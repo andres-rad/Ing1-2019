@@ -33,11 +33,11 @@ titilar
 	self encender.! !
 
 
-!LuzAmarilla class methodsFor: 'as yet unclassified' stamp: 'AR 3/25/2019 20:58:50'!
+!LuzAmarilla class methodsFor: 'as yet unclassified' stamp: 'AR 3/25/2019 21:27:36'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
-	morph := (EllipseMorph basicNew instVarAt: 1 put: nil; instVarAt: 2 put: #(); instVarAt: 3 put: (MorphicTranslation basicNew instVarAt: 1 put: 0.0; instVarAt: 2 put: 0.0; yourself); instVarAt: 4 put: false; instVarAt: 5 put: nil; instVarAt: 6 put: nil; instVarAt: 7 put: 50@40; instVarAt: 8 put: (Color r: 0.000 g: 0.000 b: 0.000); instVarAt: 9 put: 1; instVarAt: 10 put: (Color r: 0.500 g: 0.500 b: 0.500); yourself).! !
+	morph := nil.! !
 
 
 !classDefinition: #LuzRoja category: #Semaforo!
@@ -69,11 +69,11 @@ encender
 	self color: Color red.! !
 
 
-!LuzRoja class methodsFor: 'as yet unclassified' stamp: 'AR 3/25/2019 20:58:50'!
+!LuzRoja class methodsFor: 'as yet unclassified' stamp: 'AR 3/25/2019 21:27:36'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
-	morph := (EllipseMorph basicNew instVarAt: 1 put: nil; instVarAt: 2 put: #(); instVarAt: 3 put: (MorphicTranslation basicNew instVarAt: 1 put: 0.0; instVarAt: 2 put: 0.0; yourself); instVarAt: 4 put: false; instVarAt: 5 put: nil; instVarAt: 6 put: nil; instVarAt: 7 put: 50@40; instVarAt: 8 put: (Color r: 0.000 g: 0.000 b: 0.000); instVarAt: 9 put: 1; instVarAt: 10 put: (Color r: 0.500 g: 0.500 b: 0.500); yourself).! !
+	morph := nil.! !
 
 
 !classDefinition: #LuzVerde category: #Semaforo!
@@ -105,15 +105,15 @@ encender
 	self color: Color green.! !
 
 
-!LuzVerde class methodsFor: 'as yet unclassified' stamp: 'AR 3/25/2019 20:58:50'!
+!LuzVerde class methodsFor: 'as yet unclassified' stamp: 'AR 3/25/2019 21:27:36'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
-	morph := (EllipseMorph basicNew instVarAt: 1 put: nil; instVarAt: 2 put: #(); instVarAt: 3 put: (MorphicTranslation basicNew instVarAt: 1 put: 0.0; instVarAt: 2 put: 0.0; yourself); instVarAt: 4 put: false; instVarAt: 5 put: nil; instVarAt: 6 put: nil; instVarAt: 7 put: 50@40; instVarAt: 8 put: (Color r: 0.000 g: 0.000 b: 0.000); instVarAt: 9 put: 1; instVarAt: 10 put: (Color r: 0.500 g: 0.500 b: 0.500); yourself).! !
+	morph := nil.! !
 
 
-!classDefinition: #Semaforo category: #Semaforo!
-DenotativeObjectMorph subclass: #Semaforo
+!classDefinition: #SemaforoDeMaipuYCorrientes category: #Semaforo!
+DenotativeObjectMorph subclass: #SemaforoDeMaipuYCorrientes
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -121,11 +121,11 @@ DenotativeObjectMorph subclass: #Semaforo
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'Semaforo class' category: #Semaforo!
-Semaforo class
+!classDefinition: 'SemaforoDeMaipuYCorrientes class' category: #Semaforo!
+SemaforoDeMaipuYCorrientes class
 	instanceVariableNames: 'luzRoja luzVerde luzAmarilla'!
 
-!Semaforo class methodsFor: 'morph' stamp: 'AR 3/25/2019 20:05:34'!
+!SemaforoDeMaipuYCorrientes class methodsFor: 'morph' stamp: 'AR 3/25/2019 20:05:34'!
 createMorph
 
 	^LayoutMorph newColumn
@@ -134,32 +134,22 @@ createMorph
 ! !
 
 
-!Semaforo class methodsFor: 'inicializacion' stamp: 'AR 3/25/2019 20:33:42'!
+!SemaforoDeMaipuYCorrientes class methodsFor: 'inicializacion' stamp: 'AR 3/25/2019 21:21:28'!
 agregarLuces
 	"
 	Crea en el semáforo las tres luces que tiene un semáforo (Roja, Amarilla, Verde)
 	En principio empiezan todas apagadas.
 	"
-	LuzAmarilla color: Color black.
-	LuzVerde color: Color black.
-	LuzRoja color: Color black.
+	LuzAmarilla encender.
+	LuzVerde encender.
+	LuzRoja encender.
 	
 	self addMorph: LuzRoja.
 	self addMorph: LuzAmarilla.
 	self addMorph: LuzVerde.! !
 
-!Semaforo class methodsFor: 'inicializacion' stamp: 'AR 3/25/2019 20:46:48'!
-señalizarEncendido
-	"
-	Cuando un semáforo se prende lo primero que hace es titilar las luces amarillas 5 veces para avisar 
-	 precaución por encendido.
-	"
-	5 timesRepeat: [
-		self titilar: LuzAmarilla.
-	]! !
-
-!Semaforo class methodsFor: 'inicializacion' stamp: 'AR 3/25/2019 20:53:47'!
-señalizarEncendido2
+!SemaforoDeMaipuYCorrientes class methodsFor: 'inicializacion' stamp: 'AR 3/25/2019 21:23:49'!
+avisarPrecaucionPorEncendido
 	"
 	Cuando un semáforo se prende lo primero que hace es titilar las luces amarillas 5 veces para avisar 
 	 precaución por encendido (con esta versión se muestra en pantalla).
@@ -169,14 +159,8 @@ señalizarEncendido2
 		(Delay for: 0.5*second) wait.
 	]! !
 
-!Semaforo class methodsFor: 'inicializacion' stamp: 'AR 3/25/2019 20:47:10'!
-titilar: aLuz
-	aLuz apagar.
-	(Delay for: 0.5*second) wait.
-	aLuz encender.! !
 
-
-!Semaforo class methodsFor: 'creacion' stamp: 'AR 3/25/2019 20:34:42'!
+!SemaforoDeMaipuYCorrientes class methodsFor: 'creacion' stamp: 'AR 3/25/2019 20:34:42'!
 apagar
 	"
 	Apaga todas las luces del semáforo.
@@ -185,18 +169,18 @@ apagar
 	LuzAmarilla apagar.
 	LuzVerde apagar.! !
 
-!Semaforo class methodsFor: 'creacion' stamp: 'AR 3/25/2019 20:32:12'!
+!SemaforoDeMaipuYCorrientes class methodsFor: 'creacion' stamp: 'AR 3/25/2019 21:23:49'!
 encender
 	"
 	Inicializa el semáforo y lo muestra en pantalla.
 	"
 	self openInWorld.
 	self agregarLuces.
-	self señalizarEncendido.
+	self avisarPrecaucionPorEncendido.
 ! !
 
 
-!Semaforo class methodsFor: 'as yet unclassified' stamp: 'AR 3/25/2019 20:58:50'!
+!SemaforoDeMaipuYCorrientes class methodsFor: 'as yet unclassified' stamp: 'AR 3/25/2019 21:27:36'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -208,4 +192,4 @@ initializeCollaboratorsFromFile
 LuzAmarilla initializeAfterFileIn!
 LuzRoja initializeAfterFileIn!
 LuzVerde initializeAfterFileIn!
-Semaforo initializeAfterFileIn!
+SemaforoDeMaipuYCorrientes initializeAfterFileIn!
