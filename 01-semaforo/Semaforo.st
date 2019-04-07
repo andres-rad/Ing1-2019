@@ -1,5 +1,40 @@
+!classDefinition: #SeñalDeDetencion category: #Semaforo!
+DenotativeObjectMorph subclass: #SeñalDeDetencion
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Semaforo'!
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'SeñalDeDetencion class' category: #Semaforo!
+SeñalDeDetencion class
+	instanceVariableNames: ''!
+
+!SeñalDeDetencion class methodsFor: 'morph' stamp: 'TF 4/7/2019 16:12:15'!
+apagar
+	self color: Color black.! !
+
+!SeñalDeDetencion class methodsFor: 'morph' stamp: 'TF 4/7/2019 16:10:36'!
+createMorph
+	^EllipseMorph new
+		color: Color black;
+		yourself! !
+
+!SeñalDeDetencion class methodsFor: 'morph' stamp: 'TF 4/7/2019 16:09:58'!
+encender
+	self color: Color red.! !
+
+
+!SeñalDeDetencion class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:21:44'!
+initializeCollaboratorsFromFile
+	"Auto generated method for loading purposes - Do not modify it"
+
+	morph := nil.! !
+
+
 !classDefinition: #SeñalDeDetencionDeCorrientes category: #Semaforo!
-DenotativeObjectMorph subclass: #SeñalDeDetencionDeCorrientes
+SeñalDeDetencion subclass: #SeñalDeDetencionDeCorrientes
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -11,23 +46,8 @@ DenotativeObjectMorph subclass: #SeñalDeDetencionDeCorrientes
 SeñalDeDetencionDeCorrientes class
 	instanceVariableNames: ''!
 
-!SeñalDeDetencionDeCorrientes class methodsFor: 'morph' stamp: 'TF 4/7/2019 15:44:20'!
-apagar
-	self color: Color black.! !
 
-!SeñalDeDetencionDeCorrientes class methodsFor: 'morph' stamp: 'TF 4/7/2019 15:17:14'!
-createMorph
-
-	^EllipseMorph new
-		color: Color black;
-		yourself! !
-
-!SeñalDeDetencionDeCorrientes class methodsFor: 'morph' stamp: 'TF 4/7/2019 15:17:14'!
-encender
-	self color: Color red.! !
-
-
-!SeñalDeDetencionDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 15:54:33'!
+!SeñalDeDetencionDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:21:44'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -35,7 +55,7 @@ initializeCollaboratorsFromFile
 
 
 !classDefinition: #SeñalDeDetencionDeMaipu category: #Semaforo!
-DenotativeObjectMorph subclass: #SeñalDeDetencionDeMaipu
+SeñalDeDetencion subclass: #SeñalDeDetencionDeMaipu
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -47,23 +67,44 @@ DenotativeObjectMorph subclass: #SeñalDeDetencionDeMaipu
 SeñalDeDetencionDeMaipu class
 	instanceVariableNames: ''!
 
-!SeñalDeDetencionDeMaipu class methodsFor: 'morph' stamp: 'AR 3/25/2019 20:28:28'!
+
+!SeñalDeDetencionDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:21:44'!
+initializeCollaboratorsFromFile
+	"Auto generated method for loading purposes - Do not modify it"
+
+	morph := nil.! !
+
+
+!classDefinition: #SeñalDePaso category: #Semaforo!
+DenotativeObjectMorph subclass: #SeñalDePaso
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Semaforo'!
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'SeñalDePaso class' category: #Semaforo!
+SeñalDePaso class
+	instanceVariableNames: ''!
+
+!SeñalDePaso class methodsFor: 'morph' stamp: 'TF 4/7/2019 16:16:55'!
 apagar
 	self color: Color black.! !
 
-!SeñalDeDetencionDeMaipu class methodsFor: 'morph' stamp: 'AR 3/25/2019 20:05:24'!
+!SeñalDePaso class methodsFor: 'morph' stamp: 'TF 4/7/2019 16:16:55'!
 createMorph
 
 	^EllipseMorph new
 		color: Color black;
 		yourself! !
 
-!SeñalDeDetencionDeMaipu class methodsFor: 'morph' stamp: 'AR 3/25/2019 20:47:59'!
+!SeñalDePaso class methodsFor: 'morph' stamp: 'TF 4/7/2019 16:16:55'!
 encender
-	self color: Color red.! !
+	self color: Color green.! !
 
 
-!SeñalDeDetencionDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 15:54:33'!
+!SeñalDePaso class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:21:44'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -71,7 +112,7 @@ initializeCollaboratorsFromFile
 
 
 !classDefinition: #SeñalDePasoDeCorrientes category: #Semaforo!
-DenotativeObjectMorph subclass: #SeñalDePasoDeCorrientes
+SeñalDePaso subclass: #SeñalDePasoDeCorrientes
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -83,23 +124,8 @@ DenotativeObjectMorph subclass: #SeñalDePasoDeCorrientes
 SeñalDePasoDeCorrientes class
 	instanceVariableNames: ''!
 
-!SeñalDePasoDeCorrientes class methodsFor: 'morph' stamp: 'TF 4/7/2019 15:17:22'!
-apagar
-	self color: Color black.! !
 
-!SeñalDePasoDeCorrientes class methodsFor: 'morph' stamp: 'TF 4/7/2019 15:17:22'!
-createMorph
-
-	^EllipseMorph new
-		color: Color black;
-		yourself! !
-
-!SeñalDePasoDeCorrientes class methodsFor: 'morph' stamp: 'TF 4/7/2019 15:17:22'!
-encender
-	self color: Color green.! !
-
-
-!SeñalDePasoDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 15:54:33'!
+!SeñalDePasoDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:21:44'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -107,7 +133,7 @@ initializeCollaboratorsFromFile
 
 
 !classDefinition: #SeñalDePasoDeMaipu category: #Semaforo!
-DenotativeObjectMorph subclass: #SeñalDePasoDeMaipu
+SeñalDePaso subclass: #SeñalDePasoDeMaipu
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -135,7 +161,49 @@ encender
 	self color: Color green.! !
 
 
-!SeñalDePasoDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 15:54:33'!
+!SeñalDePasoDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:21:44'!
+initializeCollaboratorsFromFile
+	"Auto generated method for loading purposes - Do not modify it"
+
+	morph := nil.! !
+
+
+!classDefinition: #SeñalDePrecaución category: #Semaforo!
+DenotativeObjectMorph subclass: #SeñalDePrecaución
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Semaforo'!
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'SeñalDePrecaución class' category: #Semaforo!
+SeñalDePrecaución class
+	instanceVariableNames: ''!
+
+!SeñalDePrecaución class methodsFor: 'morph' stamp: 'TF 4/7/2019 16:17:29'!
+apagar
+	self color: Color black.! !
+
+!SeñalDePrecaución class methodsFor: 'morph' stamp: 'TF 4/7/2019 16:17:29'!
+createMorph
+
+	^EllipseMorph new
+		color: Color black;
+		yourself! !
+
+!SeñalDePrecaución class methodsFor: 'morph' stamp: 'TF 4/7/2019 16:17:29'!
+encender
+	self color: Color yellow.! !
+
+!SeñalDePrecaución class methodsFor: 'morph' stamp: 'TF 4/7/2019 16:17:29'!
+titilar
+	self apagar.
+	(Delay for: 0.5*second) wait.
+	self encender.! !
+
+
+!SeñalDePrecaución class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:21:44'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -143,7 +211,7 @@ initializeCollaboratorsFromFile
 
 
 !classDefinition: #SeñalDePrecaucionDeCorrientes category: #Semaforo!
-DenotativeObjectMorph subclass: #SeñalDePrecaucionDeCorrientes
+SeñalDePrecaución subclass: #SeñalDePrecaucionDeCorrientes
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -155,29 +223,8 @@ DenotativeObjectMorph subclass: #SeñalDePrecaucionDeCorrientes
 SeñalDePrecaucionDeCorrientes class
 	instanceVariableNames: ''!
 
-!SeñalDePrecaucionDeCorrientes class methodsFor: 'morph' stamp: 'TF 4/7/2019 15:17:07'!
-apagar
-	self color: Color black.! !
 
-!SeñalDePrecaucionDeCorrientes class methodsFor: 'morph' stamp: 'TF 4/7/2019 15:17:07'!
-createMorph
-
-	^EllipseMorph new
-		color: Color black;
-		yourself! !
-
-!SeñalDePrecaucionDeCorrientes class methodsFor: 'morph' stamp: 'TF 4/7/2019 15:17:07'!
-encender
-	self color: Color yellow.! !
-
-!SeñalDePrecaucionDeCorrientes class methodsFor: 'morph' stamp: 'TF 4/7/2019 15:17:07'!
-titilar
-	self apagar.
-	(Delay for: 0.5*second) wait.
-	self encender.! !
-
-
-!SeñalDePrecaucionDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 15:54:33'!
+!SeñalDePrecaucionDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:21:44'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -185,7 +232,7 @@ initializeCollaboratorsFromFile
 
 
 !classDefinition: #SeñalDePrecaucionDeMaipu category: #Semaforo!
-DenotativeObjectMorph subclass: #SeñalDePrecaucionDeMaipu
+SeñalDePrecaución subclass: #SeñalDePrecaucionDeMaipu
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -197,29 +244,8 @@ DenotativeObjectMorph subclass: #SeñalDePrecaucionDeMaipu
 SeñalDePrecaucionDeMaipu class
 	instanceVariableNames: ''!
 
-!SeñalDePrecaucionDeMaipu class methodsFor: 'morph' stamp: 'AR 3/25/2019 20:28:22'!
-apagar
-	self color: Color black.! !
 
-!SeñalDePrecaucionDeMaipu class methodsFor: 'morph' stamp: 'AR 3/25/2019 20:07:45'!
-createMorph
-
-	^EllipseMorph new
-		color: Color black;
-		yourself! !
-
-!SeñalDePrecaucionDeMaipu class methodsFor: 'morph' stamp: 'AR 3/25/2019 20:37:48'!
-encender
-	self color: Color yellow.! !
-
-!SeñalDePrecaucionDeMaipu class methodsFor: 'morph' stamp: 'AR 3/25/2019 20:53:20'!
-titilar
-	self apagar.
-	(Delay for: 0.5*second) wait.
-	self encender.! !
-
-
-!SeñalDePrecaucionDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 15:54:33'!
+!SeñalDePrecaucionDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:21:44'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -322,7 +348,7 @@ encender
 ! !
 
 
-!SeñalizadorDeTransitoDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 15:54:33'!
+!SeñalizadorDeTransitoDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:21:44'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -425,7 +451,7 @@ encender
 ! !
 
 
-!SeñalizadorDeTransitoDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 15:54:33'!
+!SeñalizadorDeTransitoDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:21:44'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -473,10 +499,13 @@ manejarTransito
 		(Delay forSeconds: 2) wait.
 	].! !
 
+SeñalDeDetencion initializeAfterFileIn!
 SeñalDeDetencionDeCorrientes initializeAfterFileIn!
 SeñalDeDetencionDeMaipu initializeAfterFileIn!
+SeñalDePaso initializeAfterFileIn!
 SeñalDePasoDeCorrientes initializeAfterFileIn!
 SeñalDePasoDeMaipu initializeAfterFileIn!
+SeñalDePrecaución initializeAfterFileIn!
 SeñalDePrecaucionDeCorrientes initializeAfterFileIn!
 SeñalDePrecaucionDeMaipu initializeAfterFileIn!
 SeñalizadorDeTransitoDeCorrientes initializeAfterFileIn!
