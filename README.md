@@ -16,8 +16,8 @@ Repositorio para los tps de Ingeniería de Software I - 1er cuatrimestre 2019
 13. done
 14. done
 15. done
-16. 8/4
-17. 8/4
+16. done
+17. done
 18. 8/4
 19. 8/4
 20. 8/4
