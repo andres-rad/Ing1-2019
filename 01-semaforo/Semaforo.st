@@ -26,7 +26,7 @@ encender
 	self color: Color red.! !
 
 
-!SeñalDeDetencion class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:55:55'!
+!SeñalDeDetencion class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 18:55:40'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -47,7 +47,7 @@ SeñalDeDetencionDeCorrientes class
 	instanceVariableNames: ''!
 
 
-!SeñalDeDetencionDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:55:55'!
+!SeñalDeDetencionDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 18:55:40'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -68,7 +68,7 @@ SeñalDeDetencionDeMaipu class
 	instanceVariableNames: ''!
 
 
-!SeñalDeDetencionDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:55:55'!
+!SeñalDeDetencionDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 18:55:40'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -104,7 +104,7 @@ encender
 	self color: Color green.! !
 
 
-!SeñalDePaso class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:55:55'!
+!SeñalDePaso class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 18:55:40'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -125,7 +125,7 @@ SeñalDePasoDeCorrientes class
 	instanceVariableNames: ''!
 
 
-!SeñalDePasoDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:55:55'!
+!SeñalDePasoDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 18:55:40'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -161,7 +161,7 @@ encender
 	self color: Color green.! !
 
 
-!SeñalDePasoDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:55:55'!
+!SeñalDePasoDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 18:55:40'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -203,7 +203,7 @@ titilar
 	self encender.! !
 
 
-!SeñalDePrecaución class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:55:55'!
+!SeñalDePrecaución class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 18:55:40'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -224,7 +224,7 @@ SeñalDePrecaucionDeCorrientes class
 	instanceVariableNames: ''!
 
 
-!SeñalDePrecaucionDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:55:55'!
+!SeñalDePrecaucionDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 18:55:40'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -245,7 +245,7 @@ SeñalDePrecaucionDeMaipu class
 	instanceVariableNames: ''!
 
 
-!SeñalDePrecaucionDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:55:55'!
+!SeñalDePrecaucionDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 18:55:40'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -348,7 +348,7 @@ encender
 ! !
 
 
-!SeñalizadorDeTransito class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:55:55'!
+!SeñalizadorDeTransito class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 18:55:40'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -374,7 +374,7 @@ SeñalizadorDeTransitoDeCorrientes class
 
 
 
-!SeñalizadorDeTransitoDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:55:55'!
+!SeñalizadorDeTransitoDeCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 18:55:40'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -400,7 +400,7 @@ SeñalizadorDeTransitoDeMaipu class
 
 
 
-!SeñalizadorDeTransitoDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:55:55'!
+!SeñalizadorDeTransitoDeMaipu class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 18:55:40'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -452,7 +452,7 @@ manejarTransito
 	].! !
 
 
-!Semaforo class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:55:55'!
+!Semaforo class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 18:55:40'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -477,7 +477,7 @@ SemaforoDeMaipuYCorrientes class
 iniciarHijo
 	self iniciar.! !
 
-!SemaforoDeMaipuYCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 16:55:55'!
+!SemaforoDeMaipuYCorrientes class methodsFor: 'as yet unclassified' stamp: 'TF 4/7/2019 18:55:40'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
