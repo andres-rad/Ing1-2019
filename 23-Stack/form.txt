@@ -1,0 +1,60 @@
+
+A Simple Technique for Handling Multiple Polymorphism
+https://www.dropbox.com/s/f00ujuvfgqnkm55/A%20simple%20technique%20for%20handling%20multiple%20polymorphism%20-%20double%20dispatch.pdf?dl=0
+
+El paper presenta la situación en la que una expresión posee…
+… una variable no polimórfica con otra.
+X más de una variable independientemente polimórficas.
+… más de una variable dependientemente polimórficas.
+Ninguna de las anteriores.
+
+Para que dos objetos sean polimórficos es necesario pedir que...
+… sean instancias de la misma clase.
+… sean instancia de diferentes clases pero con una clase padre en común.
+… uno haya sido creado a partir de clonar al otro.
+X Ninguna de las anteriores.
+
+La solución presentada en el paper (Double-Dispatch) utiliza polimorfismo para...
+X evitar el chequeo de tipos (isMemberOf)
+… para resolver la interacción entre dos objetos que no deberían interactuar.
+… generar polimorfismo entre dos objetos en principio no polimórficos.
+Todas las anteriores.
+
+Teniendo en cuenta el ejemplo del paper (Graphical Objects y Display Ports). La solución final, donde los nuevos métodos se encuentran en las clases ports…
+… es mejor que la solución donde los métodos se encuentran en las clases graphical ya que genera objetos más cohesivos y con bajo acoplamiento.
+… se puede mejorar aún más implementando los nuevos métodos en las clases graphical ya que genera objetos más cohesivos y con bajo acoplamiento.
+X es igual de buena que la solución donde los métodos se encuentran en las clases graphical y solo depende de una decisión de diseño.
+Ninguna de las anteriores.
+
+
+Polymorphic Hierarchies
+https://www.dropbox.com/s/jyy87o2a3ljdr7w/Polymorphic%20Hierarchy.pdf?dl=0
+
+Compare la definición de polimorfismo visto en clase con la presentada en el paper.
+En clase vimos que dos objetos son polimórficos con respecto a un conjunto de mensajes si responden semánticamente igual a dicho conjunto. La definición del paper es similar en cuanto a que utiliza el concepto de conjunto de mensajes (lo llama core interface) cómo una interfaz atómica que ambos objetos deben saber responder de forma polimórfica. Aquí es donde diverge sobre el significado de que dos métodos sean polimórficos y da una definición muy rígida, en particular, no sólo pide que tengan el mismo nombre (misma cantidad de parametros) y que responda semánticamente igual (mismo propósito), sino que además espera que retornen el mismo tipo y que tengan los mismos efectos secundarios, esto último es tal vez lo más controversial. Además, el autor plantea que si dos métodos polimórficos tienen la misma implementación, entonces dejan de serlo y pasan a ser código repetido, planteando un límite interesante sobre cuando dos métodos son "demasiado" similares.  
+
+
+Explique la siguiente afirmación del autor: Template Class is similar to the Template Method pattern.
+El Template Method pattern al que se refiere es la utilización de métodos tontos (dummy), sin implementación, utilizados para definir su interfaz (que parametros toma, en que orden, el nombre) y lo que se espera de ellos (el propósito). Estos luegos son implementados por objetos que saben responder a estos mensajes, estas implementaciones comparten el qué (heredado del Template Method) pero difieren en el cómo (la forma de solucionar el qué debería ser distinta para cada uno de ellos). El plantea una evolución de esta idea a Template Class, donde creamos una clase tonta, sin (o con pocos) métodos implementados, cuya única razón de ser es definir lo que se espera de objetos que implementen dicha clase. En particular, una Template Class va a incluir un conjunto de Template Methods. La similitud viene de que la Template Class es a las clases lo que el Template Method es a los métodos, una forma natural de definir (en el código) lo que se espera de ellos.
+
+
+Verdadero o Falso (justificar solo en caso de Falso). Según el autor:
+(Para completar en las siguientes dos preguntas)
+Todos los objetos que sepan responder al mensaje value y value: serán polimórficos.
+Falso, en particular el autor da el ejemplo del objeto BlockClosure, donde value y value: son métodos para evaluar el bloque y obtener el resultado, mientras que en ValueModel, value y value: son getter y setter, respectivamente, para colaboradores internos del objeto.
+
+En una jerarquía de clases, las clases más arriba en la jerarquía deben definir el cómo, es decir, deben proveer la implementación de los métodos y luego las subclases solo deben tener un comentario que diga “See superimplementor.”
+Falso. Esto no es así en general, en particular, las clases de más arriba deberían dar una idea del qué, dejando los detalles implementativos para las hojas de la jerarquía. Si todas las implementaciones de los métodos estuviesen en las clases de más arriba, las clases de más abajo tendrían poco sentido de existir. Obviamente, hay casos donde puede tener sentido definir la implementación en las clases superiores, por ejemplo si varias clases inferiores comparten la implementación de un método, este debería ser trasladado a las superiores, para evitar código repetido.
+
+
+
+Null Object Pattern
+http://www.cs.oberlin.edu/~jwalker/refs/woolf.ps
+¿Qué técnica usa el Patrón NullObject para evitar el uso de ifs?
+Utiliza polimorfismo, ya que la idea es tener un NullObject que sepa responder a los mismos mensajes que otro objeto (RealObject) sin hacer nada, o actuando cómo si no hiciese nada. ESto evita tener Ifs de la pinta "if (obj is not nil) then ("do something with obj") else ("do nothing")", ya que ese if es encapsulado dentro del NullObject y el efecto es el mismo, pero con mejor transparencia.
+
+Explique por qué la solución del patrón es superadora a la de usar nil en el ejemplo del Controller.
+Es similar a la respuesta del ejemplo anterior, usar nil nos obligaría a chequear (cada vez que accedemos a dicho objeto) si es un nil o un objeto instanciado (realObject), esto implica un crecimiento enorme de ifs y un código más propenso a errores, ya que olvidarse uno de estos ifs podría implicar un error difícil de rastrear.
+
+El patrón de diseño explica que estructuralmente el NullObject debe tener un ancestro común con la jerarquía de real objects. ¿Qué opina de dicha restricción?
+Creemos que es una restricción válida, ya que cómo mínimo, el NullObject debe responder a los mismo mensajes que el real object, esto implica que deberían compartir una jerarquía ya que definen diferentes implementaciones de un mismo concepto abstracto. Si bien es posible hacerlo sin tener un ancestro en común, esto no sería un buen diseño de lo que está ocurriendo.
