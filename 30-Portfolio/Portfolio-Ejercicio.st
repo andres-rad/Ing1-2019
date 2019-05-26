@@ -38,8 +38,8 @@ test03EmptyPortfolioDoesNotHaveTransactions
 	self assert: portfolio transactions isEmpty .
 ! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 21:24:34'!
-test04APortfolioHasTheBalanceEqualToTheSumOfItsElements
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:32:08'!
+test04APortfolioBalanceEqualsTheSumOfItsElements
 
 	| portfolio anotherPortfolio anAccount anotherAccount |
 	
@@ -103,8 +103,8 @@ test07APortfolioCannotHaveElementTwice
 	
 	self should: [portfolio add: anAccount]  raise: Error withMessageText:  Portfolio CannotHaveElementRepeated.! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 21:50:35'!
-test08APortfolioCannotIndirectlyHaveElementTwice
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:47:48'!
+test08APortfolioCannotIndirectlyDownwardHaveElementTwice
 
 	| portfolio anotherPortfolio anAccount |
 	
@@ -117,6 +117,22 @@ test08APortfolioCannotIndirectlyHaveElementTwice
 	anotherPortfolio add: anAccount. 
 	
 	self should: [portfolio add: anotherPortfolio.]  raise: Error withMessageText:  Portfolio CannotHaveElementRepeated.! !
+
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 19:09:29'!
+test09APortfolioCannotIndirectlyUpwardsHaveElementTwice
+
+	| portfolio anotherPortfolio anAccount |
+	
+	anAccount := ReceptiveAccount new.
+	
+	portfolio := Portfolio new.
+
+	
+	anotherPortfolio := Portfolio new.
+	anotherPortfolio add: anAccount. 
+	anotherPortfolio add: portfolio .
+		
+	self should: [portfolio add: anAccount .]  raise: Error withMessageText:  Portfolio CannotHaveElementRepeated.! !
 
 
 !classDefinition: #ReceptiveAccountTest category: #'Portfolio-Ejercicio'!
@@ -316,41 +332,69 @@ for: aValue
 
 !classDefinition: #Portfolio category: #'Portfolio-Ejercicio'!
 Object subclass: #Portfolio
-	instanceVariableNames: 'portfoliosAndAccounts'
+	instanceVariableNames: 'portfoliosAndAccounts parents'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 21:45:26'!
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:59:17'!
 add: anAccountOrPortfolio
 
-	(self includes: anAccountOrPortfolio) ifTrue: [
-		^self error: self class CannotHaveElementRepeated .
-	].
-	portfoliosAndAccounts add: anAccountOrPortfolio.! !
+	(self allSupraSubElements intersection: (anAccountOrPortfolio allSupraSubElements )) ifNotEmpty: [^self error: self class CannotHaveElementRepeated .].
+	
+	portfoliosAndAccounts add: anAccountOrPortfolio.
+	anAccountOrPortfolio addParent: self.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:41:22'!
+addParent: aPortfolioOrAnAccount
+	parents add: aPortfolioOrAnAccount .! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:49:19'!
+allSubElements
+	| allSubElements |
+	allSubElements := Set with: self.
+	
+	portfoliosAndAccounts do: [:pOrA | allSubElements addAll: pOrA allSubElements.].
+	
+	^allSubElements .
+	
+	! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:57:19'!
+allSupraElements
+	| allSupraElements |
+	allSupraElements := Set with: self .
+	
+	parents do: [:pOrA | allSupraElements addAll: pOrA allSupraElements.].
+	
+	^allSupraElements .
+	
+	! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:58:30'!
+allSupraSubElements
+	| allSupraSubElements |
+	allSupraSubElements := Set new .
+	
+	self allSupraElements do: [:pOrA | allSupraSubElements addAll: pOrA allSubElements.].
+	
+	^allSupraSubElements .
+	
+	! !
 
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 21:03:04'!
 balance
 	^ portfoliosAndAccounts sum: [ :portfolioOrAccount | portfolioOrAccount balance.] ifEmpty: [0].! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 21:10:43'!
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 19:08:14'!
 hasRegistered: aDeposit 
-	^portfoliosAndAccounts inject: false into: [:foldedValue :aPortfolioOrAnAccount | foldedValue or: [aPortfolioOrAnAccount hasRegistered: aDeposit] ] .! !
+	^self transactions includes: aDeposit .
+! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 21:48:27'!
-includes: anAccountOrPortfolio
-
-	^(portfoliosAndAccounts includes: anAccountOrPortfolio) or: [
-		portfoliosAndAccounts inject: false into: [:accum :aPOrA | accum or: 
-			[ |res| [ res := aPOrA includes: anAccountOrPortfolio] on: MessageNotUnderstood
-		do: [res := aPOrA = anAccountOrPortfolio ]. res ] 
-		].
-	].
-	! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 21:01:24'!
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:40:53'!
 initialize
-	portfoliosAndAccounts := OrderedCollection new.! !
+	portfoliosAndAccounts := OrderedCollection new.
+	parents := OrderedCollection new.! !
 
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 21:28:36'!
 transactions
@@ -399,8 +443,20 @@ balance
 	^transactions sum: [ :aTransaction | aTransaction netValue ] ifEmpty: [ 0 ]! !
 
 
+!ReceptiveAccount methodsFor: 'testing' stamp: 'atr 5/26/2019 19:00:06'!
+addParent: aParent! !
+
 !ReceptiveAccount methodsFor: 'testing' stamp: 'HAW 10/11/2018 16:53:54'!
 hasRegistered: aTtransaction
 
 	^ transactions includes: aTtransaction 
 ! !
+
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:47:01'!
+allSubElements
+	^Set with: self.! !
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:59:44'!
+allSupraSubElements
+	^Set with: self.! !
