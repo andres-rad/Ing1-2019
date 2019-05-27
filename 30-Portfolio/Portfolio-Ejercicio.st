@@ -5,7 +5,7 @@ TestCase subclass: #PortfolioTest
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 20:53:07'!
+!PortfolioTest methodsFor: 'tests' stamp: 'TF 5/23/2019 20:53:07'!
 test01PortfolioHasZeroBalanceWhenCreatedEmpty
 
 	| portfolio |
@@ -15,7 +15,7 @@ test01PortfolioHasZeroBalanceWhenCreatedEmpty
 	self assert: portfolio balance equals: 0. 
 ! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 21:14:12'!
+!PortfolioTest methodsFor: 'tests' stamp: 'TF 5/23/2019 21:14:12'!
 test02EmptyPortfolioDoesNotKnowTransactionsNotContainedInItself
 
 	| portfolio deposit withdraw |
@@ -28,7 +28,7 @@ test02EmptyPortfolioDoesNotKnowTransactionsNotContainedInItself
 	self deny: (portfolio hasRegistered:withdraw).
 ! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 20:53:18'!
+!PortfolioTest methodsFor: 'tests' stamp: 'TF 5/23/2019 20:53:18'!
 test03EmptyPortfolioDoesNotHaveTransactions
 
 	| portfolio |
@@ -38,7 +38,7 @@ test03EmptyPortfolioDoesNotHaveTransactions
 	self assert: portfolio transactions isEmpty .
 ! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:32:08'!
+!PortfolioTest methodsFor: 'tests' stamp: 'atr 5/26/2019 18:32:08'!
 test04APortfolioBalanceEqualsTheSumOfItsElements
 
 	| portfolio anotherPortfolio anAccount anotherAccount |
@@ -59,7 +59,7 @@ test04APortfolioBalanceEqualsTheSumOfItsElements
 	Deposit register: 75 on:  anotherAccount .
 	self assert: portfolio balance equals: (anAccount balance + anotherAccount balance ).! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 21:25:12'!
+!PortfolioTest methodsFor: 'tests' stamp: 'TF 5/23/2019 21:25:12'!
 test05APortfolioKnowsTheTransactionsOfTheAccountsItHasRegistered
 
 	| portfolio anAccount aDeposit |
@@ -75,7 +75,7 @@ test05APortfolioKnowsTheTransactionsOfTheAccountsItHasRegistered
 	
 	self assert: (portfolio hasRegistered: aDeposit) .! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 21:26:45'!
+!PortfolioTest methodsFor: 'tests' stamp: 'TF 5/23/2019 21:26:45'!
 test06APortfolioHasTheTransactionsOfTheAccountsItHasRegistered
 
 	| portfolio anAccount aDeposit |
@@ -91,7 +91,7 @@ test06APortfolioHasTheTransactionsOfTheAccountsItHasRegistered
 	
 	self assert: portfolio transactions equals: anAccount transactions .! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 21:40:42'!
+!PortfolioTest methodsFor: 'tests' stamp: 'TF 5/23/2019 21:40:42'!
 test07APortfolioCannotHaveElementTwice
 
 	| portfolio anAccount |
@@ -103,7 +103,7 @@ test07APortfolioCannotHaveElementTwice
 	
 	self should: [portfolio add: anAccount]  raise: Error withMessageText:  Portfolio CannotHaveElementRepeated.! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:47:48'!
+!PortfolioTest methodsFor: 'tests' stamp: 'atr 5/26/2019 18:47:48'!
 test08APortfolioCannotIndirectlyDownwardHaveElementTwice
 
 	| portfolio anotherPortfolio anAccount |
@@ -118,7 +118,7 @@ test08APortfolioCannotIndirectlyDownwardHaveElementTwice
 	
 	self should: [portfolio add: anotherPortfolio.]  raise: Error withMessageText:  Portfolio CannotHaveElementRepeated.! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 19:09:29'!
+!PortfolioTest methodsFor: 'tests' stamp: 'atr 5/26/2019 19:09:29'!
 test09APortfolioCannotIndirectlyUpwardsHaveElementTwice
 
 	| portfolio anotherPortfolio anAccount |
@@ -332,73 +332,95 @@ for: aValue
 
 !classDefinition: #Portfolio category: #'Portfolio-Ejercicio'!
 Object subclass: #Portfolio
-	instanceVariableNames: 'portfoliosAndAccounts parents'
+	instanceVariableNames: 'portfoliosThatManageMe managedPortfoliosAndAccounts'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:59:17'!
-add: anAccountOrPortfolio
+!Portfolio methodsFor: 'initialization' stamp: 'TF 5/27/2019 15:11:43'!
+initialize
+	managedPortfoliosAndAccounts := OrderedCollection new.
+	portfoliosThatManageMe := OrderedCollection new.! !
 
-	(self allSupraSubElements intersection: (anAccountOrPortfolio allSupraSubElements )) ifNotEmpty: [^self error: self class CannotHaveElementRepeated .].
-	
-	portfoliosAndAccounts add: anAccountOrPortfolio.
-	anAccountOrPortfolio addParent: self.! !
+!Portfolio methodsFor: 'initialization' stamp: 'TF 5/27/2019 15:22:53'!
+transactions
+	^managedPortfoliosAndAccounts 
+		inject: OrderedCollection new 
+		into: [:anOrderedCollection :aPortfolioOrAnAccount | anOrderedCollection addAll: aPortfolioOrAnAccount transactions ].! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:41:22'!
-addParent: aPortfolioOrAnAccount
-	parents add: aPortfolioOrAnAccount .! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:49:19'!
-allSubElements
-	| allSubElements |
-	allSubElements := Set with: self.
-	
-	portfoliosAndAccounts do: [:pOrA | allSubElements addAll: pOrA allSubElements.].
-	
-	^allSubElements .
-	
-	! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:57:19'!
-allSupraElements
-	| allSupraElements |
-	allSupraElements := Set with: self .
-	
-	parents do: [:pOrA | allSupraElements addAll: pOrA allSupraElements.].
-	
-	^allSupraElements .
-	
-	! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:58:30'!
-allSupraSubElements
-	| allSupraSubElements |
-	allSupraSubElements := Set new .
-	
-	self allSupraElements do: [:pOrA | allSupraSubElements addAll: pOrA allSubElements.].
-	
-	^allSupraSubElements .
-	
-	! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 21:03:04'!
+!Portfolio methodsFor: 'accessing' stamp: 'TF 5/27/2019 15:12:37'!
 balance
-	^ portfoliosAndAccounts sum: [ :portfolioOrAccount | portfolioOrAccount balance.] ifEmpty: [0].! !
+	^ managedPortfoliosAndAccounts sum: [ :aPortfolioOrAccount | aPortfolioOrAccount balance.] ifEmpty: [0].! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 19:08:14'!
+!Portfolio methodsFor: 'accessing' stamp: 'atr 5/26/2019 19:08:14'!
 hasRegistered: aDeposit 
 	^self transactions includes: aDeposit .
 ! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:40:53'!
-initialize
-	portfoliosAndAccounts := OrderedCollection new.
-	parents := OrderedCollection new.! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'TF 5/23/2019 21:28:36'!
-transactions
-	^portfoliosAndAccounts inject: OrderedCollection new into: [:anOrderedCollection :aPortfolioOrAnAccount | anOrderedCollection addAll: aPortfolioOrAnAccount transactions ].! !
+!Portfolio methodsFor: 'operations' stamp: 'TF 5/27/2019 15:24:29'!
+add: anAccountOrPortfolio
+
+	self assertNoDuplicateInformationByAdding: anAccountOrPortfolio.
+	
+	managedPortfoliosAndAccounts add: anAccountOrPortfolio.
+	anAccountOrPortfolio addPortfolioThatManages: self.! !
+
+!Portfolio methodsFor: 'operations' stamp: 'TF 5/27/2019 15:24:40'!
+addPortfolioThatManages: aPortfolio
+	portfoliosThatManageMe add: aPortfolio .! !
+
+
+!Portfolio methodsFor: 'operations - private' stamp: 'TF 5/27/2019 15:26:01'!
+accountsOrPortfoliosManagedByAnyoneThatManagesMe
+	| allAccountsOrPortfoliosManagedByAnyoneThatManagesMe |
+	
+	allAccountsOrPortfoliosManagedByAnyoneThatManagesMe := Set new .
+	
+	self portfoliosThatManageMe do: 
+		[:aPortfolio | allAccountsOrPortfoliosManagedByAnyoneThatManagesMe addAll: aPortfolio managedAccountsOrPortfolios.].
+	
+	^allAccountsOrPortfoliosManagedByAnyoneThatManagesMe .
+	
+	! !
+
+!Portfolio methodsFor: 'operations - private' stamp: 'TF 5/27/2019 15:19:05'!
+managedAccountsOrPortfolios
+	| allManagedAccountsOrPortfolios |
+	
+	allManagedAccountsOrPortfolios := Set with: self.
+	
+	managedPortfoliosAndAccounts do: 
+		[:aPortfolioOrAccount | allManagedAccountsOrPortfolios addAll: aPortfolioOrAccount managedAccountsOrPortfolios.].
+	
+	^allManagedAccountsOrPortfolios .
+	
+	! !
+
+!Portfolio methodsFor: 'operations - private' stamp: 'TF 5/27/2019 15:25:33'!
+portfoliosThatManageMe
+	| allPortfoliosThatManageMe |
+	
+	allPortfoliosThatManageMe := Set with: self .
+	
+	portfoliosThatManageMe do: 
+		[:aPortfolio | allPortfoliosThatManageMe addAll: aPortfolio portfoliosThatManageMe.].
+	
+	^allPortfoliosThatManageMe .
+	
+	! !
+
+
+!Portfolio methodsFor: 'assertions' stamp: 'TF 5/27/2019 15:23:55'!
+assertNoDuplicateInformationByAdding: anAccountOrPortfolio
+
+	^(self accountsOrPortfoliosManagedByAnyoneThatManagesMe 
+		intersection: 
+			(anAccountOrPortfolio managedAccountsOrPortfolios )) 
+				ifNotEmpty: [^self error: self class CannotHaveElementRepeated .].
+	
+	! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -443,9 +465,6 @@ balance
 	^transactions sum: [ :aTransaction | aTransaction netValue ] ifEmpty: [ 0 ]! !
 
 
-!ReceptiveAccount methodsFor: 'testing' stamp: 'atr 5/26/2019 19:00:06'!
-addParent: aParent! !
-
 !ReceptiveAccount methodsFor: 'testing' stamp: 'HAW 10/11/2018 16:53:54'!
 hasRegistered: aTtransaction
 
@@ -453,10 +472,10 @@ hasRegistered: aTtransaction
 ! !
 
 
-!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:47:01'!
-allSubElements
+!ReceptiveAccount methodsFor: 'portfolio operations - private' stamp: 'TF 5/27/2019 15:08:52'!
+managedAccountsOrPortfolios
 	^Set with: self.! !
 
-!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:59:44'!
-allSupraSubElements
-	^Set with: self.! !
+
+!ReceptiveAccount methodsFor: 'portfolio operations' stamp: 'TF 5/27/2019 15:24:52'!
+addPortfolioThatManages: aPortfolio! !
