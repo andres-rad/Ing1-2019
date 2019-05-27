@@ -5,7 +5,7 @@ TestCase subclass: #TaTeTiTest
 	poolDictionaries: ''
 	category: 'Ingsoft-TaTeTi'!
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'TF 5/20/2019 18:36:37'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'TF 5/20/2019 18:36:37'!
 test01CuandoComienzaElJuegoNoSeTermino
 	
 	| tateti |
@@ -15,7 +15,7 @@ test01CuandoComienzaElJuegoNoSeTermino
 	self assert: tateti isOver not.
 		! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/25/2019 20:02:14'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/25/2019 20:02:14'!
 test02EmpiezaElJugadorX
 	
 	| tateti |
@@ -26,18 +26,18 @@ test02EmpiezaElJugadorX
 	
 	self assert: (tateti at: 0@0) equals: #X. ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/25/2019 20:03:25'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'TF 5/27/2019 14:52:29'!
 test03NoEmpiezaElJugadorO
 	
 	| tateti |
 	
 	tateti := TaTeTi new.
 	
-	self should: [tateti playOAt: 0@0] raise: Error  withMessageText: 'No es tu turno.'.
+	self should: [tateti playOAt: 0@0] raise: Error  withMessageText: TaTeTi notYourTurnErrorDescription.
 	
 	! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/25/2019 20:03:38'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/25/2019 20:03:38'!
 test04NoPuedoHacerUnMovimientoFueraDelTablero
 	
 	| tateti |
@@ -49,7 +49,7 @@ test04NoPuedoHacerUnMovimientoFueraDelTablero
 	
 	! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/25/2019 20:03:55'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/25/2019 20:03:55'!
 test05NoPuedeJugarDosVecesSeguidasElMismoJugador
 	
 	| tateti |
@@ -61,7 +61,7 @@ test05NoPuedeJugarDosVecesSeguidasElMismoJugador
 	
 	! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 15:10:38'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 15:10:38'!
 test06NoPuedoPonerDosPiezasEnLaMismaPosicion
 	
 	| tateti |
@@ -73,7 +73,7 @@ test06NoPuedoPonerDosPiezasEnLaMismaPosicion
 	
 	! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 15:10:43'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 15:10:43'!
 test07PuedeJugarODespuesDeX
 	
 	| tateti |
@@ -88,7 +88,7 @@ test07PuedeJugarODespuesDeX
 	
 	! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 15:18:34'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 15:18:34'!
 test08ElJugadorONoPuedePonerMasDeTresFichas
 	
 	| tateti |
@@ -113,7 +113,7 @@ test08ElJugadorONoPuedePonerMasDeTresFichas
 	
 	! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 15:18:43'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 15:18:43'!
 test09ElJugadorXNoPuedePonerMasDeTresFichas
 	
 	| tateti |
@@ -138,8 +138,8 @@ test09ElJugadorXNoPuedePonerMasDeTresFichas
 	
 	! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 15:12:00'!
-test10SiUnJugadorTieneTresFichasEnUnaFilaGana
+!TaTeTiTest methodsFor: 'tests' stamp: 'TF 5/27/2019 14:53:57'!
+test10SiUnJugadorTieneTresFichasEnUnaFilaElJuegoSeTermina
 	
 	| tateti |
 	
@@ -154,8 +154,8 @@ test10SiUnJugadorTieneTresFichasEnUnaFilaGana
 	self assert: tateti isOver.
 	! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 14:16:33'!
-test11SiUnJugadorTieneTresFichasEnUnaColumnaGana
+!TaTeTiTest methodsFor: 'tests' stamp: 'TF 5/27/2019 14:54:09'!
+test11SiUnJugadorTieneTresFichasEnUnaColumnaElJuegoSeTermina
 	
 	| tateti |
 	
@@ -171,8 +171,8 @@ test11SiUnJugadorTieneTresFichasEnUnaColumnaGana
 	self assert: tateti isOver.
 	! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 14:25:34'!
-test12SiUnJugadorTieneTresFichasEnLaDiagonalQueBajaGana
+!TaTeTiTest methodsFor: 'tests' stamp: 'TF 5/27/2019 14:54:23'!
+test12SiUnJugadorTieneTresFichasEnLaDiagonalQueBajaElJuegoSeTermina
 	
 	| tateti |
 	
@@ -187,8 +187,8 @@ test12SiUnJugadorTieneTresFichasEnLaDiagonalQueBajaGana
 	self assert: tateti isOver.
 	! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 14:50:24'!
-test13SiUnJugadorTieneTresFichasEnLaDiagonalQueSubeGana
+!TaTeTiTest methodsFor: 'tests' stamp: 'TF 5/27/2019 14:54:30'!
+test13SiUnJugadorTieneTresFichasEnLaDiagonalQueSubeElJuegoSeTermina
 	
 	| tateti |
 	
@@ -204,7 +204,7 @@ test13SiUnJugadorTieneTresFichasEnLaDiagonalQueSubeGana
 	self assert: tateti isOver.
 	! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 15:16:35'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 15:16:35'!
 test14SiUnJugadorYaGanoONoPuedePonerMasFichas
 	
 	| tateti |
@@ -219,7 +219,7 @@ test14SiUnJugadorYaGanoONoPuedePonerMasFichas
 	
 	self should: [ tateti playOAt: 2@1 ] raise: Error withMessageText: TaTeTi gameAlreadyOverErrorDescription.! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 15:16:59'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 15:16:59'!
 test15SiUnJugadorYaGanoXNoPuedePonerMasFichas
 	
 	| tateti |
@@ -234,7 +234,7 @@ test15SiUnJugadorYaGanoXNoPuedePonerMasFichas
 	
 	self should: [ tateti playXAt: 2@1 ] raise: Error withMessageText: TaTeTi gameAlreadyOverErrorDescription.! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 15:53:31'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 15:53:31'!
 test16SiTodaviaNoSePusieronTodasLasFichasNoSePuedenMoverLasColocadas
 	
 	| tateti |
@@ -247,7 +247,7 @@ test16SiTodaviaNoSePusieronTodasLasFichasNoSePuedenMoverLasColocadas
 	self should: [ tateti moveXFrom: 0@0 to: 0@1 ] raise: Error withMessageText: TaTeTi cantMovePieceUntilAllArePlaced.
 	self should: [ tateti moveOFrom: 2@2 to: 2@1 ] raise: Error withMessageText: TaTeTi cantMovePieceUntilAllArePlaced.! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:02:47'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 18:02:47'!
 test17SiElJuegoSeTerminoNingunJugadorPuedeMoverUnaPieza
 	
 	| tateti |
@@ -263,7 +263,7 @@ test17SiElJuegoSeTerminoNingunJugadorPuedeMoverUnaPieza
 	self should: [ tateti moveXFrom: 0@2 to: 1@2 ] raise: Error withMessageText: TaTeTi gameAlreadyOverErrorDescription.
 	self should: [ tateti moveOFrom: 2@2 to: 2@1 ] raise: Error withMessageText: TaTeTi gameAlreadyOverErrorDescription.! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 16:30:07'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 16:30:07'!
 test18XNoPuedeDeslizarDesdeDondeNoHayFichas
 	
 	| tateti |
@@ -280,7 +280,7 @@ test18XNoPuedeDeslizarDesdeDondeNoHayFichas
 	self should: [ tateti moveXFrom: 2@0 to: 2@1 ] raise: Error withMessageText: TaTeTi cantMoveFromAnEmptyPositionErrorDescription.
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 16:42:33'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 16:42:33'!
 test19XNoPuedeDeslizarDesdeDondeHayO
 	
 	| tateti |
@@ -297,7 +297,7 @@ test19XNoPuedeDeslizarDesdeDondeHayO
 	self should: [ tateti moveXFrom: 1@2 to: 2@2 ] raise: Error withMessageText: TaTeTi cantMoveADifferentPieceErrorDescription.
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 16:42:50'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 16:42:50'!
 test20XNoPuedeDeslizarUnMovimientoMayorA1
 	
 	| tateti |
@@ -314,7 +314,7 @@ test20XNoPuedeDeslizarUnMovimientoMayorA1
 	self should: [ tateti moveXFrom: 0@2 to: 2@2 ] raise: Error withMessageText: TaTeTi invalidSlidingMovementErrorDescription.
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 17:18:12'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 17:18:12'!
 test21XNoPuedeDeslizarAUnaPosicionInvalida
 	
 	| tateti |
@@ -331,7 +331,7 @@ test21XNoPuedeDeslizarAUnaPosicionInvalida
 	self should: [ tateti moveXFrom: 0@2 to: 0@3 ] raise: Error withMessageText: TaTeTi invalidSlidingMovementErrorDescription .
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:03:24'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 18:03:24'!
 test22XNoPuedeDeslizarDesdeUnaPosicionInvalida
 	
 	| tateti |
@@ -348,7 +348,7 @@ test22XNoPuedeDeslizarDesdeUnaPosicionInvalida
 	self should: [ tateti moveXFrom: 2@3 to: 2@2 ] raise: Error withMessageText: TaTeTi outOfBoardErrorDescription.
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 16:58:32'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 16:58:32'!
 test23XNoPuedeDeslizarPorUnaDiagonalInvalida
 	
 	| tateti |
@@ -365,7 +365,7 @@ test23XNoPuedeDeslizarPorUnaDiagonalInvalida
 	self should: [ tateti moveXFrom: 1@0 to: 2@1 ] raise: Error withMessageText: TaTeTi invalidSlidingMovementErrorDescription .
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 17:33:15'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'TF 5/27/2019 14:56:15'!
 test24SiDeslizoXDejaDeEstarDondeEstabaYPasaAEstarDondeLoMovi
 	
 	| tateti |
@@ -381,15 +381,12 @@ test24SiDeslizoXDejaDeEstarDondeEstabaYPasaAEstarDondeLoMovi
 
 	tateti moveXFrom: 0@2 to: 1@2.
 	
-
-
 	tateti at: 0@2 ifPresent: [:unused | self fail].
-
 
 	self assert: (tateti at: 1@2) equals: #X.
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 17:42:44'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 17:42:44'!
 test25ONoPuedeDeslizarDesdeDondeNoHayFichas
 	
 	| tateti |
@@ -407,7 +404,7 @@ test25ONoPuedeDeslizarDesdeDondeNoHayFichas
 	self should: [ tateti moveOFrom: 0@0 to: 1@0 ] raise: Error withMessageText: TaTeTi cantMoveFromAnEmptyPositionErrorDescription.
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 17:48:02'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 17:48:02'!
 test26ONoPuedeDeslizarDesdeDondeHayX
 	
 	| tateti |
@@ -425,7 +422,7 @@ test26ONoPuedeDeslizarDesdeDondeHayX
 	self should: [ tateti moveOFrom: 2@0 to: 2@1 ] raise: Error withMessageText: TaTeTi cantMoveADifferentPieceErrorDescription.
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 17:49:28'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 17:49:28'!
 test27ONoPuedeDeslizarUnMovimientoMayorA1
 	
 	| tateti |
@@ -443,7 +440,7 @@ test27ONoPuedeDeslizarUnMovimientoMayorA1
 	self should: [ tateti moveOFrom: 2@2 to: 2@0 ] raise: Error withMessageText: TaTeTi invalidSlidingMovementErrorDescription.
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 17:50:43'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 17:50:43'!
 test28ONoPuedeDeslizarAUnaPosicionInvalida
 	
 	| tateti |
@@ -462,7 +459,7 @@ test28ONoPuedeDeslizarAUnaPosicionInvalida
 	self should: [ tateti moveOFrom: 2@2 to: 2@3 ] raise: Error withMessageText: TaTeTi invalidSlidingMovementErrorDescription .
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 17:52:29'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 17:52:29'!
 test29ONoPuedeDeslizarPorUnaDiagonalInvalida
 	
 	| tateti |
@@ -480,7 +477,7 @@ test29ONoPuedeDeslizarPorUnaDiagonalInvalida
 	self should: [ tateti moveOFrom: 2@1 to: 1@0 ] raise: Error withMessageText: TaTeTi invalidSlidingMovementErrorDescription .
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 17:53:23'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 17:53:23'!
 test30SiDeslizoODejaDeEstarDondeEstabaYPasaAEstarDondeLoMovi
 	
 	| tateti |
@@ -506,7 +503,7 @@ test30SiDeslizoODejaDeEstarDondeEstabaYPasaAEstarDondeLoMovi
 	self assert: (tateti at: 0@0) equals: #O.
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 17:57:36'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 17:57:36'!
 test31NoPuedoDeslizarDosVecesSeguidasX
 	
 	| tateti |
@@ -526,7 +523,7 @@ test31NoPuedoDeslizarDosVecesSeguidasX
 	
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 17:58:44'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 17:58:44'!
 test32NoPuedoDeslizarDosVecesSeguidasO
 	
 	| tateti |
@@ -548,7 +545,7 @@ test32NoPuedoDeslizarDosVecesSeguidasO
 	
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:01:19'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 18:01:19'!
 test33NoPuedoDeslizarXAUnaPosicionOcupada
 	
 	| tateti |
@@ -568,7 +565,7 @@ test33NoPuedoDeslizarXAUnaPosicionOcupada
 	
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:04:07'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 18:04:07'!
 test34NoPuedoDeslizarOAUnaPosicionOcupada
 	
 	| tateti |
@@ -588,7 +585,7 @@ test34NoPuedoDeslizarOAUnaPosicionOcupada
 	
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:20:47'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 18:20:47'!
 test35ElJuegoTerminaComoXComoGanadorCuandoGana
 	
 	| tateti |
@@ -604,7 +601,7 @@ test35ElJuegoTerminaComoXComoGanadorCuandoGana
 	self assert: tateti winner equals: #X.	
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:26:43'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 18:26:43'!
 test36ElJuegoTerminaComoOComoGanadorCuandoGana
 	
 	| tateti |
@@ -621,7 +618,7 @@ test36ElJuegoTerminaComoOComoGanadorCuandoGana
 	self assert: tateti winner equals: #O.	
 ! !
 
-!TaTeTiTest methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:29:13'!
+!TaTeTiTest methodsFor: 'tests' stamp: 'atr 5/26/2019 18:29:13'!
 test37NoHayGanadorSiNoTerminoElJuego
 	
 	| tateti |
@@ -634,7 +631,6 @@ test37NoHayGanadorSiNoTerminoElJuego
 	
 	self should: [tateti winner] raise: Error  withMessageText: TaTeTi noWinnerErrorDescription.	
 ! !
-
 
 
 !classDefinition: #TaTeTi category: #'Ingsoft-TaTeTi'!
@@ -651,12 +647,12 @@ initialize
 	! !
 
 
-!TaTeTi methodsFor: 'game logic' stamp: 'atr 5/26/2019 14:47:06'!
+!TaTeTi methodsFor: 'game logic' stamp: 'TF 5/27/2019 15:00:03'!
 hasWinFor: aSymbol
 	^ (((self hasWinInColumn: aSymbol) 
-		or: (self hasWinInRow: aSymbol)) 
-			or: (self hasWinInDownwardDiagonal: aSymbol))
-				or: (self hasWinInUpwardDiagonal: aSymbol).! !
+		or: [self hasWinInRow: aSymbol]) 
+			or: [self hasWinInDownwardDiagonal: aSymbol])
+				or: [self hasWinInUpwardDiagonal: aSymbol].! !
 
 !TaTeTi methodsFor: 'game logic' stamp: 'atr 5/26/2019 18:05:09'!
 hasWinInColumn: aSymbol
@@ -702,6 +698,10 @@ player: aSymbol hasWinInDiagonal: aDiagonalPositions
 	PiecePositions := (occupiedPositions select: [:piece | piece = aSymbol ]) keys.
 	^ PiecePositions includesAllOf: aDiagonalPositions .
 	! !
+
+!TaTeTi methodsFor: 'game logic' stamp: 'atr 5/26/2019 18:25:59'!
+winner
+	^state winner.! !
 
 
 !TaTeTi methodsFor: 'assertions' stamp: 'TF 5/20/2019 18:53:14'!
@@ -784,11 +784,6 @@ playXAt: aPoint
 !TaTeTi methodsFor: 'private' stamp: 'atr 5/26/2019 18:18:05'!
 state: aNewState
 	state _ aNewState.! !
-
-
-!TaTeTi methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:25:59'!
-winner
-	^state winner.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -898,13 +893,13 @@ moveOFrom: aPosition to: anotherPosition inGame: aTicTacToeGame
 moveXFrom: aPosition to: anotherPosition inGame: aTicTacToeGame
 	self subclassResponsibility.! !
 
-!TaTeTiState methodsFor: 'ingame actions' stamp: 'atr 5/26/2019 16:10:02'!
+!TaTeTiState methodsFor: 'ingame actions' stamp: 'TF 5/27/2019 15:02:05'!
 playOAt: aPosition inGame: aTicTacToeGame
-	^ self subclassResponsibility.! !
+	self subclassResponsibility.! !
 
-!TaTeTiState methodsFor: 'ingame actions' stamp: 'atr 5/26/2019 16:09:57'!
+!TaTeTiState methodsFor: 'ingame actions' stamp: 'TF 5/27/2019 15:02:08'!
 playXAt: aPosition inGame: aTicTacToeGame
-	^ self subclassResponsibility.! !
+	self subclassResponsibility.! !
 
 
 !TaTeTiState methodsFor: 'game logic' stamp: 'atr 5/26/2019 15:19:45'!
@@ -1017,9 +1012,9 @@ playOAt: aPosition inGame: aTicTacToeGame
 	aTicTacToeGame placePiece: #O at: aPosition.
 	self nextStateOf: aTicTacToeGame.! !
 
-!TaTeTiInitialStageOToMove methodsFor: 'ingame actions' stamp: 'atr 5/26/2019 11:57:34'!
+!TaTeTiInitialStageOToMove methodsFor: 'ingame actions' stamp: 'TF 5/27/2019 15:03:17'!
 playXAt: aPosition inGame: aTicTacToeGame
-	^ self error: aTicTacToeGame class notYourTurnErrorDescription.! !
+	self error: aTicTacToeGame class notYourTurnErrorDescription.! !
 
 
 !classDefinition: #TaTeTiInitialStageXToMove category: #'Ingsoft-TaTeTi'!
@@ -1036,9 +1031,9 @@ nextStateOf: aGame
 		ifFalse: [aGame state: TaTeTiInitialStageOToMove new.].! !
 
 
-!TaTeTiInitialStageXToMove methodsFor: 'ingame actions' stamp: 'atr 5/26/2019 11:57:45'!
+!TaTeTiInitialStageXToMove methodsFor: 'ingame actions' stamp: 'TF 5/27/2019 15:03:25'!
 playOAt: aPosition inGame: aTicTacToeGame
-	^ self error: aTicTacToeGame class notYourTurnErrorDescription.! !
+	self error: aTicTacToeGame class notYourTurnErrorDescription.! !
 
 !TaTeTiInitialStageXToMove methodsFor: 'ingame actions' stamp: 'atr 5/26/2019 13:31:56'!
 playXAt: aPosition inGame: aTicTacToeGame
@@ -1078,7 +1073,7 @@ TaTeTiSlidingState subclass: #TaTeTiSlidingStateOToMove
 	poolDictionaries: ''
 	category: 'Ingsoft-TaTeTi'!
 
-!TaTeTiSlidingStateOToMove methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:04:39'!
+!TaTeTiSlidingStateOToMove methodsFor: 'ingame actions' stamp: 'atr 5/26/2019 18:04:39'!
 moveOFrom: aPosition to: anotherPosition inGame: aTicTacToeGame
 	
 	
@@ -1091,12 +1086,13 @@ moveOFrom: aPosition to: anotherPosition inGame: aTicTacToeGame
 	
 	self nextStateOf: aTicTacToeGame .! !
 
-!TaTeTiSlidingStateOToMove methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 17:58:03'!
+!TaTeTiSlidingStateOToMove methodsFor: 'ingame actions' stamp: 'TF 5/27/2019 15:04:08'!
 moveXFrom: aPosition to: anotherPosition inGame: aTicTacToeGame
 
-	^ self error: aTicTacToeGame class notYourTurnErrorDescription.! !
+	self error: aTicTacToeGame class notYourTurnErrorDescription.! !
 
-!TaTeTiSlidingStateOToMove methodsFor: 'as yet unclassified' stamp: 'atr 5/26/2019 18:24:54'!
+
+!TaTeTiSlidingStateOToMove methodsFor: 'state' stamp: 'atr 5/26/2019 18:24:54'!
 nextStateOf: aGame
 	(aGame hasWinFor: #O)
 		ifTrue: [aGame state: (TaTeTiGameOverState withWinner: #O).]
@@ -1110,10 +1106,10 @@ TaTeTiSlidingState subclass: #TaTeTiSlidingStateXToMove
 	poolDictionaries: ''
 	category: 'Ingsoft-TaTeTi'!
 
-!TaTeTiSlidingStateXToMove methodsFor: 'ingame actions' stamp: 'atr 5/26/2019 17:58:53'!
+!TaTeTiSlidingStateXToMove methodsFor: 'ingame actions' stamp: 'TF 5/27/2019 15:04:21'!
 moveOFrom: aPosition to: anotherPosition inGame: aTicTacToeGame
 
-	^ self error: aTicTacToeGame class notYourTurnErrorDescription.! !
+	self error: aTicTacToeGame class notYourTurnErrorDescription.! !
 
 !TaTeTiSlidingStateXToMove methodsFor: 'ingame actions' stamp: 'atr 5/26/2019 18:04:46'!
 moveXFrom: aPosition to: anotherPosition inGame: aTicTacToeGame
@@ -1128,7 +1124,8 @@ moveXFrom: aPosition to: anotherPosition inGame: aTicTacToeGame
 	
 	self nextStateOf: aTicTacToeGame .! !
 
-!TaTeTiSlidingStateXToMove methodsFor: 'ingame actions' stamp: 'atr 5/26/2019 18:25:08'!
+
+!TaTeTiSlidingStateXToMove methodsFor: 'state' stamp: 'atr 5/26/2019 18:25:08'!
 nextStateOf: aGame
 	(aGame hasWinFor: #X)
 		ifTrue: [aGame state: (TaTeTiGameOverState withWinner: #X).]
