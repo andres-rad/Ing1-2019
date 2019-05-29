@@ -29,10 +29,10 @@ _¿Qué es el problema de la “identidad” o de “self”? ¿En cuáles de es
 ### Future
 
 _El patrón Future se utiliza para:_
-    * Obtener una referencia a un resultado que es inmediato.
-    * Poder programar asincronicamente, paralelizando la ejecución y sincronizando los resultados.
-    * Ninguna de las anteriores.
-    * Las respuestas a y b son válidas.
+* Obtener una referencia a un resultado que es inmediato.
+* Poder programar asincronicamente, paralelizando la ejecución y sincronizando los resultados.
+* Ninguna de las anteriores.
+* Las respuestas a y b son válidas.
 
 _Explique por qué son importantes las promesas en un lenguaje fuertemente basado en eventos como Javascript_
 
