@@ -32,7 +32,13 @@ _¿Por qué desarrollar software es esencialmente complejo según Brooks?_
 
 _Describa similitudes y diferencias entre Decorator y Adapter._
 
+Si bien Decorator o Adapter son similares, no son iguales. Ambos tienen el objetivo de situarse alrededor (encima) de otro objeto (el decoratee o adaptee) y modificar la interfaz o funcionalidad de cierta manera. Por ejemplo, un adapter podría modificar la interfaz pública de un string cambiando el selector para conseguir el tamaño de `size` a `length` (o viceversa). O un Decorator podría querer modificar como se muestra un string en pantalla para que cambie los espacios ` ` por guiones bajos `_`, sin cambiar la representación interna.
+
+Por otro lado, sus diferencias no son menores, mientras que un Decorator se utiliza para cambiar el funcionamiento de un objeto sin modificar su interfaz, un Adapter tiene cómo objetivo lo contrario, es decir mapear la funcionalidad de un objeto (en principio sin modificarla enormemente) a otra interfaz.
+
 _¿Qué ventajas y desventajas tiene implementar un Proxy polimórfico sobre uno no polimórfico?_
+
+La ventaja principal de implementar un Proxy polimórfico es que permite hacer que la funcionalidad agregada por el proxy sea invisible al usuario, esto tiene dos consecuencias buenas, la primera que simplifica el código, por ejemplo, pensando en el Lazy Proxy visto en clase, una vez que decidimos que cierto objeto es necesario envolverlo en un Lazy Proxy, si este es polimórfico con el objeto subyacente, no hay que cambiar nada más en la implementación, e incluso podemos olvidarnos de eso. La segunda es que nos permite utilizar métodos que esperan una instancia del objeto subyacente sin pagar nada extra (modificar código) por ejemplo, no hace falta tener dos métodos, uno que espere una lista cómun y otro que espere una lista Lazy.
 
 _¿Qué es el problema de la “identidad” o de “self”? ¿En cuáles de estos patrones aplica?_
 
