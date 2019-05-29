@@ -6,9 +6,19 @@ http://www.industriallogic.com/patterns/P21.pdf
 
 _¿Qué intenta resolver el patrón Object Recursion?_
 
+El patron Object Recursion busca simplificar la implementación de métodos en objetos complejos, separando estos en partes más pequeñas y pasando la responsabilidad de resolver parte del problema a sus partes más simples. La idea se basa en que eventualmente, uno debería llegar a un objeto tan simple que se pueda resolver trivialmente. A través del polimorfismo esta recursión se implementa naturalmente, y permite también abstraer y encapsular el algoritmo aún más, ya que no es necesario conocer los objetos a los cuales se hace recursión.
+
 _Presente un ejemplo (diferente al del paper) que se pueda abordar con dicho patrón_
 
+CREO QUE ESTA MAL, PORQUE TIENEN UNA RELACION ESTRUCTURAL LOS OBJETOS
+
+Un posible ejemplo sería si uno tuviese un objeto que modela a una ciudad como un conjunto de barrios, a un barrio como un conjunto de manzanas, a una manzana como un conjunto de construcciones, donde las construcciones pueden ser o casas o edificios, donde estos últimos se modelan cómo un conjunto de casas. Si ahora se requiriese implementar un método para preguntar si cierta persona vive en una ciudad, con Object Recursion podríamos resolver este problema para cada uno de los objetos involucrados (donde la casa sería la base de la recursión y se debería poder resolver trivialmente). 
+
+Cabe notar que no solo utilizar el patrón de Object Recursion simplificaría la implementación, sino que, ya que encapsulamos nuestra implementación, es probable que la solución sea más general y permita, por ejemplo, resolver otros casos, como una ciudad pequeña donde no hay barrios.
+
 _¿Cómo se relaciona el patrón Object Recursion con el patrón Decorator?_
+
+Según Woolf, el patrón Object Recursion es más general que el Decorator, mientras que el segundo responde a un patrón estructural, el primero responde a un patrón de comportamiento. Esto implica que el Decorator muchas veces puede incluir al patrón de Object Recursion.
 
 ### No Silver Bullet – Essence and Accident in Software Engineering
 
