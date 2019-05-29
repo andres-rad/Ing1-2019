@@ -26,6 +26,26 @@ http://worrydream.com/refs/Brooks-NoSilverBullet.pdf
 
 _Describa las características inalienables al software que Brooks presenta_
 
+En este trabajo Brooks distingue cuatro propiedades que son escenciales a la tarea del desarrollo del software:
+
+* Complejidad
+
+El software tiene una complejidad inherente debido entre otras causas al tamaño de los sistemas de software pensado como el conjunto de estados posibles que puede tener, a la cantidad de partes diferentes que tienen que interactuar, y de como este número crece siempre que crece el sistema. Dada la naturaleza escencial de la complejidad, no puede haber herramientas que ayuden a abstraerla, ya que eso implicaría ignorar elementos escenciales del software.
+
+La complejidad ocasiona dificultades para la comunicación entre equipos, para agregar funcionalidades a un software existentey para tener un conocimiento integral de lo que está solucionando el sistema.
+
+* Conformismo
+
+En el desarrollo de software no existen principios básicos que puedan aplicarse a cualquier situación, ya que uno siempre termina enfrentandose a un problema cuya complejidad está decidida arbitrariamente por el cliente que define la interfaz a la que debe adaptarse.
+
+* Volatibilidad
+
+Las entidades de software debido a la percepción de que son fáciles de modificar, están bajo presión constante de ser modificadas, tanto alterando funcionalidades como extendiéndolas. 
+
+* Invisibilidad
+
+El software es escencialmente invisible, ya que realmente no existe en ningún espacio físico. Debido a esto, el ingeniero de software no tiene abstracciones que lo ayuden a visualizar de manera concisa la estructura del software que está diseñando.
+
 _¿Por qué desarrollar software es esencialmente complejo según Brooks?_
 
 ### Decorator, Adapter, Proxy
