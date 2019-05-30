@@ -72,7 +72,10 @@ X Poder programar asincronicamente, paralelizando la ejecución y sincronizando 
 
 _Explique por qué son importantes las promesas en un lenguaje fuertemente basado en eventos como Javascript_
 
+Las promesas son importantes en lenguajes basados en eventos ya que nos permiten responder a estos de forma casi instantanea, basándonos en ellas para paralelizar la ejecución del callback de cierto evento. Si no tuviesemos Futures (o alguna otra herramienta para paralelizar código) sería díficil tener software que reaccione rápidamente a los eventos.
+
 _Explique que es un future transparente o polimórfico. ¿Qué ventajas tiene con respecto a uno que no comparte el mismo protocolo que el objeto a proxiar?_
 
-Se refiere a un futuro que mantiene polimorfismo con el objeto que genera. Esto implica que, puedo tratar a un Futuro de una instancia de un objeto X cómo si fuera la instancia del objeto X. La ventaja principal de esto es que no hace falta explicitar operaciones inherentes del Future, por ejemplo, `wait` o `value`. Y simplemente podemos utilizarlo como si fuese el valor esperado. Esto genera código mucho más simple y fácil de entender.
+Se refiere a un futuro que mantiene polimorfismo con el objeto que genera forwardeando los mensajes. Esto implica que puedo tratar a un Futuro de una instancia de un objeto X cómo si fuera la instancia del objeto X. La ventaja principal de esta funcionalidad es que no hace falta explicitar operaciones inherentes del Future, por ejemplo, `wait` o `value`. Y simplemente podemos utilizarlo como si fuese el valor esperado. Esto genera código mucho más simple y fácil de entender.
 
+Además, tener Futures polimórficos permite (muy fácilmente) tomar programas ya escritos y agregarles paralelización, simplemente rastreando que objetos tardan mucho en crearse y envolviéndoos con un Future.
