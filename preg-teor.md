@@ -46,6 +46,8 @@ El software es escencialmente invisible, ya que realmente no existe en ningún e
 
 _¿Por qué desarrollar software es esencialmente complejo según Brooks?_
 
+Al principio del paper Brooks clasifica las tareas relacionadas a la construcción de software en dos clases, las escenciales y las accidentales. Para él la parte más difícil del desarrollo de software ocurre en las tareas escenciales, que llevan atadas todas las características enumeradas en la pregunta anterior. Como estuvimos viendo a lo largo de la materia, todas estas tareas están relacionadas a una actividad creativa más que a una mecánica (lo que sería el diseño del modelo que tiene que tener el software para resolver el problema).
+
 ### Decorator, Adapter, Proxy
 
 _Describa similitudes y diferencias entre Decorator y Adapter._
@@ -61,6 +63,32 @@ La ventaja principal de implementar un Proxy polimórfico es que permite hacer q
 La principal desventaja es que puede dar lugar a situaciones complicadas a medida que crece el sistema. Por ejemplo, qué pasa si uno quisiese (o lo hace por error) envolver un objeto en dos proxys distintos. O si comienza a hacer programas con metaprogramación y se olvida (o nunca supo) que una instancia de un objeto X era en realidad una instancia de un objeto X envuelta en un proxy, si bien es polimórfica, al pedirle la clase el resultado no es el esperado. Y esto podría fallar en situaciones complicadas. En algún sentido, puede convenir ser explícito al respecto.
 
 _¿Qué es el problema de la “identidad” o de “self”? ¿En cuáles de estos patrones aplica?_
+
+Cuando se habla del problema de la "identidad" o de "self" se hace referencia a una situación en la que la variable self puede referenciar a dos objetos diferentes. Esto ocurre principalmente cuando se realiza forwardeo de mensajes entre clases, ya que en este acto el objeto emisor del mensaje delega la responsabilidad al receptor. Este problema aplica principalmente al patrón de proxy, ya que su intención no es modificar la identidad del objeto decorado, si no que con este patrón lo que se hace es agregar dinámicamente funcionalidad a un objeto preexistente. Para verlo mejor supongamos que tenemos una clase A que responde a los mensajes m1 y m2 tal que m2 tiene la siguiente implementacion
+
+```
+m2
+  ...
+  self m1
+  ...
+```
+
+Por otro lado se crea un Decorador para la clase A con el objetivo de loguear lo que ocurre con ella, para ello implementa los mensajes m1 y m2 como
+
+```
+m1
+  ...logueo m1 de alguna manera...
+  ^decoratee m1
+```
+
+```
+m2
+  ...logueo m1 de alguna manera...
+  ^decoratee m2
+```
+
+Al hacer decorator m2 en algún momento uno esperaría que se logueasen tanto m2 como m1 (ya que en A m2 llama a m1), pero al forweardear el mensaje m1 a su decoratee dentro del contexto de ejecución de m1 ocuree que self == decoratee por lo que la colaboración self m1 no va a loguearse.
+
 
 ### Future
 
