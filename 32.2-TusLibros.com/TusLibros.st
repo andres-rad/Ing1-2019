@@ -27,8 +27,8 @@ test02CannotCreateCardWithoutSixteenDigits
 	
 	! !
 
-!CardTest methodsFor: 'tests' stamp: 'atr 6/9/2019 21:30:41'!
-test03CannotCardWithEmptyStringAsOwner
+!CardTest methodsFor: 'tests' stamp: 'TF 6/10/2019 15:16:07'!
+test03CannotCreateCardWithEmptyStringAsOwner
 	self
 		should: [Card withNumber: '1234123412341234' ownerName: ''  expiringOn: (February of: 2019)] 
 		raise: Error - MessageNotUnderstood 
@@ -38,8 +38,8 @@ test03CannotCardWithEmptyStringAsOwner
 	
 	! !
 
-!CardTest methodsFor: 'tests' stamp: 'atr 6/9/2019 21:34:26'!
-test04CannotCardWithInvalidOwnerNameLength
+!CardTest methodsFor: 'tests' stamp: 'TF 6/10/2019 15:16:13'!
+test04CannotCreateCardWithInvalidOwnerNameLength
 	self
 		should: [Card withNumber: '1234123412341234' ownerName: 'gvjafldghsruithskgjlhsfdugiashugilhfdjkraehlutiaerhdgkhasdfuighsruiglshuif'  expiringOn: (February of: 2019)] 
 		raise: Error - MessageNotUnderstood 
