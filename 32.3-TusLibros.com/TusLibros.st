@@ -351,6 +351,25 @@ test09bNoPuedoHacerCheckoutDeUnCarritoIdInvalido
 		raise: Error  - MessageNotUnderstood 
 		withMessageText: TusLibrosInnerInterface invalidCartIdErrorDescription .! !
 
+!TusLibrosInnerInterfaceTest methodsFor: 'testing' stamp: 'TF 6/24/2019 16:25:29'!
+test09cHacerCheckoutConUnaTarjetaExpiradaLevantaUnaExcepcion
+
+	| cartId |
+	
+	cartId := interface createCartFor: self validUser with: self validPassword .
+	
+
+	interface add: 2 of: testObjects itemSellByTheStore toCartWithId: cartId .
+
+
+	
+	self should: [interface checkOutCartWithId: cartId 
+							creditCardNumber: '1234123412341234' 
+							expirationDay: testObjects expiredMonthOfYear 
+							holderName: 'Teodoro Freund'] 
+		raise: Error  - MessageNotUnderstood  .
+	! !
+
 !TusLibrosInnerInterfaceTest methodsFor: 'testing' stamp: 'TF 6/24/2019 10:00:45'!
 test10AlHacerCheckoutLaVentaSeRegistraEnElSalesbook
 
@@ -477,6 +496,76 @@ test16NoPuedoHacerCheckoutDeUnCarritoExpirado
 	
 
 ! !
+
+!TusLibrosInnerInterfaceTest methodsFor: 'testing' stamp: 'TF 6/24/2019 16:21:11'!
+test17NoPuedoHacerCheckoutDespuesDeHacerCheckout
+
+	| cartId |
+	
+	cartId := interface createCartFor: self validUser with: self validPassword .
+	interface add: 2 of: testObjects itemSellByTheStore toCartWithId: cartId .
+	
+
+	interface checkOutCartWithId: cartId creditCardNumber: '1234123412341234'  expirationDay: testObjects notExpiredMonthOfYear holderName: 'Andres Radunsky' .
+	
+	
+	self should: [interface checkOutCartWithId: cartId creditCardNumber: '1234123412341234'  expirationDay: testObjects notExpiredMonthOfYear holderName: 'Andres Radunsky' ] 
+		raise: Error - MessageNotUnderstood 
+		withMessageText:  TusLibrosInnerInterface invalidCartIdErrorDescription .
+	
+
+! !
+
+!TusLibrosInnerInterfaceTest methodsFor: 'testing' stamp: 'TF 6/24/2019 16:27:14'!
+test18NoPuedoHacerNadaDespuesDeHacerCheckout
+
+	| cartId |
+	
+	cartId := interface createCartFor: self validUser with: self validPassword .
+	interface add: 2 of: testObjects itemSellByTheStore toCartWithId: cartId .
+	
+
+	interface checkOutCartWithId: cartId creditCardNumber: '1234123412341234'  expirationDay: testObjects notExpiredMonthOfYear holderName: 'Andres Radunsky' .
+	
+	
+	self should: [interface listCartWithId: cartId ] 
+		raise: Error - MessageNotUnderstood 
+		withMessageText:  TusLibrosInnerInterface invalidCartIdErrorDescription .
+	
+
+! !
+
+!TusLibrosInnerInterfaceTest methodsFor: 'testing' stamp: 'TF 6/24/2019 16:23:37'!
+test19ListarUnCarritoReiniciaElTimer
+
+	| cartId |
+	
+	cartId := interface createCartFor: self validUser with: self validPassword .
+	
+	clock advance: 20 minutes.
+	
+	interface listCartWithId: cartId .
+	
+	clock advance: 20 minutes .
+	
+	self shouldnt: [interface listCartWithId: cartId ]  raise: Error.
+	! !
+
+!TusLibrosInnerInterfaceTest methodsFor: 'testing' stamp: 'TF 6/24/2019 16:27:23'!
+test20AgregarCosasAUnCarritoReiniciaElTimer
+
+	| cartId |
+	
+	cartId := interface createCartFor: self validUser with: self validPassword .
+	
+	clock advance: 20 minutes.
+	
+	interface add: 2 of: testObjects itemSellByTheStore toCartWithId: cartId .
+	
+	clock advance: 20 minutes .
+	
+	self shouldnt: [interface listCartWithId: cartId ]  raise: Error.
+	! !
 
 
 !TusLibrosInnerInterfaceTest methodsFor: 'test objects - user and password' stamp: 'TF 6/22/2019 13:06:14'!
@@ -992,7 +1081,7 @@ Object subclass: #TusLibrosInnerInterface
 add: anAmount of: aBook toCartWithId: aCartId 
 	self onCart: aCartId do: [:aCart | aCart add: anAmount of: aBook] .! !
 
-!TusLibrosInnerInterface methodsFor: 'API protocol' stamp: 'TF 6/22/2019 16:34:02'!
+!TusLibrosInnerInterface methodsFor: 'API protocol' stamp: 'TF 6/24/2019 16:20:51'!
 checkOutCartWithId: aCartId creditCardNumber: aCardNumber expirationDay: anExpirationDate holderName: aCardHolder 
 	^self onCart: aCartId do: [:aCart | | aCashier | 
 			aCashier := Cashier toCheckout: aCart 
@@ -1000,7 +1089,8 @@ checkOutCartWithId: aCartId creditCardNumber: aCardNumber expirationDay: anExpir
 								throught: merchantProcessor 
 								on: DateAndTime now
 								registeringOn: salesBook.
-			aCashier checkOut ] .
+			aCashier checkOut.
+			carts removeKey: aCartId ] .
 ! !
 
 !TusLibrosInnerInterface methodsFor: 'API protocol' stamp: 'TF 6/24/2019 10:51:23'!
@@ -1101,3 +1191,4 @@ authenticatingWith: aUserPasswordRecord
 		chargingOn:  aMerchantProcessor 
 		registeringOn:  aSalesBook 
 		timingWith: aClock .! !
+
