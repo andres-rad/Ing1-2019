@@ -348,12 +348,14 @@ test11ReciboUnaRespuesta404AlAgregarItemsAUnCarritoInexistente
 	self assert: addToCartResponse content = 'Item is not in catalog'.! !
 
 
-!TusLibrosServerControllerTest methodsFor: 'test - port' stamp: 'ar 7/7/2019 15:42:09'!
+!TusLibrosServerControllerTest methodsFor: 'test - port' stamp: 'tf 7/9/2019 22:40:44'!
 test02PuedoCrearUnaInstanciaDelServidorQueEscucheEnUnPuertoEspecifico
 	| aServerController |
 	
 	aServerController _ TusLibrosServerController listeningOn: 8888 withFacade: aSystemFacade.
-	self assert: (aServerController port = 8888).! !
+	self assert: (aServerController port = 8888).
+	
+	aServerController stopListening ; destroy .! !
 
 !TusLibrosServerControllerTest methodsFor: 'test - port' stamp: 'ar 7/7/2019 15:46:46'!
 test03ElServerNoPuedeEscucharEnUnPuertoNegativo
@@ -727,47 +729,6 @@ test05ElNumeroDePuertoDelClienteTieneQueSerUnNumeroEntero
 		].! !
 
 
-!TusLibrosWebClientTest methodsFor: 'as yet unclassified' stamp: 'TF 7/9/2019 15:28:40'!
-htmlSubmit: url fields: fields
-	^onHtmlSubmitBlock value: url value: fields.! !
-
-!TusLibrosWebClientTest methodsFor: 'as yet unclassified' stamp: 'TF 7/9/2019 15:19:19'!
-setUp
-	onHtmlSubmitBlock _ [:a :b |].
-	defaultWebClient _ TusLibrosWebClient sendingToPort: 8484 withUrl: 'http://tusLibros.com'  withWebClient: self. 
-	testObjectFactory _ TusLibrosWebTestObjectFactory new.! !
-
-!TusLibrosWebClientTest methodsFor: 'as yet unclassified' stamp: 'TF 7/9/2019 16:59:55'!
-test06PuedoCrearUnCarritoConUsuarioYContrasenaValidosYObtengoUnCartIdYSeLeEnviaElRequestAlServidor
-	| cartId |
-		
-	onHtmlSubmitBlock _ [:url :fields | 
-		self assert: url equals: 'http://tusLibros.com:8484/createcart'.
-		self assert: (fields at: 'username') equals: testObjectFactory validUser .
-		self assert: (fields at: 'password') equals: testObjectFactory validUserPassword .
-		^(WebResponse protocol: 'http' code: 200) content: (WebUtils jsonEncode: 23); yourself. 
-	].
-
-	cartId _ defaultWebClient createCartFor: testObjectFactory validUser authenticatedWith: testObjectFactory validUserPassword .
-	
-	self assert: cartId equals: 23.! !
-
-!TusLibrosWebClientTest methodsFor: 'as yet unclassified' stamp: 'TF 7/9/2019 16:59:44'!
-test07SiElRequestAlServidorDeCrearUnCarritoDaErrorElWebClientLevantaUnaExcepcion
-		
-	onHtmlSubmitBlock _ [:url :fields | 
-		self assert: url equals: 'http://tusLibros.com:8484/createcart'.
-		self assert: (fields at: 'username') equals: testObjectFactory validUser .
-		self assert: (fields at: 'password') equals: testObjectFactory validUserPassword .
-		^(WebResponse protocol: 'http' code: 404) content: 'Error!!'; yourself. 
-	].
-
-	self should: [defaultWebClient createCartFor: testObjectFactory validUser authenticatedWith: testObjectFactory validUserPassword ]
-		 raise:  Error - MessageNotUnderstood 
-		withMessageText: 'Error!!'.
-	
-! !
-
 !TusLibrosWebClientTest methodsFor: 'as yet unclassified' stamp: 'ar 7/9/2019 19:50:51'!
 test08PuedoPedirElCatalogoDeLibrosDelServidor
 	| catalogResponse catalog|
@@ -782,6 +743,165 @@ test08PuedoPedirElCatalogoDeLibrosDelServidor
 	catalogResponse _ defaultWebClient catalog.
 	
 	self assert: catalogResponse equals: catalog.
+! !
+
+!TusLibrosWebClientTest methodsFor: 'as yet unclassified' stamp: 'tf 7/9/2019 23:06:31'!
+test09
+		
+	onHtmlSubmitBlock _ [:url :fields | 
+		(WebResponse protocol: 'http' code: 404) content: 'Error!!!!' 
+	].
+
+	self should: [defaultWebClient catalog ]
+		raise: Error - MessageNotUnderstood 
+		withMessageText: 'Error!!!!'.
+! !
+
+!TusLibrosWebClientTest methodsFor: 'as yet unclassified' stamp: 'tf 7/9/2019 23:06:15'!
+test10PuedoAgregarCosasAUnCarrito
+	| addToCartResponse|
+		
+	onHtmlSubmitBlock _ [:url :fields | 
+		self assert: url equals: 'http://tusLibros.com:8484/addtocart'.
+		self assert: (fields at: 'cartId') equals: 23 printString .
+		self assert: (fields at: 'bookISBN') equals: 'validBook'.
+		self assert: (fields at: 'bookQuantity') equals: 3 printString .
+		(WebResponse protocol: 'http' code: 200) content: (WebUtils jsonEncode: 0) 
+	].
+
+	addToCartResponse _ defaultWebClient add: 3 of: 'validBook' toCartIdentifiedAs: 23 .
+	
+	self assert: addToCartResponse equals: 0.
+! !
+
+!TusLibrosWebClientTest methodsFor: 'as yet unclassified' stamp: 'tf 7/9/2019 23:05:51'!
+test11SiElServerDaUnErrorAlAgregarCosasAUnCarritoLevantoUnaExcepcion
+
+		
+	onHtmlSubmitBlock _ [:url :fields | 
+		(WebResponse protocol: 'http' code: 404) content: 'Error!!'.
+	].
+
+	self should: [defaultWebClient add: 3 of: 'validBook' toCartIdentifiedAs: 23] 
+		raise: Error - MessageNotUnderstood 
+		withMessageText: 'Error!!'.
+
+	
+
+! !
+
+!TusLibrosWebClientTest methodsFor: 'as yet unclassified' stamp: 'tf 7/9/2019 23:04:41'!
+test12PuedoHacerCheckoutDeUnCarrito
+	| checkoutResponse|
+		
+	onHtmlSubmitBlock _ [:url :fields | 
+		self assert: url equals: 'http://tusLibros.com:8484/checkoutcart'.
+		self assert: (fields at: 'cartId') equals: 23 printString .
+		self assert: (fields at: 'creditCardNumber') equals: '0000111122223333'.
+		self assert: (fields at: 'ownersName') equals: 'Teo'.
+		self assert: (fields at: 'expirationDate') 
+			equals: ((Month month: 07 year: 2020) printString copyReplaceAll: ' ' with: '%20') .
+			
+		(WebResponse protocol: 'http' code: 200) content: (WebUtils jsonEncode: 0) 
+	].
+
+	checkoutResponse _ defaultWebClient 
+		checkOutCartIdentifiedAs: 23 
+		withCreditCardNumbered: '0000111122223333' 
+		ownedBy: 'Teo' 
+		expiringOn: (Month month: 07 year: 2020) .
+	
+	self assert: checkoutResponse equals: 0.
+! !
+
+!TusLibrosWebClientTest methodsFor: 'as yet unclassified' stamp: 'tf 7/9/2019 23:09:29'!
+test13LevantaUnaExcepcionAlRecibirUnErrorDelServer
+		
+	onHtmlSubmitBlock _ [:url :fields | 
+		(WebResponse protocol: 'http' code: 404) content: 'Error'. 
+	].
+
+	self should: [
+			defaultWebClient 
+				checkOutCartIdentifiedAs: 23 
+				withCreditCardNumbered: '0000111122223333' 
+				ownedBy: 'Teo' 
+				expiringOn: (Month month: 07 year: 2020) .]
+		 raise: Error -  MessageNotUnderstood 
+		 withMessageText: 'Error'.
+	! !
+
+!TusLibrosWebClientTest methodsFor: 'as yet unclassified' stamp: 'tf 7/9/2019 23:12:56'!
+test14PuedoListarLasComprasDeUnUsuario
+	| listPurchaseResponse|
+		
+	onHtmlSubmitBlock _ [:url :fields | 
+		self assert: url equals: 'http://tusLibros.com:8484/listpurchases'.
+		self assert: (fields at: 'username') equals: 'Teo' .
+		self assert: (fields at: 'password') equals: 'freund'.
+
+
+
+			
+		(WebResponse protocol: 'http' code: 200) content: (WebUtils jsonEncode: '123') 
+	].
+
+	listPurchaseResponse _ defaultWebClient listPurchasesOf: 'Teo' authenticatingWith: 'freund'. 
+	
+	self assert: listPurchaseResponse equals: '123'.
+! !
+
+!TusLibrosWebClientTest methodsFor: 'as yet unclassified' stamp: 'tf 7/9/2019 23:15:19'!
+test15PuedoListarLasComprasDeUnUsuario
+		
+	onHtmlSubmitBlock _ [:url :fields | 
+		(WebResponse protocol: 'http' code: 404) content: 'Error' 
+	].
+
+	self should: [defaultWebClient listPurchasesOf: 'Teo' authenticatingWith: 'freund'] 
+		raise: Error - MessageNotUnderstood  
+		withMessageText: 'Error'. 
+	! !
+
+
+!TusLibrosWebClientTest methodsFor: 'setUp/tearDown' stamp: 'TF 7/9/2019 15:19:19'!
+setUp
+	onHtmlSubmitBlock _ [:a :b |].
+	defaultWebClient _ TusLibrosWebClient sendingToPort: 8484 withUrl: 'http://tusLibros.com'  withWebClient: self. 
+	testObjectFactory _ TusLibrosWebTestObjectFactory new.! !
+
+
+!TusLibrosWebClientTest methodsFor: 'webclient protocol' stamp: 'TF 7/9/2019 15:28:40'!
+htmlSubmit: url fields: fields
+	^onHtmlSubmitBlock value: url value: fields.! !
+
+
+!TusLibrosWebClientTest methodsFor: 'test - createcart' stamp: 'TF 7/9/2019 16:59:55'!
+test06PuedoCrearUnCarritoConUsuarioYContrasenaValidosYObtengoUnCartIdYSeLeEnviaElRequestAlServidor
+	| cartId |
+		
+	onHtmlSubmitBlock _ [:url :fields | 
+		self assert: url equals: 'http://tusLibros.com:8484/createcart'.
+		self assert: (fields at: 'username') equals: testObjectFactory validUser .
+		self assert: (fields at: 'password') equals: testObjectFactory validUserPassword .
+		^(WebResponse protocol: 'http' code: 200) content: (WebUtils jsonEncode: 23); yourself. 
+	].
+
+	cartId _ defaultWebClient createCartFor: testObjectFactory validUser authenticatedWith: testObjectFactory validUserPassword .
+	
+	self assert: cartId equals: 23.! !
+
+!TusLibrosWebClientTest methodsFor: 'test - createcart' stamp: 'tf 7/9/2019 23:06:53'!
+test07SiElRequestAlServidorDeCrearUnCarritoDaErrorElWebClientLevantaUnaExcepcion
+		
+	onHtmlSubmitBlock _ [:url :fields | 
+		^(WebResponse protocol: 'http' code: 404) content: 'Error!!'; yourself. 
+	].
+
+	self should: [defaultWebClient createCartFor: testObjectFactory validUser authenticatedWith: testObjectFactory validUserPassword ]
+		 raise:  Error - MessageNotUnderstood 
+		withMessageText: 'Error!!'.
+	
 ! !
 
 
@@ -1072,6 +1192,25 @@ signalInvalidPort
 	self error: self class invalidPortNumberMessageError.! !
 
 
+!TusLibrosWebClient methodsFor: 'server requests' stamp: 'tf 7/9/2019 23:07:36'!
+add: anAmount of: aBook toCartIdentifiedAs: aCartId
+	| queryParams response |
+
+	queryParams _ Dictionary new 
+			at: 'bookQuantity' put: anAmount printString ; 
+			at: 'bookISBN' put: aBook; 
+			at: 'cartId' put: aCartId printString ; 
+			yourself .
+	response _ webClient htmlSubmit: (self url, TusLibrosServerController addToCartEndpoint ) fields: queryParams. 
+	
+	response isSuccess
+		ifTrue: [
+				^WebUtils jsonDecode: response content readStream .
+			]
+		ifFalse: [
+				self error: response content .
+			].! !
+
 !TusLibrosWebClient methodsFor: 'server requests' stamp: 'ar 7/9/2019 19:51:43'!
 catalog
 	| response |
@@ -1082,12 +1221,56 @@ catalog
 		ifTrue: [^WebUtils jsonDecode: response content readStream]
 		ifFalse: [self error: response content].! !
 
+!TusLibrosWebClient methodsFor: 'server requests' stamp: 'tf 7/9/2019 23:03:40'!
+checkOutCartIdentifiedAs: aCartId 
+withCreditCardNumbered: aCreditCartNumber 
+ownedBy: anOwner 
+expiringOn: anExpirationMonthOfYear
+	| queryParams response |
+
+	queryParams _ Dictionary new 
+			at: 'cartId' put: aCartId printString ; 
+			at: 'creditCardNumber' put: aCreditCartNumber ;
+			at:  'ownersName' put: anOwner ; 
+			at: 'expirationDate' put: (anExpirationMonthOfYear printString copyReplaceAll: ' ' with: '%20') ;
+			yourself .
+	response _ webClient 
+		htmlSubmit: (self url, TusLibrosServerController checkoutCartEndpoint ) fields: queryParams. 
+	
+	response isSuccess
+		ifTrue: [
+				^WebUtils jsonDecode: response content readStream .
+			]
+		ifFalse: [
+				self error: response content .
+			].! !
+
 !TusLibrosWebClient methodsFor: 'server requests' stamp: 'ar 7/9/2019 20:15:47'!
 createCartFor: aUser authenticatedWith: aPassword 
 	| queryParams response |
 
 	queryParams _ Dictionary new at: 'username' put: aUser; at: 'password' put: aPassword; yourself .
 	response _ webClient htmlSubmit: (self url, TusLibrosServerController createCartEndpoint ) fields: queryParams. 
+	
+	response isSuccess
+		ifTrue: [
+				^WebUtils jsonDecode: response content readStream .
+			]
+		ifFalse: [
+				self error: response content .
+			].! !
+
+!TusLibrosWebClient methodsFor: 'server requests' stamp: 'tf 7/9/2019 23:13:09'!
+listPurchasesOf: aUser authenticatingWith: aPassword
+	| queryParams response |
+
+	queryParams _ Dictionary new 
+			at: 'username' put: aUser ; 
+			at: 'password' put: aPassword ;
+			yourself .
+			
+	response _ webClient 
+		htmlSubmit: (self url, TusLibrosServerController listPurchasesEndpoint ) fields: queryParams. 
 	
 	response isSuccess
 		ifTrue: [
@@ -1163,6 +1346,10 @@ createSalesBook
 debit: arg1 from: arg2
 	^ self.! !
 
+!TusLibrosWebTestObjectFactory methodsFor: 'as yet unclassified' stamp: 'tf 7/9/2019 22:43:32'!
+initialize
+	storeTestObjectsFactory _ StoreTestObjectsFactory new.! !
+
 !TusLibrosWebTestObjectFactory methodsFor: 'as yet unclassified' stamp: 'TF 7/9/2019 14:55:00'!
 invalidUser
 	^ 'noPrueba'! !
@@ -1175,10 +1362,8 @@ invalidUserPassword
 storeTestObjectsFactory
 	^storeTestObjectsFactory .! !
 
-!TusLibrosWebTestObjectFactory methodsFor: 'as yet unclassified' stamp: 'TF 7/8/2019 17:58:40'!
+!TusLibrosWebTestObjectFactory methodsFor: 'as yet unclassified' stamp: 'tf 7/9/2019 22:43:24'!
 tusLibrosSystemFacade
-	
-	storeTestObjectsFactory _ StoreTestObjectsFactory new.
 	
 	^TusLibrosSystemFacade
 		authenticatingWith: self validUsersAndPasswords 
