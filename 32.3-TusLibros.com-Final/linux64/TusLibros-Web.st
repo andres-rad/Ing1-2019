@@ -146,7 +146,7 @@ buildCartContentsColumn
   	          addMorph: (StringMorph contents: 'Total: $0').
 		! !
 
-!StoreWindow methodsFor: 'as yet unclassified' stamp: 'ar 7/9/2019 19:22:06'!
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'ar 7/9/2019 20:58:15'!
 buildCatalogColumn
 	|addToCartButton|
 	catalogList _ 
@@ -787,17 +787,16 @@ test08PuedoPedirElCatalogoDeLibrosDelServidor
 
 !classDefinition: #CreateCartWindowModel category: #'TusLibros-Web'!
 Object subclass: #CreateCartWindowModel
-	instanceVariableNames: 'username password webClient cartId catalog catalogIndex cartContents cartContentsIndex'
+	instanceVariableNames: 'username password webClient cartId catalog catalogIndex cartContents cartContentsIndex listableCatalog catalogAsDict'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros-Web'!
 
-!CreateCartWindowModel methodsFor: 'accessing' stamp: 'ar 7/9/2019 19:23:42'!
+!CreateCartWindowModel methodsFor: 'accessing' stamp: 'ar 7/9/2019 21:02:40'!
 initialize
 	webClient _ TusLibrosWebClient new.
 	username _ ''.
 	password _ ''.
-	catalog _ OrderedCollection new.
 	catalogIndex _ 0.
 	cartContents _ OrderedCollection new.
 	cartContentsIndex _ 0.! !
@@ -838,9 +837,9 @@ username: aUsername
 	^true.! !
 
 
-!CreateCartWindowModel methodsFor: 'catalog' stamp: 'ar 7/9/2019 19:19:47'!
+!CreateCartWindowModel methodsFor: 'catalog' stamp: 'ar 7/9/2019 21:05:46'!
 catalog
-	^catalog.! !
+	^catalog! !
 
 !CreateCartWindowModel methodsFor: 'catalog' stamp: 'ar 7/9/2019 19:20:34'!
 catalogIndex
@@ -850,10 +849,11 @@ catalogIndex
 catalogIndex: anIndex
 	catalogIndex _ anIndex.! !
 
-!CreateCartWindowModel methodsFor: 'catalog' stamp: 'ar 7/9/2019 20:30:31'!
+!CreateCartWindowModel methodsFor: 'catalog' stamp: 'ar 7/9/2019 21:03:43'!
 sendCatalogRequest
+	catalogAsDict _ webClient catalog.
 	catalog _ OrderedCollection new.
-	webClient catalog keysAndValuesDo: [ :titulo :valor | catalog add: titulo, '  $', valor asString].
+	catalogAsDict keysAndValuesDo: [ :titulo :valor | catalog add: titulo, '  $', valor asString].
 	self triggerEvent: #catalogArrived.! !
 
 
@@ -1067,7 +1067,12 @@ Object subclass: #TusLibrosWebClient
 	poolDictionaries: ''
 	category: 'TusLibros-Web'!
 
-!TusLibrosWebClient methodsFor: 'as yet unclassified' stamp: 'ar 7/9/2019 19:51:43'!
+!TusLibrosWebClient methodsFor: 'error messages' stamp: 'ar 7/7/2019 11:31:14'!
+signalInvalidPort
+	self error: self class invalidPortNumberMessageError.! !
+
+
+!TusLibrosWebClient methodsFor: 'server requests' stamp: 'ar 7/9/2019 19:51:43'!
 catalog
 	| response |
 
@@ -1077,7 +1082,7 @@ catalog
 		ifTrue: [^WebUtils jsonDecode: response content readStream]
 		ifFalse: [self error: response content].! !
 
-!TusLibrosWebClient methodsFor: 'as yet unclassified' stamp: 'ar 7/9/2019 20:15:47'!
+!TusLibrosWebClient methodsFor: 'server requests' stamp: 'ar 7/9/2019 20:15:47'!
 createCartFor: aUser authenticatedWith: aPassword 
 	| queryParams response |
 
@@ -1092,39 +1097,37 @@ createCartFor: aUser authenticatedWith: aPassword
 				self error: response content .
 			].! !
 
-!TusLibrosWebClient methodsFor: 'as yet unclassified' stamp: 'TF 7/9/2019 15:12:38'!
+
+!TusLibrosWebClient methodsFor: 'initialization' stamp: 'TF 7/9/2019 15:12:38'!
 initialize
 	self sendingToPort: 8080 withUrl: 'http://localhost'  andWebClient: WebClient .! !
 
-!TusLibrosWebClient methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 11:34:11'!
-isValidPortNumber: aPort
-
-	^ aPort isInteger and: [aPort between: 1 and: 65535].! !
-
-!TusLibrosWebClient methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 11:20:32'!
-port
-	^port.! !
-
-!TusLibrosWebClient methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 11:57:02'!
+!TusLibrosWebClient methodsFor: 'initialization' stamp: 'ar 7/7/2019 11:57:02'!
 sendingToPort: aPort
 	(self isValidPortNumber: aPort) ifFalse: [ self signalInvalidPort ].
 	port _ aPort.! !
 
-!TusLibrosWebClient methodsFor: 'as yet unclassified' stamp: 'TF 7/9/2019 15:11:42'!
+!TusLibrosWebClient methodsFor: 'initialization' stamp: 'TF 7/9/2019 15:11:42'!
 sendingToPort: aPort withUrl: anUrl andWebClient: aWebClient .
 	(self isValidPortNumber: aPort) ifFalse: [ self signalInvalidPort ].
 	url _ anUrl .
 	port _ aPort.
 	webClient _ aWebClient .! !
 
-!TusLibrosWebClient methodsFor: 'as yet unclassified' stamp: 'TF 7/9/2019 15:27:49'!
+
+!TusLibrosWebClient methodsFor: 'properties' stamp: 'ar 7/7/2019 11:20:32'!
+port
+	^port.! !
+
+!TusLibrosWebClient methodsFor: 'properties' stamp: 'TF 7/9/2019 15:27:49'!
 url
 	^url, ':',  self port asString.! !
 
 
-!TusLibrosWebClient methodsFor: 'error messages' stamp: 'ar 7/7/2019 11:31:14'!
-signalInvalidPort
-	self error: self class invalidPortNumberMessageError.! !
+!TusLibrosWebClient methodsFor: 'testing' stamp: 'ar 7/7/2019 11:34:11'!
+isValidPortNumber: aPort
+
+	^ aPort isInteger and: [aPort between: 1 and: 65535].! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
