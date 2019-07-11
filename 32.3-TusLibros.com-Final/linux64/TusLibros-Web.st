@@ -1,11 +1,11 @@
 !classDefinition: #CheckOutWindow category: #'TusLibros-Web'!
 Panel subclass: #CheckOutWindow
-	instanceVariableNames: 'creditCardNumberTextBox ownersNameTextBox payButton transcriptList expirationDateTextBox errorTextBox'
+	instanceVariableNames: 'creditCardNumberTextBox ownersNameTextBox payButton transcriptList expirationDateTextBox errorTextBox paymentInfoTextBox'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros-Web'!
 
-!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:58:44'!
+!CheckOutWindow methodsFor: 'GUI building' stamp: 'tf 7/11/2019 13:18:40'!
 buildCheckOutColumn
 	creditCardNumberTextBox _ TextModelMorph 
 		textProvider: self model 
@@ -19,7 +19,8 @@ buildCheckOutColumn
 	creditCardNumberTextBox 
 		borderWidth: 1;
 		borderColor: Color skyBlue;
-		morphHeight: self textBoxHeight .
+		morphHeight: self textBoxHeight ;
+		emptyTextDisplayMessage: '0123456789012345'.
 		
 	ownersNameTextBox _ TextModelMorph 
 		textProvider: self model 
@@ -33,7 +34,8 @@ buildCheckOutColumn
 	ownersNameTextBox 
 		borderWidth: 1;
 		borderColor: Color skyBlue ;
-		morphHeight: self textBoxHeight .
+		morphHeight: self textBoxHeight ;
+		emptyTextDisplayMessage: 'Jane Doe'.
 		
 	expirationDateTextBox _ TextModelMorph 
 		textProvider: self model 
@@ -47,13 +49,16 @@ buildCheckOutColumn
 	expirationDateTextBox 
 		borderWidth: 1;
 		borderColor: Color skyBlue ;
-		morphHeight: self textBoxHeight .
+		morphHeight: self textBoxHeight ;
+		emptyTextDisplayMessage: '07/2019'.
 		
 	payButton _
 		PluggableButtonMorph model: self model 
 									stateGetter: nil 
 									action: #checkout 
 									label: 'Pay'. 
+									
+	paymentInfoTextBox _ StringMorph contents: ''.
 		
 	^(LayoutMorph newColumn )
 		padding: #left;
@@ -64,11 +69,12 @@ buildCheckOutColumn
 		addMorph: ownersNameTextBox ;
 		addMorph: (StringMorph contents: 'Expiration Date (mm/yyyy)');
 		addMorph: expirationDateTextBox ;
-		addMorph: payButton .
+		addMorph: payButton ;
+		addMorph: paymentInfoTextBox .
 			
 	! !
 
-!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:56:15'!
+!CheckOutWindow methodsFor: 'GUI building' stamp: 'tf 7/11/2019 09:56:15'!
 buildMorphicWindow
 	self layoutMorph beRow;
 		 separation: 15;
@@ -76,7 +82,7 @@ buildMorphicWindow
 		 addMorph: self buildCheckOutColumn;
 		addMorph: self buildTranscriptColumn .! !
 
-!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:07:51'!
+!CheckOutWindow methodsFor: 'GUI building' stamp: 'tf 7/11/2019 10:07:51'!
 buildTranscriptColumn
 
 	transcriptList _ PluggableListMorph model: self model
@@ -97,7 +103,29 @@ buildTranscriptColumn
 			
 	! !
 
-!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:21:09'!
+
+!CheckOutWindow methodsFor: 'events' stamp: 'tf 7/11/2019 13:13:13'!
+paymentDone
+	paymentInfoTextBox contents: 'Payment Done'.
+	! !
+
+!CheckOutWindow methodsFor: 'events' stamp: 'tf 7/11/2019 10:07:58'!
+showError: anErrorMessage
+
+	errorTextBox contents: 'Error: ', anErrorMessage .! !
+
+!CheckOutWindow methodsFor: 'events' stamp: 'tf 7/11/2019 10:20:22'!
+updateTranscript
+	transcriptList updateList.
+	! !
+
+
+!CheckOutWindow methodsFor: 'layout-properties' stamp: 'tf 7/11/2019 09:09:11'!
+textBoxHeight
+	^30.! !
+
+
+!CheckOutWindow methodsFor: 'initialization' stamp: 'tf 7/11/2019 10:21:09'!
 initializeWith: aTitle cartId: cartId username: username password: password
 	
 	self titleMorph showButtonsNamed: #( close collapse ).
@@ -115,32 +143,6 @@ initializeWith: aTitle cartId: cartId username: username password: password
 	self model when: #paymentFailed:
 				send: #showError:
 				to: self.! !
-
-!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:02:00'!
-openTranscript
-
-			
-	! !
-
-!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:20:51'!
-paymentDone
-	creditCardNumberTextBox updateActualContents.
-	errorTextBox contents: 'Payment Done'.
-	! !
-
-!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:07:58'!
-showError: anErrorMessage
-
-	errorTextBox contents: 'Error: ', anErrorMessage .! !
-
-!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:09:11'!
-textBoxHeight
-	^30.! !
-
-!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:20:22'!
-updateTranscript
-	transcriptList updateList.
-	! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -217,7 +219,7 @@ buildMorphicWindow
 		addMorph: self buildPasswordRow;
 		addMorph: self buildCreateCartButtonRow.! !
 
-!CreateCartWindow methodsFor: 'GUI building' stamp: 'tf 7/10/2019 19:24:18'!
+!CreateCartWindow methodsFor: 'GUI building' stamp: 'tf 7/11/2019 13:17:09'!
 buildPasswordRow
 
 	passwordTextBox _ TextModelMorph
@@ -232,7 +234,9 @@ buildPasswordRow
 		
 	passwordTextBox
 		borderWidth: 1;
-		borderColor: Color skyBlue.
+		borderColor: Color skyBlue;
+		emptyTextDisplayMessage: 'hint: freund';
+		morphHeight: self rowHeight.
 		
 	^ (LayoutMorph newRow) separation: 25;
 		padding: #left;
@@ -240,7 +244,7 @@ buildPasswordRow
 		addMorph: passwordTextBox;
 		yourself.! !
 
-!CreateCartWindow methodsFor: 'GUI building' stamp: 'TF 7/9/2019 16:49:06'!
+!CreateCartWindow methodsFor: 'GUI building' stamp: 'tf 7/11/2019 13:17:05'!
 buildUsernameRow
 
 	usernameTextBox _ TextModelMorph
@@ -254,13 +258,20 @@ buildUsernameRow
 			usernameTextBox textMorph acceptContents ].
 	usernameTextBox
 		borderWidth: 1;
-		borderColor: Color skyBlue.
+		borderColor: Color skyBlue;
+		emptyTextDisplayMessage: 'hint: teo';
+		morphHeight: self rowHeight.
 		
 	^ (LayoutMorph newRow) separation: 25;
 		padding: #left;
 		addMorph: (StringMorph contents: 'Usuario:');
 		addMorph: usernameTextBox;
 		yourself.! !
+
+
+!CreateCartWindow methodsFor: 'layout properties' stamp: 'tf 7/11/2019 13:16:35'!
+rowHeight
+	^30.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -280,7 +291,23 @@ Panel subclass: #StoreWindow
 	poolDictionaries: ''
 	category: 'TusLibros-Web'!
 
-!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:08:07'!
+!StoreWindow methodsFor: 'events' stamp: 'ar 7/9/2019 19:59:46'!
+setCatalog
+	catalogList updateList.
+	catalogList setSelectionIndex: 0.! !
+
+!StoreWindow methodsFor: 'events' stamp: 'tf 7/10/2019 18:41:03'!
+showError: anErrorMessage
+	errorTextBox contents: 'ERROR: ', anErrorMessage .! !
+
+!StoreWindow methodsFor: 'events' stamp: 'tf 7/10/2019 18:29:22'!
+updateCartContents
+
+	cartContentsList updateList .
+	subtotalText contents: 'Total $', self model subTotal printString .! !
+
+
+!StoreWindow methodsFor: 'GUI building' stamp: 'tf 7/11/2019 09:08:07'!
 buildCartContentsColumn
 	|checkoutButton |
 	cartContentsList _ 
@@ -311,7 +338,7 @@ buildCartContentsColumn
 		    addMorph: errorTextBox .
 		! !
 
-!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:07:24'!
+!StoreWindow methodsFor: 'GUI building' stamp: 'tf 7/11/2019 09:07:24'!
 buildCatalogColumn
 	|addToCartButton|
 	catalogList _ 
@@ -334,7 +361,7 @@ buildCatalogColumn
 					    addMorph: catalogList;
 					    addMorph: addToCartButton.! !
 
-!StoreWindow methodsFor: 'as yet unclassified' stamp: 'ar 7/9/2019 19:06:39'!
+!StoreWindow methodsFor: 'GUI building' stamp: 'ar 7/9/2019 19:06:39'!
 buildMorphicWindow
 	self layoutMorph beRow;
 		 separation: 15;
@@ -342,26 +369,13 @@ buildMorphicWindow
 		 addMorph: self buildCatalogColumn;
 		 addMorph: self buildCartContentsColumn.! !
 
-!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:07:50'!
+
+!StoreWindow methodsFor: 'layout-properties' stamp: 'tf 7/11/2019 09:07:50'!
 listHeight
 	^280.! !
 
-!StoreWindow methodsFor: 'as yet unclassified' stamp: 'ar 7/9/2019 19:59:46'!
-setCatalog
-	catalogList updateList.
-	catalogList setSelectionIndex: 0.! !
 
-!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:41:03'!
-showError: anErrorMessage
-	errorTextBox contents: 'ERROR: ', anErrorMessage .! !
-
-!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:29:22'!
-updateCartContents
-
-	cartContentsList updateList .
-	subtotalText contents: 'Total $', self model subTotal printString .! !
-
-!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:46:48'!
+!StoreWindow methodsFor: 'initialization' stamp: 'tf 7/10/2019 18:46:48'!
 withModel: aModel andTitle: aTitle
 	self titleMorph showButtonsNamed: #( close collapse ).
 	self setLabel: aTitle;
@@ -413,79 +427,46 @@ TestCase subclass: #CheckOutWindowModelTest
 	poolDictionaries: ''
 	category: 'TusLibros-Web'!
 
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:12:43'!
-cartId
-	^23.! !
-
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:30:43'!
-checkOutCartIdentifiedAs: aCartId 
-withCreditCardNumbered: aCreditCartNumber 
-ownedBy: anOwner 
-expiringOn: anExpirationMonthOfYear
-	^checkoutWebClientRequestBlock 
-		value: aCartId 
-		value: aCreditCartNumber  
-		value: anOwner  
-		value: anExpirationMonthOfYear .! !
-
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:25:15'!
-listPurchasesOf: username authenticatingWith: password
-	^Dictionary new at: 'valid' put: 200; at: 'harry potter' put: 120; yourself. ! !
-
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:13:02'!
-password
-	^'ValidP'.! !
-
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:22:25'!
-setUp
-	
-	checkoutModel _ 
-		CheckOutWindowModel 
-			withWebClient: self
-			cartId: self cartId 
-			username: self username 
-			password: self password. ! !
-
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:11:01'!
+!CheckOutWindowModelTest methodsFor: 'tests' stamp: 'tf 7/11/2019 09:11:01'!
 test01CreditCardNmuberEmpiezaVacio
 	
 	self assert: checkoutModel creditCardNumber equals: ''.
  ! !
 
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:11:16'!
+!CheckOutWindowModelTest methodsFor: 'tests' stamp: 'tf 7/11/2019 09:11:16'!
 test02PuedoCambiarElValorDeCreditCardNumber
 	
 	checkoutModel creditCardNumber: '123tteeoo'.
 	self assert: checkoutModel creditCardNumber equals: '123tteeoo'.
  ! !
 
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:11:25'!
+!CheckOutWindowModelTest methodsFor: 'tests' stamp: 'tf 7/11/2019 09:11:25'!
 test03OwnersNameEmpiezaVacio
 	
 	self assert: checkoutModel ownersName equals: ''.
  ! !
 
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:12:09'!
+!CheckOutWindowModelTest methodsFor: 'tests' stamp: 'tf 7/11/2019 09:12:09'!
 test04PuedoCambiarElValorDeOwnersName
 	
 	checkoutModel ownersName: '123tteeoo'.
 	self assert: checkoutModel ownersName equals: '123tteeoo'.
  ! !
 
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:12:18'!
+!CheckOutWindowModelTest methodsFor: 'tests' stamp: 'tf 7/11/2019 09:12:18'!
 test05ExpirationDateEmpiezaVacio
 	
 	self assert: checkoutModel expirationDate equals: ''.
  ! !
 
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:11:51'!
+!CheckOutWindowModelTest methodsFor: 'tests' stamp: 'tf 7/11/2019 09:11:51'!
 test06PuedoCambiarElValorDeExpirationDate
 	
 	checkoutModel expirationDate: '123tteeoo'.
 	self assert: checkoutModel expirationDate equals: '123tteeoo'.
  ! !
 
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:30:56'!
+!CheckOutWindowModelTest methodsFor: 'tests' stamp: 'tf 7/11/2019 13:10:46'!
 test07AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiTodoSaleBien
 	|  counter |
 	
@@ -507,10 +488,10 @@ test07AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiTodoSa
 	checkoutModel checkout.
 	
 	self assert: counter equals: 2.
-	self assert: checkoutModel creditCardNumber equals: '0123'.
+
 	! !
 
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:36:39'!
+!CheckOutWindowModelTest methodsFor: 'tests' stamp: 'tf 7/11/2019 09:36:39'!
 test08AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiHayUnError
 	|  error |
 	
@@ -531,13 +512,13 @@ test08AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiHayUnE
 
 	! !
 
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:52:01'!
+!CheckOutWindowModelTest methodsFor: 'tests' stamp: 'tf 7/11/2019 09:52:01'!
 test09TranscriptEmpiezaVacio
 	
 	self assert: checkoutModel transcript isEmpty.
  ! !
 
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:28:27'!
+!CheckOutWindowModelTest methodsFor: 'tests' stamp: 'tf 7/11/2019 10:28:27'!
 test10DespuesDeEfectuarElPagoSeActualizaElTranscript
 
 	| flag |
@@ -557,9 +538,45 @@ test10DespuesDeEfectuarElPagoSeActualizaElTranscript
 	self assert: checkoutModel transcript equals: (OrderedCollection with: 'harry potter $120' with: 'valid $200').
 	! !
 
-!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:12:52'!
+
+!CheckOutWindowModelTest methodsFor: 'setUp/tearDown' stamp: 'tf 7/11/2019 09:22:25'!
+setUp
+	
+	checkoutModel _ 
+		CheckOutWindowModel 
+			withWebClient: self
+			cartId: self cartId 
+			username: self username 
+			password: self password. ! !
+
+
+!CheckOutWindowModelTest methodsFor: 'default values' stamp: 'tf 7/11/2019 00:12:43'!
+cartId
+	^23.! !
+
+!CheckOutWindowModelTest methodsFor: 'default values' stamp: 'tf 7/11/2019 00:13:02'!
+password
+	^'ValidP'.! !
+
+!CheckOutWindowModelTest methodsFor: 'default values' stamp: 'tf 7/11/2019 00:12:52'!
 username
 	^'Valid'.! !
+
+
+!CheckOutWindowModelTest methodsFor: 'web client protocol' stamp: 'tf 7/11/2019 09:30:43'!
+checkOutCartIdentifiedAs: aCartId 
+withCreditCardNumbered: aCreditCartNumber 
+ownedBy: anOwner 
+expiringOn: anExpirationMonthOfYear
+	^checkoutWebClientRequestBlock 
+		value: aCartId 
+		value: aCreditCartNumber  
+		value: anOwner  
+		value: anExpirationMonthOfYear .! !
+
+!CheckOutWindowModelTest methodsFor: 'web client protocol' stamp: 'tf 7/11/2019 10:25:15'!
+listPurchasesOf: username authenticatingWith: password
+	^Dictionary new at: 'valid' put: 200; at: 'harry potter' put: 120; yourself. ! !
 
 
 !classDefinition: #CreateCartWindowModelTest category: #'TusLibros-Web'!
@@ -892,103 +909,118 @@ tearDown
 	aDefaultServerController destroy .! !
 
 
-!TusLibrosServerControllerTest methodsFor: 'test - create cart' stamp: 'TF 7/9/2019 14:07:37'!
+!TusLibrosServerControllerTest methodsFor: 'test - create cart' stamp: 'tf 7/11/2019 11:48:59'!
 test06ElServidorDeTusLibrosTieneUnEndpointParaCrearUnCarrito
 	
-	self assert: ( aDefaultServerController webServer endpoints includes: TusLibrosServerController createCartEndpoint). ! !
+	self assert: 
+		(aDefaultServerController webServer endpoints includes: TusLibrosServerController createCartEndpoint). ! !
 
-!TusLibrosServerControllerTest methodsFor: 'test - create cart' stamp: 'tf 7/10/2019 12:47:59'!
+!TusLibrosServerControllerTest methodsFor: 'test - create cart' stamp: 'tf 7/11/2019 12:38:19'!
 test07IntentarCrearUnCarritoConUnUsuarioMalAutenticadoGeneraUnaRespuestaDeError404
 	| httpResponse queryParams |
 	
 	queryParams _ Dictionary newFromPairs:  { 
-		'user' . 'badUser' . 
-		'password' . ''
+		'user' . self encode: testObjectsFactory invalidUser . 
+		'password' . self encode: testObjectsFactory invalidUserPassword
 	}.
-	httpResponse _ WebClient htmlSubmit: 'http://localhost:8484/createCart' fields: queryParams.
+	httpResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController createCartEndpoint)
+					 fields: queryParams.
 	
 	self deny: httpResponse isSuccess.
 	self assert: httpResponse code = 404.
 	self assert: httpResponse content equals: 'key not found'.! !
 
-!TusLibrosServerControllerTest methodsFor: 'test - create cart' stamp: 'tf 7/10/2019 12:47:25'!
+!TusLibrosServerControllerTest methodsFor: 'test - create cart' stamp: 'tf 7/11/2019 12:39:20'!
 test08AlCrearUnCarritoConUnUsuarioValidoTengoUnaRespuesta200
 	| httpResponse queryParams |
 	
 	queryParams _ Dictionary newFromPairs:  { 
-		'username' . 'Prueba' . 
-		'password' . 'Prueba'
+		'username' . self encode: testObjectsFactory validUser . 
+		'password' . self encode: testObjectsFactory validUserPassword 
 	}.
-	httpResponse _ WebClient htmlSubmit: 'http://localhost:8484/createCart' fields: queryParams.
+	httpResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController createCartEndpoint)
+					 fields: queryParams.
 	
 	self assert: httpResponse isSuccess.
 	self assert: httpResponse code = 200.! !
 
 
-!TusLibrosServerControllerTest methodsFor: 'test - add items' stamp: 'TF 7/9/2019 14:12:23'!
+!TusLibrosServerControllerTest methodsFor: 'test - add items' stamp: 'tf 7/11/2019 11:52:41'!
 test09ElServidorDeTusLibrosTieneUnEndpointParaAgregarItemsAlCarrito
 	
-	self assert: ( aDefaultServerController webServer endpoints includes: TusLibrosServerController addToCartEndpoint). ! !
+	self assert: 
+		(aDefaultServerController webServer endpoints includes: TusLibrosServerController addToCartEndpoint). ! !
 
-!TusLibrosServerControllerTest methodsFor: 'test - add items' stamp: 'tf 7/10/2019 12:54:21'!
+!TusLibrosServerControllerTest methodsFor: 'test - add items' stamp: 'tf 7/11/2019 12:39:35'!
 test10ReciboUnaRespuesta200AlAgregarItemsAlCarrito
 	| cartId queryParams addToCartResponse|
 	
 	cartId _ self createCart .
 	
 	queryParams _ Dictionary newFromPairs: { 
-			'cartId' . cartId printString . 
-			'bookISBN' . 'validBook' . 
-			'bookQuantity' . '3' 
+			'cartId' . self encode: cartId printString . 
+			'bookISBN' . self encode: testObjectsFactory storeTestObjectsFactory itemSellByTheStore . 
+			'bookQuantity' . self encode: '3' 
 	}.
-	addToCartResponse  _ WebClient htmlSubmit: 'http://localhost:8484/addToCart' fields: queryParams.
+	addToCartResponse  _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController addToCartEndpoint ) 
+					 fields: queryParams.
 
 	self assert: addToCartResponse isSuccess .
 	self assert: addToCartResponse code = 200.! !
 
-!TusLibrosServerControllerTest methodsFor: 'test - add items' stamp: 'tf 7/10/2019 12:54:36'!
+!TusLibrosServerControllerTest methodsFor: 'test - add items' stamp: 'tf 7/11/2019 12:39:59'!
 test11ReciboUnaRespuesta404AlAgregarItemsDeUnLibroInexistente
 	| queryParams addToCartResponse cartId |
 	
 	cartId _ self createCart .
 	
 	queryParams _ Dictionary newFromPairs: { 
-		'cartId' . cartId printString . 
-		'bookISBN' . 'invalidBook' . 
-		'bookQuantity' . '3' 
+		'cartId' . self encode: cartId printString . 
+		'bookISBN' . self encode: testObjectsFactory storeTestObjectsFactory itemNotSellByTheStore . 
+		'bookQuantity' . self encode: '3' 
 	}.
-	addToCartResponse  _ WebClient htmlSubmit: 'http://localhost:8484/addToCart' fields: queryParams.
+	addToCartResponse  _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController addToCartEndpoint ) 
+					 fields: queryParams.
 	
 	self deny: addToCartResponse isSuccess .
 	self assert: addToCartResponse code = 404.
 	self assert: addToCartResponse content = 'Item is not in catalog'.! !
 
-!TusLibrosServerControllerTest methodsFor: 'test - add items' stamp: 'tf 7/10/2019 12:14:47'!
+!TusLibrosServerControllerTest methodsFor: 'test - add items' stamp: 'tf 7/11/2019 12:40:06'!
 test12ReciboUnaRespuesta404AlAgregarItemsAUnCarritoInexistente
 	| queryParams addToCartResponse|
 	
 	queryParams _ Dictionary newFromPairs: { 
-		'cartId' . '-1835140' . 
-		'bookISBN' . 'validBook' . 
-		'bookQuantity' . '3' 
+		'cartId' . self encode: '-1835140' . 
+		'bookISBN' . self encode: testObjectsFactory storeTestObjectsFactory itemSellByTheStore . 
+		'bookQuantity' . self encode: '3' 
 	}.
-	addToCartResponse  _ WebClient htmlSubmit: 'http://localhost:8484/addToCart' fields: queryParams.
+	addToCartResponse  _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController addToCartEndpoint ) 
+					 fields: queryParams.
 	
 	self assert: addToCartResponse code = 404.
 	self assert: addToCartResponse content = 'Invalid cart id'.! !
 
 
-!TusLibrosServerControllerTest methodsFor: 'test - catalogo' stamp: 'TF 7/9/2019 14:31:02'!
+!TusLibrosServerControllerTest methodsFor: 'test - catalogo' stamp: 'tf 7/11/2019 11:54:15'!
 test18ElServidorDeTusLibrosTieneUnEndpointParaHacerCatalogDelSistema
 	
-	self assert: ( aDefaultServerController webServer endpoints includes: TusLibrosServerController catalogEndpoint). ! !
+	self assert: 
+		(aDefaultServerController webServer endpoints includes: TusLibrosServerController catalogEndpoint). ! !
 
-!TusLibrosServerControllerTest methodsFor: 'test - catalogo' stamp: 'tf 7/10/2019 12:15:05'!
+!TusLibrosServerControllerTest methodsFor: 'test - catalogo' stamp: 'tf 7/11/2019 11:54:35'!
 test19AlPedirElCatalogoMeLoDevuelveConCodigo200
 	| catalogResponse aCatalog |
 
 		
-	catalogResponse _ WebClient htmlSubmit: 'http://localhost:8484/catalog'  fields: Dictionary new.
+	catalogResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController catalogEndpoint ) 
+					 fields: Dictionary new.
 		
 	
 	self assert: catalogResponse code equals: 200.
@@ -1000,113 +1032,116 @@ test19AlPedirElCatalogoMeLoDevuelveConCodigo200
 		! !
 
 
-!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'TF 7/9/2019 14:13:08'!
+!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 11:55:06'!
 test13ElServidorDeTusLibrosTieneUnEndpointParaHacerCheckoutDelCarrito
 	
-	self assert: ( aDefaultServerController webServer endpoints includes: TusLibrosServerController checkoutCartEndpoint). ! !
+	self assert: 
+		(aDefaultServerController webServer endpoints includes: TusLibrosServerController checkoutCartEndpoint). ! !
 
-!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/10/2019 12:51:58'!
+!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 12:41:23'!
 test14AlHacerCheckoutDeUnCarritoConElementosObtengoUnaRespuestaConCodigo200
 	| cartId queryParams checkOutResponse expirationDate |
 	
 	cartId _ self createCart .
+	self addToCartWithDefaultValuesWithCartId: cartId .
 	
-	queryParams _ Dictionary newFromPairs: { 
-		'cartId' . cartId printString . 
-		'bookISBN' . 'validBook' . 
-		'bookQuantity' . '3' 
-	}.
-	WebClient htmlSubmit: 'http://localhost:8484/addToCart' fields: queryParams.
-
-	expirationDate _ testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString copyReplaceAll: ' ' with: '%20'.
+	expirationDate _ self encode: testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString.
 	queryParams _ Dictionary newFromPairs: 
-		{'cartId' . cartId printString . 
-		'creditCardNumber' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
-		'ownersName' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
+		{'cartId' . self encode: cartId printString . 
+		'creditCardNumber' . self encode: testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
+		'ownersName' . self encode: testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
 		'expirationDate' . expirationDate }.
 		
-	checkOutResponse _ WebClient htmlSubmit: 'http://localhost:8484/checkoutcart' fields: queryParams .
+	checkOutResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController checkoutCartEndpoint ) 
+					 fields: queryParams .
 		
 	self assert: checkOutResponse code equals: 200.
 	
 		! !
 
-!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/10/2019 12:52:09'!
+!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 12:41:40'!
 test15AlHacerCheckoutDeUnCarritoInexistenteObtengoUnaRespuestaConCodigo404YMensajeDeError
 	| cartId queryParams checkOutResponse expirationDate |
 	
 	cartId _ -10.
 	
-	expirationDate _ testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString copyReplaceAll: ' ' with: '%20'.
+	expirationDate _ self encode: testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString.
 	queryParams _ Dictionary newFromPairs: 
-		{'cartId' . cartId printString . 
-		'creditCardNumber' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
-		'ownersName' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
+		{'cartId' . self encode: cartId printString . 
+		'creditCardNumber' . self encode: testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
+		'ownersName' . self encode: testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
 		'expirationDate' . expirationDate }.
 		
-	checkOutResponse _ WebClient htmlSubmit: 'http://localhost:8484/checkoutcart' fields: queryParams .
-		
+	checkOutResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController checkoutCartEndpoint ) 
+					 fields: queryParams .
+					
 	self assert: checkOutResponse code equals: 404.
 	self assert: checkOutResponse content equals: 'Invalid cart id'
 	
 		! !
 
-!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/10/2019 12:52:35'!
+!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 12:41:56'!
 test16AlHacerCheckoutDeUnCarritoVacioObtengoUnaRespuestaConCodigo404YUnMensajeDeError
 	| cartId queryParams checkOutResponse expirationDate |
 	
 	cartId _ self createCart .
 	
-	expirationDate _ testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString copyReplaceAll: ' ' with: '%20'.
+	expirationDate _ self encode: testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString.
 	queryParams _ Dictionary newFromPairs: 
-		{'cartId' . cartId printString . 
-		'creditCardNumber' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
-		'ownersName' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
+		{'cartId' . self encode: cartId printString . 
+		'creditCardNumber' . self encode: testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
+		'ownersName' . self encode: testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
 		'expirationDate' . expirationDate }.
 		
-	checkOutResponse _ WebClient htmlSubmit: 'http://localhost:8484/checkoutcart' fields: queryParams .
-		
+	checkOutResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController checkoutCartEndpoint ) 
+					 fields: queryParams .
+						
 	self assert: checkOutResponse code equals: 404.
 	self assert: checkOutResponse content equals: 'Can not check out an empty cart'.
 	
 		! !
 
-!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/10/2019 12:52:50'!
+!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 12:42:11'!
 test17AlHacerCheckoutDeUnCarritoConElementosConUnaTarjetaInvalidaObtengoUnaRespuestaConCodigo404YUnMensajeDeError
 	| cartId queryParams checkOutResponse expirationDate |
 	
 	cartId _ self createCart .
 	
-	queryParams _ Dictionary newFromPairs: { 'cartId' . cartId printString . 'bookISBN' . 'validBook' . 'bookQuantity' . '3' }.
-	WebClient htmlSubmit: 'http://localhost:8484/addToCart' fields: queryParams.
-
-	expirationDate _ testObjectsFactory storeTestObjectsFactory expiredMonthOfYear printString copyReplaceAll: ' ' with: '%20'.
+	self addToCartWithDefaultValuesWithCartId: cartId .
+	
+	expirationDate _ self encode: testObjectsFactory storeTestObjectsFactory expiredMonthOfYear printString.
 	queryParams _ Dictionary newFromPairs: 
-		{'cartId' . cartId printString . 
-		'creditCardNumber' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
-		'ownersName' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
+		{'cartId' . self encode: cartId printString . 
+		'creditCardNumber' . self encode: testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
+		'ownersName' . self encode: testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
 		'expirationDate' . expirationDate }.
 		
-	checkOutResponse _ WebClient htmlSubmit: 'http://localhost:8484/checkoutcart' fields: queryParams .
-		
+	checkOutResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController checkoutCartEndpoint ) 
+					 fields: queryParams .
+						
 	self assert: checkOutResponse code equals: 404.
 	self assert: checkOutResponse content equals: 'Can not charge an expired credit card'.
 	
 		! !
 
 
-!TusLibrosServerControllerTest methodsFor: 'test - list purchase' stamp: 'TF 7/9/2019 14:38:01'!
+!TusLibrosServerControllerTest methodsFor: 'test - list purchase' stamp: 'tf 7/11/2019 11:57:54'!
 test20ElServidorDeTusLibrosTieneUnEndpointParaHacerListPurchases
 	
-	self assert: ( aDefaultServerController webServer endpoints includes: TusLibrosServerController listPurchasesEndpoint). ! !
+	self assert: 
+		(aDefaultServerController webServer endpoints includes: TusLibrosServerController listPurchasesEndpoint). ! !
 
-!TusLibrosServerControllerTest methodsFor: 'test - list purchase' stamp: 'TF 7/9/2019 14:43:55'!
+!TusLibrosServerControllerTest methodsFor: 'test - list purchase' stamp: 'tf 7/11/2019 12:42:20'!
 test21ListPurchasesDeUnUsuarioQueNoHizoComprasDevuelveCodigo200YListaVacia
 	| queryParams listPurchasesResponse |
 	
 	queryParams _ Dictionary newFromPairs: 
-		{'username' . testObjectsFactory validUser . 
-		  'password' . testObjectsFactory validUserPassword }.
+		{'username' . self encode: testObjectsFactory validUser . 
+		  'password' . self encode: testObjectsFactory validUserPassword }.
 		
 	listPurchasesResponse _ WebClient htmlSubmit: 'http://localhost:8484/listpurchases' fields: queryParams .
 		
@@ -1114,27 +1149,27 @@ test21ListPurchasesDeUnUsuarioQueNoHizoComprasDevuelveCodigo200YListaVacia
 	
 		! !
 
-!TusLibrosServerControllerTest methodsFor: 'test - list purchase' stamp: 'tf 7/10/2019 12:53:50'!
+!TusLibrosServerControllerTest methodsFor: 'test - list purchase' stamp: 'tf 7/11/2019 12:42:40'!
 test22AlPedirLasComprasDeUnUsuarioConComprasReciboCodigo200YDiccionarioAcorde
 	| cartId queryParams expirationDate purchasesResponse |
 	
 	cartId _ self createCart .
 	
-	queryParams _ Dictionary newFromPairs: { 'cartId' . cartId printString . 'bookISBN' . 'validBook' . 'bookQuantity' . '3' }.
-	WebClient htmlSubmit: 'http://localhost:8484/addToCart' fields: queryParams.
-
-	expirationDate _ testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString copyReplaceAll: ' ' with: '%20'.
+	self addToCartWithDefaultValuesWithCartId: cartId .
+	
+	
+	expirationDate _ self encode: testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString.
 	queryParams _ Dictionary newFromPairs: 
-		{'cartId' . cartId printString . 
-		'creditCardNumber' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
-		'ownersName' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
+		{'cartId' . self encode: cartId printString . 
+		'creditCardNumber' . self encode: testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
+		'ownersName' . self encode: testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
 		'expirationDate' . expirationDate }.
 		
 	WebClient htmlSubmit: 'http://localhost:8484/checkoutcart' fields: queryParams .
 	
 	queryParams _ Dictionary newFromPairs: 
-		{'username' . testObjectsFactory validUser . 
-		  'password' . testObjectsFactory validUserPassword }.
+		{'username' . self encode: testObjectsFactory validUser . 
+		  'password' . self encode: testObjectsFactory validUserPassword }.
 		
 	purchasesResponse _ WebClient htmlSubmit: 'http://localhost:8484/listpurchases'  fields: queryParams.
 		
@@ -1146,13 +1181,13 @@ test22AlPedirLasComprasDeUnUsuarioConComprasReciboCodigo200YDiccionarioAcorde
 	
 		! !
 
-!TusLibrosServerControllerTest methodsFor: 'test - list purchase' stamp: 'TF 7/9/2019 14:58:59'!
+!TusLibrosServerControllerTest methodsFor: 'test - list purchase' stamp: 'tf 7/11/2019 12:42:48'!
 test23AlPedirLasComprasDeUnUsuarioMalAutenticadoReciboError404ConMensajeAcorde
 	| queryParams purchasesResponse |
 
 	queryParams _ Dictionary newFromPairs: 
-		{'username' . testObjectsFactory invalidUser . 
-		  'password' . testObjectsFactory invalidUserPassword }.
+		{'username' . self encode: testObjectsFactory invalidUser . 
+		  'password' . self encode: testObjectsFactory invalidUserPassword }.
 		
 	purchasesResponse _ WebClient htmlSubmit: 'http://localhost:8484/listpurchases'  fields: queryParams.
 		
@@ -1163,18 +1198,41 @@ test23AlPedirLasComprasDeUnUsuarioMalAutenticadoReciboError404ConMensajeAcorde
 		! !
 
 
-!TusLibrosServerControllerTest methodsFor: 'helpers' stamp: 'tf 7/10/2019 12:50:40'!
+!TusLibrosServerControllerTest methodsFor: 'helpers' stamp: 'tf 7/11/2019 12:42:56'!
+addToCartWithDefaultValuesWithCartId: cartId
+	| queryParams |
+	
+	queryParams _ Dictionary newFromPairs: { 
+		'cartId' . self encode: cartId printString . 
+		'bookISBN' . self encode: testObjectsFactory storeTestObjectsFactory itemSellByTheStore . 
+		'bookQuantity' . self encode: '3' 
+	}.
+	WebClient htmlSubmit: (self urlFor: TusLibrosServerController addToCartEndpoint) fields: queryParams.! !
+
+!TusLibrosServerControllerTest methodsFor: 'helpers' stamp: 'tf 7/11/2019 12:43:01'!
 createCart
 	| cartCreationResponse cartId queryParams |
 	
 	queryParams _ Dictionary newFromPairs: 
-		{'username' . testObjectsFactory validUser . 
-		  'password' . testObjectsFactory validUserPassword }.
+		{'username' . self encode: testObjectsFactory validUser . 
+		  'password' . self encode: testObjectsFactory validUserPassword }.
 	
 	cartCreationResponse _ WebClient htmlSubmit: 'http://localhost:8484/createCart' fields: queryParams.
 	cartId _ WebUtils jsonDecode: cartCreationResponse content readStream.
 	
 	^cartId .! !
+
+!TusLibrosServerControllerTest methodsFor: 'helpers' stamp: 'tf 7/11/2019 12:55:16'!
+decode: anJsonEncoding
+	^(WebUtils jsonDecode: anJsonEncoding readStream) copyReplaceAll: '%20' with: ' ' .! !
+
+!TusLibrosServerControllerTest methodsFor: 'helpers' stamp: 'tf 7/11/2019 12:51:56'!
+encode: anObject
+	^(WebUtils jsonEncode: anObject) copyReplaceAll: ' ' with: '%20' .! !
+
+!TusLibrosServerControllerTest methodsFor: 'helpers' stamp: 'tf 7/11/2019 11:51:02'!
+urlFor: aMethodName
+	^'http://localhost:8484', aMethodName. ! !
 
 
 !classDefinition: #TusLibrosWebClientTest category: #'TusLibros-Web'!
@@ -1233,18 +1291,15 @@ test05ElNumeroDePuertoDelClienteTieneQueSerUnNumeroEntero
 		].! !
 
 
-!TusLibrosWebClientTest methodsFor: 'test - list purchases' stamp: 'tf 7/9/2019 23:12:56'!
+!TusLibrosWebClientTest methodsFor: 'test - list purchases' stamp: 'tf 7/11/2019 12:56:03'!
 test14PuedoListarLasComprasDeUnUsuario
 	| listPurchaseResponse|
 		
 	onHtmlSubmitBlock _ [:url :fields | 
 		self assert: url equals: 'http://tusLibros.com:8484/listpurchases'.
-		self assert: (fields at: 'username') equals: 'Teo' .
-		self assert: (fields at: 'password') equals: 'freund'.
-
-
-
-			
+		self assert: (self decode: (fields at: 'username')) equals: 'Teo' .
+		self assert: (self decode: (fields at: 'password')) equals: 'freund'.
+		
 		(WebResponse protocol: 'http' code: 200) content: (WebUtils jsonEncode: '123') 
 	].
 
@@ -1278,14 +1333,14 @@ htmlSubmit: url fields: fields
 	^onHtmlSubmitBlock value: url value: fields.! !
 
 
-!TusLibrosWebClientTest methodsFor: 'test - createcart' stamp: 'TF 7/9/2019 16:59:55'!
+!TusLibrosWebClientTest methodsFor: 'test - createcart' stamp: 'tf 7/11/2019 12:56:41'!
 test06PuedoCrearUnCarritoConUsuarioYContrasenaValidosYObtengoUnCartIdYSeLeEnviaElRequestAlServidor
 	| cartId |
 		
 	onHtmlSubmitBlock _ [:url :fields | 
 		self assert: url equals: 'http://tusLibros.com:8484/createcart'.
-		self assert: (fields at: 'username') equals: testObjectFactory validUser .
-		self assert: (fields at: 'password') equals: testObjectFactory validUserPassword .
+		self assert: (self decode: (fields at: 'username')) equals: testObjectFactory validUser .
+		self assert: (self decode: (fields at: 'password')) equals: testObjectFactory validUserPassword .
 		^(WebResponse protocol: 'http' code: 200) content: (WebUtils jsonEncode: 23); yourself. 
 	].
 
@@ -1336,15 +1391,15 @@ test09SiAlPedirElCatalogoElServidorDevuelveUnErrorElWebClientLevantaUnaEXcepcion
 ! !
 
 
-!TusLibrosWebClientTest methodsFor: 'test - add to cart' stamp: 'tf 7/9/2019 23:06:15'!
+!TusLibrosWebClientTest methodsFor: 'test - add to cart' stamp: 'tf 7/11/2019 12:57:05'!
 test10PuedoAgregarCosasAUnCarrito
 	| addToCartResponse|
 		
 	onHtmlSubmitBlock _ [:url :fields | 
 		self assert: url equals: 'http://tusLibros.com:8484/addtocart'.
-		self assert: (fields at: 'cartId') equals: 23 printString .
-		self assert: (fields at: 'bookISBN') equals: 'validBook'.
-		self assert: (fields at: 'bookQuantity') equals: 3 printString .
+		self assert: (self decode: (fields at: 'cartId')) equals: 23 printString .
+		self assert: (self decode: (fields at: 'bookISBN')) equals: 'validBook'.
+		self assert: (self decode: (fields at: 'bookQuantity')) equals: 3 printString .
 		(WebResponse protocol: 'http' code: 200) content: (WebUtils jsonEncode: 0) 
 	].
 
@@ -1370,17 +1425,17 @@ test11SiElServerDaUnErrorAlAgregarCosasAUnCarritoLevantoUnaExcepcion
 ! !
 
 
-!TusLibrosWebClientTest methodsFor: 'test - checkout' stamp: 'tf 7/9/2019 23:04:41'!
+!TusLibrosWebClientTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 13:01:16'!
 test12PuedoHacerCheckoutDeUnCarrito
 	| checkoutResponse|
 		
 	onHtmlSubmitBlock _ [:url :fields | 
 		self assert: url equals: 'http://tusLibros.com:8484/checkoutcart'.
-		self assert: (fields at: 'cartId') equals: 23 printString .
-		self assert: (fields at: 'creditCardNumber') equals: '0000111122223333'.
-		self assert: (fields at: 'ownersName') equals: 'Teo'.
-		self assert: (fields at: 'expirationDate') 
-			equals: ((Month month: 07 year: 2020) printString copyReplaceAll: ' ' with: '%20') .
+		self assert: (self decode: (fields at: 'cartId')) equals: 23 printString .
+		self assert: (self decode: (fields at: 'creditCardNumber')) equals: '0000111122223333'.
+		self assert: (self decode: (fields at: 'ownersName')) equals: 'Teo'.
+		self assert: (self decode: (fields at: 'expirationDate')) 
+			equals: (Month month: 07 year: 2020 ) printString .
 			
 		(WebResponse protocol: 'http' code: 200) content: (WebUtils jsonEncode: 0) 
 	].
@@ -1411,6 +1466,15 @@ test13LevantaUnaExcepcionAlRecibirUnErrorDelServerSiSeLePideHacerCheckout
 		 withMessageText: 'Error'.
 	! !
 
+
+!TusLibrosWebClientTest methodsFor: 'encoding' stamp: 'tf 7/11/2019 12:55:20'!
+decode: anJsonEncoding
+	^(WebUtils jsonDecode: anJsonEncoding readStream) copyReplaceAll: '%20' with: ' ' .! !
+
+!TusLibrosWebClientTest methodsFor: 'encoding' stamp: 'tf 7/11/2019 12:55:00'!
+encode: anObject
+	^(WebUtils jsonEncode: anObject) copyReplaceAll: ' ' with: '%20' .! !
+
 
 !classDefinition: #CheckOutWindowModel category: #'TusLibros-Web'!
 Object subclass: #CheckOutWindowModel
@@ -1419,13 +1483,45 @@ Object subclass: #CheckOutWindowModel
 	poolDictionaries: ''
 	category: 'TusLibros-Web'!
 
-!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:26:58'!
+!CheckOutWindowModel methodsFor: 'accessing' stamp: 'tf 7/11/2019 00:13:16'!
+creditCardNumber
+	^creditCardNumber! !
+
+!CheckOutWindowModel methodsFor: 'accessing' stamp: 'tf 7/11/2019 00:14:01'!
+creditCardNumber: aString 
+	
+	creditCardNumber _ aString! !
+
+!CheckOutWindowModel methodsFor: 'accessing' stamp: 'tf 7/11/2019 00:19:07'!
+expirationDate
+	^expirationDate.! !
+
+!CheckOutWindowModel methodsFor: 'accessing' stamp: 'tf 7/11/2019 00:19:52'!
+expirationDate: aString 
+	
+	expirationDate _ aString! !
+
+!CheckOutWindowModel methodsFor: 'accessing' stamp: 'tf 7/11/2019 00:15:25'!
+ownersName
+	^ownersName.! !
+
+!CheckOutWindowModel methodsFor: 'accessing' stamp: 'tf 7/11/2019 00:16:01'!
+ownersName: aString 
+	
+	ownersName _ aString! !
+
+!CheckOutWindowModel methodsFor: 'accessing' stamp: 'tf 7/11/2019 09:56:48'!
+transcript
+	^transcript.! !
+
+
+!CheckOutWindowModel methodsFor: 'events' stamp: 'tf 7/11/2019 13:07:28'!
 checkout
 
 	[
 		webClient checkOutCartIdentifiedAs: cartId 
-					withCreditCardNumbered:  creditCardNumber 
-					ownedBy: ownersName  
+					withCreditCardNumbered:  creditCardNumber string
+					ownedBy: ownersName  string
 					expiringOn: (Month readFrom: expirationDate readStream).
 		creditCardNumber _ creditCardNumber last: 4.
 		self triggerEvent: #paymentDone.
@@ -1435,25 +1531,16 @@ checkout
 	] on: Error 
 	do: [:anError | self triggerEvent: #paymentFailed: with: anError messageText ].! !
 
-!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:13:16'!
-creditCardNumber
-	^creditCardNumber! !
-
-!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:14:01'!
-creditCardNumber: aString 
+!CheckOutWindowModel methodsFor: 'events' stamp: 'tf 7/11/2019 13:07:42'!
+updateTranscript
+	| originalTranscript |
+	originalTranscript _ webClient listPurchasesOf: username string authenticatingWith: password string .
 	
-	creditCardNumber _ aString! !
+	transcript _ OrderedCollection new.
+	originalTranscript keysAndValuesDo: [:key :value | transcript add: key, ' $', value printString ].! !
 
-!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:19:07'!
-expirationDate
-	^expirationDate.! !
 
-!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:19:52'!
-expirationDate: aString 
-	
-	expirationDate _ aString! !
-
-!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:57:01'!
+!CheckOutWindowModel methodsFor: 'initialization' stamp: 'tf 7/11/2019 09:57:01'!
 initializeWithWebClient: aWebClient cartId: aCartId username: aUsername password: aPassword 
 	webClient _ aWebClient .
 	cartId _ aCartId .
@@ -1464,27 +1551,6 @@ initializeWithWebClient: aWebClient cartId: aCartId username: aUsername password
 	ownersName _ ''.
 	expirationDate _ ''.
 	transcript _ OrderedCollection new.! !
-
-!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:15:25'!
-ownersName
-	^ownersName.! !
-
-!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:16:01'!
-ownersName: aString 
-	
-	ownersName _ aString! !
-
-!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:56:48'!
-transcript
-	^transcript.! !
-
-!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:27:52'!
-updateTranscript
-	| originalTranscript |
-	originalTranscript _ webClient listPurchasesOf: username authenticatingWith: password .
-	
-	transcript _ OrderedCollection new.
-	originalTranscript keysAndValuesDo: [:key :value | transcript add: key, ' $', value printString ].! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -1564,11 +1630,11 @@ username: aUsername
 	^true.! !
 
 
-!CreateCartWindowModel methodsFor: 'PluggableButtonSelectors' stamp: 'ar 7/9/2019 20:12:54'!
+!CreateCartWindowModel methodsFor: 'PluggableButtonSelectors' stamp: 'tf 7/11/2019 13:05:05'!
 sendCreateCartRequest
 
 	[
-		cartId _ webClient createCartFor: username authenticatedWith: password.
+		cartId _ webClient createCartFor: username string authenticatedWith: password string.
 		self triggerEvent: #cartCreationSuccess .
 	] 
 	on: Error 
@@ -1592,26 +1658,12 @@ Object subclass: #StoreWindowModel
 	poolDictionaries: ''
 	category: 'TusLibros-Web'!
 
-!StoreWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:26:21'!
-addToCart
-	| bookName |
-	
-	bookName _ catalogNames at: catalogIndex .
-	
-	[
-		webClient add: 1 of: bookName  toCartIdentifiedAs: cartId.
-		cartContents add: bookName.
-		subTotal _ subTotal + originalCatalog at: bookName .
-		self triggerEvent: #cartContentsUpdated.
-	] on: Error 
-	do: [:anError | self triggerEvent: #addToCartFailed with: anError messageText ].! !
-
-!StoreWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 17:32:37'!
+!StoreWindowModel methodsFor: 'accessing' stamp: 'tf 7/10/2019 17:32:37'!
 cartContents
 	
 	^cartContents! !
 
-!StoreWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:19:16'!
+!StoreWindowModel methodsFor: 'accessing' stamp: 'tf 7/10/2019 18:19:16'!
 cartContentsAsOrderedCollection
 	| cartContentsAsOrderedCollection |
 	
@@ -1621,37 +1673,37 @@ cartContentsAsOrderedCollection
 	
 	^cartContentsAsOrderedCollection .! !
 
-!StoreWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:07:12'!
+!StoreWindowModel methodsFor: 'accessing' stamp: 'tf 7/10/2019 18:07:12'!
 cartContentsIndex
 	
 	^cartContentsIndex! !
 
-!StoreWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:07:53'!
+!StoreWindowModel methodsFor: 'accessing' stamp: 'tf 7/10/2019 18:07:53'!
 cartContentsIndex: anIndex 
 	
 	cartContentsIndex _ anIndex! !
 
-!StoreWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 17:13:24'!
+!StoreWindowModel methodsFor: 'accessing' stamp: 'tf 7/10/2019 17:13:24'!
 catalog
 	
 	^catalog ifNil: [self initializeCatalog. catalog] ifNotNil: [catalog]. ! !
 
-!StoreWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 16:58:26'!
+!StoreWindowModel methodsFor: 'accessing' stamp: 'tf 7/10/2019 16:58:26'!
 catalogIndex
 	
 	^catalogIndex! !
 
-!StoreWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 17:01:10'!
+!StoreWindowModel methodsFor: 'accessing' stamp: 'tf 7/10/2019 17:01:10'!
 catalogIndex: anIndex 
 	
 	catalogIndex _ anIndex! !
 
-!StoreWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:46:05'!
-goToCheckout
-	CheckOutWindow withCartId: cartId usernam: username password: password.
-	self triggerEvent: #checkOutWindowCreated.! !
+!StoreWindowModel methodsFor: 'accessing' stamp: 'tf 7/10/2019 18:23:20'!
+subTotal
+	^subTotal.! !
 
-!StoreWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:25:58'!
+
+!StoreWindowModel methodsFor: 'initialization' stamp: 'tf 7/10/2019 18:25:58'!
 initializeCatalog
 	
 	catalog _ OrderedCollection new.
@@ -1666,7 +1718,7 @@ initializeCatalog
 	] on: Error 
 		do: [:anError |  self triggerEvent: #catalogRequestFailed with: anError messageText ]! !
 
-!StoreWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:23:32'!
+!StoreWindowModel methodsFor: 'initialization' stamp: 'tf 7/10/2019 18:23:32'!
 initializewithWebClient: aWebClient 
 	cartId: aCartId 
 	username: aUsername 
@@ -1685,9 +1737,25 @@ initializewithWebClient: aWebClient
 	
 	! !
 
-!StoreWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:23:20'!
-subTotal
-	^subTotal.! !
+
+!StoreWindowModel methodsFor: 'events' stamp: 'tf 7/11/2019 12:33:09'!
+addToCart
+	| bookName |
+
+	bookName _ catalogNames at: catalogIndex .
+	
+	[
+		webClient add: 1 of: bookName  toCartIdentifiedAs: cartId.
+		cartContents add: bookName.
+		subTotal _ subTotal + originalCatalog at: bookName .
+		self triggerEvent: #cartContentsUpdated.
+	] on: Error 
+	do: [:anError | self triggerEvent: #addToCartFailed with: anError messageText ].! !
+
+!StoreWindowModel methodsFor: 'events' stamp: 'tf 7/10/2019 18:46:05'!
+goToCheckout
+	CheckOutWindow withCartId: cartId usernam: username password: password.
+	self triggerEvent: #checkOutWindowCreated.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -1698,6 +1766,57 @@ StoreWindowModel class
 !StoreWindowModel class methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 16:37:26'!
 withWebClient: aWebClient cartId: aCartId username: aUsername andPassword: aPassword
 	^self new initializewithWebClient: aWebClient cartId: aCartId username: aUsername andPassword: aPassword.! !
+
+
+!classDefinition: #TusLibrosLocalTester category: #'TusLibros-Web'!
+Object subclass: #TusLibrosLocalTester
+	instanceVariableNames: 'server debitsMade systemFacade'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+
+!TusLibrosLocalTester methodsFor: 'system facade values' stamp: 'tf 7/11/2019 12:24:37'!
+createSalesBook
+	^OrderedCollection new! !
+
+!TusLibrosLocalTester methodsFor: 'system facade values' stamp: 'tf 7/11/2019 12:28:40'!
+defaultCatalog
+	^Dictionary new
+		at: 'valid Book' put: 32;
+		at: 'harry potter' put: 56.7;
+		at: 'self help' put: 1;
+		yourself.! !
+
+!TusLibrosLocalTester methodsFor: 'system facade values' stamp: 'tf 7/11/2019 12:25:17'!
+validUsersAndPasswords
+	^Dictionary new at: 'teo' put: 'freund';
+						at: 'andy' put: 'radunsky';
+						yourself.! !
+
+
+!TusLibrosLocalTester methodsFor: 'initialization' stamp: 'tf 7/11/2019 12:26:47'!
+initialize
+	debitsMade _ OrderedCollection new.
+	systemFacade _ TusLibrosSystemFacade
+		authenticatingWith: self validUsersAndPasswords 
+		acceptingItemsOf:  self defaultCatalog
+		registeringOn: self createSalesBook 
+		debitingThrought: self
+		measuringTimeWith: DateAndTime.
+	server _ TusLibrosServerController listeningOn: self port withFacade:  systemFacade.
+	
+	CreateCartWindow open.! !
+
+
+!TusLibrosLocalTester methodsFor: 'merchant processor protocol' stamp: 'tf 7/11/2019 13:35:47'!
+debit: anAmount from: aCreditCard
+
+	debitsMade add: anAmount@aCreditCard .! !
+
+
+!TusLibrosLocalTester methodsFor: 'port' stamp: 'tf 7/11/2019 12:25:02'!
+port
+	^8080.! !
 
 
 !classDefinition: #TusLibrosServerController category: #'TusLibros-Web'!
@@ -1716,42 +1835,39 @@ webServer
 	^webServer.! !
 
 
-!TusLibrosServerController methodsFor: 'services' stamp: 'ar 7/7/2019 17:35:53'!
+!TusLibrosServerController methodsFor: 'services' stamp: 'tf 7/11/2019 12:44:30'!
 registerAddToCart
-	webServer addService: self class addToCartEndpoint 
-				action: [ :request |
+	self addService: self class addToCartEndpoint 
+		withBlock: [ :request |
 					|cartId bookISBN bookQuantity|
-					[
-						cartId _ (request fields at: 'cartId') asInteger.
-						bookISBN _ request fields at: 'bookISBN'.
-						bookQuantity _ (request fields at: 'bookQuantity') asInteger.
-						tusLibrosFacade add: bookQuantity of: bookISBN toCartIdentifiedAs: cartId.
-						request send200Response: (WebUtils jsonEncode: 0). 
-					]
-					on: Error
-					do: [:anError |
-						request send404Response: anError messageText.	
-					]
-				].! !
+					
+					cartId _ (self decode: (request fields at: 'cartId')) asInteger.
+					bookISBN _ self decode: (request fields at: 'bookISBN').
+					bookQuantity _ (self decode: (request fields at: 'bookQuantity')) asInteger.
+					tusLibrosFacade add: bookQuantity of: bookISBN toCartIdentifiedAs: cartId.
+					request send200Response: (WebUtils jsonEncode: 0). 
+				].
+! !
 
-!TusLibrosServerController methodsFor: 'services' stamp: 'TF 7/9/2019 14:36:41'!
+!TusLibrosServerController methodsFor: 'services' stamp: 'tf 7/11/2019 12:04:40'!
 registerCatalog
-	webServer addService: self class catalogEndpoint 
-				action: [:request |
+	self addService: self class catalogEndpoint 
+		withBlock: [:request |
 						request send200Response: (WebUtils jsonEncode: tusLibrosFacade catalog ).
 						
-					 ].! !
+					 ].
+	! !
 
-!TusLibrosServerController methodsFor: 'services' stamp: 'TF 7/8/2019 17:59:43'!
+!TusLibrosServerController methodsFor: 'services' stamp: 'tf 7/11/2019 12:52:28'!
 registerCheckoutCart
-	webServer addService: self class checkoutCartEndpoint 
-				action: [:request |
+	self addService: self class checkoutCartEndpoint 
+		withBlock: [:request |
 						|cartId creditCardNumber expirationDate ownersName |
-					[ 
-						cartId _ (request fields at: 'cartId') asInteger.
-						creditCardNumber _ request fields at: 'creditCardNumber'.
-						ownersName _ request fields at: 'ownersName'.
-						expirationDate _ (request fields at: 'expirationDate') copyReplaceAll: '%20' with: ' ' .
+
+						cartId _ (self decode: (request fields at: 'cartId')) asInteger.
+						creditCardNumber _ self decode: (request fields at: 'creditCardNumber').
+						ownersName _ self decode: (request fields at: 'ownersName').
+						expirationDate _ (self decode: (request fields at: 'expirationDate')).
 						expirationDate _ Month readFrom: expirationDate readStream .
 						
 						tusLibrosFacade 
@@ -1761,46 +1877,34 @@ registerCheckoutCart
 							expiringOn: expirationDate .
 						
 						request send200Response: (WebUtils jsonEncode: 0). 
-					]
-					on: Error
-					do: [:anError |
-						request send404Response: anError messageText .	
-					]
-					].! !
+					].
+	! !
 
-!TusLibrosServerController methodsFor: 'services' stamp: 'ar 7/7/2019 17:35:38'!
+!TusLibrosServerController methodsFor: 'services' stamp: 'tf 7/11/2019 12:45:27'!
 registerCreateCart
-	webServer addService: self class createCartEndpoint 
-				action: [ :request |
+	self addService: self class createCartEndpoint 
+		withBlock:  [:request |
 					| cartId password username |
-					[
-						username _ request fields at: 'username'.
-						password _ request fields at: 'password'.
+					
+						username _ self decode: (request fields at: 'username').
+						password _ self decode: (request fields at: 'password').
 						cartId _ tusLibrosFacade createCartFor: username authenticatedWith: password.
 						request send200Response: (WebUtils jsonEncode: cartId).
-					]
-					on: Error
-					do: [ :anError |
-						request send404Response: anError messageText.
 					].
-				].! !
+! !
 
-!TusLibrosServerController methodsFor: 'services' stamp: 'TF 7/9/2019 14:57:09'!
+!TusLibrosServerController methodsFor: 'services' stamp: 'tf 7/11/2019 12:53:45'!
 registerListPurchases
-	webServer addService: self class listPurchasesEndpoint 
-				action: [:request | | purchases password username |
+	self addService:  self class listPurchasesEndpoint 
+		withBlock: [:request | | purchases password username |
 					
-						[
-							username _ request fields at: 'username'.
-							password _ request fields at: 'password'.
+						
+							username _ self decode: ( request fields at: 'username').
+							password _ self decode: (request fields at: 'password').
 							purchases _ tusLibrosFacade listPurchasesOf: username authenticatingWith: password .
 							request send200Response: (WebUtils jsonEncode: purchases).
-						] on: Error 
-						do: [:anError |
-							request send404Response: anError messageText .	
-					]
-					
-					].! !
+						].
+	! !
 
 
 !TusLibrosServerController methodsFor: 'port' stamp: 'ar 7/7/2019 12:02:40'!
@@ -1835,37 +1939,56 @@ destroy
 stopListening
 	webServer stopListener.! !
 
+
+!TusLibrosServerController methodsFor: 'services - private' stamp: 'tf 7/11/2019 12:03:11'!
+addService: aServiceName withBlock: aBlock
+	webServer addService: aServiceName 
+				action: [ :request |
+					[aBlock value: request ]
+					on: Error
+					do: [:anError |
+						request send404Response: anError messageText.	
+					]
+				].! !
+
+
+!TusLibrosServerController methodsFor: 'decoding' stamp: 'tf 7/11/2019 12:51:40'!
+decode: anJsonEncoding
+	^(WebUtils jsonDecode: anJsonEncoding readStream) copyReplaceAll: '%20' with: ' ' .! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'TusLibrosServerController class' category: #'TusLibros-Web'!
 TusLibrosServerController class
 	instanceVariableNames: ''!
 
-!TusLibrosServerController class methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 16:39:00'!
+!TusLibrosServerController class methodsFor: 'endpoints' stamp: 'ar 7/7/2019 16:39:00'!
 addToCartEndpoint
 	^'/addtocart'.! !
 
-!TusLibrosServerController class methodsFor: 'as yet unclassified' stamp: 'TF 7/9/2019 14:31:30'!
+!TusLibrosServerController class methodsFor: 'endpoints' stamp: 'TF 7/9/2019 14:31:30'!
 catalogEndpoint
 	^'/catalog'.! !
 
-!TusLibrosServerController class methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 17:51:22'!
+!TusLibrosServerController class methodsFor: 'endpoints' stamp: 'ar 7/7/2019 17:51:22'!
 checkoutCartEndpoint
 	^'/checkoutcart'.! !
 
-!TusLibrosServerController class methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 14:51:03'!
+!TusLibrosServerController class methodsFor: 'endpoints' stamp: 'ar 7/7/2019 14:51:03'!
 createCartEndpoint
 	^'/createcart'.! !
 
-!TusLibrosServerController class methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 11:54:31'!
-invalidPortNumberMessageError
-	^ 'El numero de puerto tiene que ser un numero entero entre 1 y 65535'.! !
-
-!TusLibrosServerController class methodsFor: 'as yet unclassified' stamp: 'TF 7/9/2019 14:41:22'!
+!TusLibrosServerController class methodsFor: 'endpoints' stamp: 'TF 7/9/2019 14:41:22'!
 listPurchasesEndpoint
 	^'/listpurchases'.! !
 
-!TusLibrosServerController class methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 15:14:21'!
+
+!TusLibrosServerController class methodsFor: 'error message' stamp: 'ar 7/7/2019 11:54:31'!
+invalidPortNumberMessageError
+	^ 'El numero de puerto tiene que ser un numero entero entre 1 y 65535'.! !
+
+
+!TusLibrosServerController class methodsFor: 'instance creation' stamp: 'ar 7/7/2019 15:14:21'!
 listeningOn: aPort withFacade: aSystemFacade
 	^self new listeningOn: aPort withFacade: aSystemFacade .! !
 
@@ -1882,14 +2005,14 @@ signalInvalidPort
 	self error: self class invalidPortNumberMessageError.! !
 
 
-!TusLibrosWebClient methodsFor: 'server requests' stamp: 'tf 7/9/2019 23:07:36'!
+!TusLibrosWebClient methodsFor: 'server requests' stamp: 'tf 7/11/2019 12:58:45'!
 add: anAmount of: aBook toCartIdentifiedAs: aCartId
 	| queryParams response |
 
 	queryParams _ Dictionary new 
-			at: 'bookQuantity' put: anAmount printString ; 
-			at: 'bookISBN' put: aBook; 
-			at: 'cartId' put: aCartId printString ; 
+			at: 'bookQuantity' put: (self encode: anAmount printString) ; 
+			at: 'bookISBN' put: (self encode: aBook); 
+			at: 'cartId' put: (self encode: aCartId printString) ; 
 			yourself .
 	response _ webClient htmlSubmit: (self url, TusLibrosServerController addToCartEndpoint ) fields: queryParams. 
 	
@@ -1911,7 +2034,7 @@ catalog
 		ifTrue: [^WebUtils jsonDecode: response content readStream]
 		ifFalse: [self error: response content].! !
 
-!TusLibrosWebClient methodsFor: 'server requests' stamp: 'tf 7/9/2019 23:03:40'!
+!TusLibrosWebClient methodsFor: 'server requests' stamp: 'tf 7/11/2019 12:59:29'!
 checkOutCartIdentifiedAs: aCartId 
 withCreditCardNumbered: aCreditCartNumber 
 ownedBy: anOwner 
@@ -1919,10 +2042,10 @@ expiringOn: anExpirationMonthOfYear
 	| queryParams response |
 
 	queryParams _ Dictionary new 
-			at: 'cartId' put: aCartId printString ; 
-			at: 'creditCardNumber' put: aCreditCartNumber ;
-			at:  'ownersName' put: anOwner ; 
-			at: 'expirationDate' put: (anExpirationMonthOfYear printString copyReplaceAll: ' ' with: '%20') ;
+			at: 'cartId' put: (self encode: aCartId printString ); 
+			at: 'creditCardNumber' put: (self encode: aCreditCartNumber) ;
+			at:  'ownersName' put: (self encode: anOwner ); 
+			at: 'expirationDate' put: (self encode: anExpirationMonthOfYear printString );
 			yourself .
 	response _ webClient 
 		htmlSubmit: (self url, TusLibrosServerController checkoutCartEndpoint ) fields: queryParams. 
@@ -1935,11 +2058,14 @@ expiringOn: anExpirationMonthOfYear
 				self error: response content .
 			].! !
 
-!TusLibrosWebClient methodsFor: 'server requests' stamp: 'ar 7/9/2019 20:15:47'!
+!TusLibrosWebClient methodsFor: 'server requests' stamp: 'tf 7/11/2019 13:07:56'!
 createCartFor: aUser authenticatedWith: aPassword 
 	| queryParams response |
 
-	queryParams _ Dictionary new at: 'username' put: aUser; at: 'password' put: aPassword; yourself .
+	queryParams _ Dictionary new 
+		at: 'username' put: (self encode: aUser); 
+		at: 'password' put: (self encode: aPassword); 
+		yourself .
 	response _ webClient htmlSubmit: (self url, TusLibrosServerController createCartEndpoint ) fields: queryParams. 
 	
 	response isSuccess
@@ -1950,13 +2076,13 @@ createCartFor: aUser authenticatedWith: aPassword
 				self error: response content .
 			].! !
 
-!TusLibrosWebClient methodsFor: 'server requests' stamp: 'tf 7/9/2019 23:13:09'!
+!TusLibrosWebClient methodsFor: 'server requests' stamp: 'tf 7/11/2019 13:00:09'!
 listPurchasesOf: aUser authenticatingWith: aPassword
 	| queryParams response |
 
 	queryParams _ Dictionary new 
-			at: 'username' put: aUser ; 
-			at: 'password' put: aPassword ;
+			at: 'username' put: (self encode: aUser) ; 
+			at: 'password' put: (self encode: aPassword) ;
 			yourself .
 			
 	response _ webClient 
@@ -2002,6 +2128,15 @@ isValidPortNumber: aPort
 
 	^ aPort isInteger and: [aPort between: 1 and: 65535].! !
 
+
+!TusLibrosWebClient methodsFor: 'encoding' stamp: 'tf 7/11/2019 12:57:53'!
+decode: anJsonEncoding
+	^(WebUtils jsonDecode: anJsonEncoding readStream) copyReplaceAll: '%20' with: ' ' .! !
+
+!TusLibrosWebClient methodsFor: 'encoding' stamp: 'tf 7/11/2019 12:58:01'!
+encode: anObject
+	^(WebUtils jsonEncode: anObject) copyReplaceAll: ' ' with: '%20' .! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'TusLibrosWebClient class' category: #'TusLibros-Web'!
@@ -2028,31 +2163,11 @@ Object subclass: #TusLibrosWebTestObjectFactory
 	poolDictionaries: ''
 	category: 'TusLibros-Web'!
 
-!TusLibrosWebTestObjectFactory methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 15:58:19'!
-createSalesBook
-	^OrderedCollection new! !
-
-!TusLibrosWebTestObjectFactory methodsFor: 'as yet unclassified' stamp: 'TF 7/8/2019 17:58:27'!
-debit: arg1 from: arg2
-	^ self.! !
-
-!TusLibrosWebTestObjectFactory methodsFor: 'as yet unclassified' stamp: 'tf 7/9/2019 22:43:32'!
-initialize
-	storeTestObjectsFactory _ StoreTestObjectsFactory new.! !
-
-!TusLibrosWebTestObjectFactory methodsFor: 'as yet unclassified' stamp: 'TF 7/9/2019 14:55:00'!
-invalidUser
-	^ 'noPrueba'! !
-
-!TusLibrosWebTestObjectFactory methodsFor: 'as yet unclassified' stamp: 'TF 7/9/2019 14:55:43'!
-invalidUserPassword
-	^ 'noPrueba'! !
-
-!TusLibrosWebTestObjectFactory methodsFor: 'as yet unclassified' stamp: 'TF 7/8/2019 16:41:52'!
+!TusLibrosWebTestObjectFactory methodsFor: 'accessing' stamp: 'TF 7/8/2019 16:41:52'!
 storeTestObjectsFactory
 	^storeTestObjectsFactory .! !
 
-!TusLibrosWebTestObjectFactory methodsFor: 'as yet unclassified' stamp: 'tf 7/9/2019 22:43:24'!
+!TusLibrosWebTestObjectFactory methodsFor: 'accessing' stamp: 'tf 7/9/2019 22:43:24'!
 tusLibrosSystemFacade
 	
 	^TusLibrosSystemFacade
@@ -2063,17 +2178,41 @@ tusLibrosSystemFacade
 		measuringTimeWith: DateAndTime
 ! !
 
-!TusLibrosWebTestObjectFactory methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 16:01:19'!
+
+!TusLibrosWebTestObjectFactory methodsFor: 'merchant processor protocol' stamp: 'TF 7/8/2019 17:58:27'!
+debit: arg1 from: arg2
+	^ self.! !
+
+
+!TusLibrosWebTestObjectFactory methodsFor: 'initialization' stamp: 'tf 7/9/2019 22:43:32'!
+initialize
+	storeTestObjectsFactory _ StoreTestObjectsFactory new.! !
+
+
+!TusLibrosWebTestObjectFactory methodsFor: 'users' stamp: 'TF 7/9/2019 14:55:00'!
+invalidUser
+	^ 'noPrueba'! !
+
+!TusLibrosWebTestObjectFactory methodsFor: 'users' stamp: 'TF 7/9/2019 14:55:43'!
+invalidUserPassword
+	^ 'noPrueba'! !
+
+!TusLibrosWebTestObjectFactory methodsFor: 'users' stamp: 'ar 7/7/2019 16:01:19'!
 validUser
 	^ 'Prueba'! !
 
-!TusLibrosWebTestObjectFactory methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 16:01:32'!
+!TusLibrosWebTestObjectFactory methodsFor: 'users' stamp: 'ar 7/7/2019 16:01:32'!
 validUserPassword
 	^ 'Prueba'! !
 
-!TusLibrosWebTestObjectFactory methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 16:00:35'!
+!TusLibrosWebTestObjectFactory methodsFor: 'users' stamp: 'ar 7/7/2019 16:00:35'!
 validUsersAndPasswords
 
 	^Dictionary new
 		at: self validUser put: self validUserPassword;
 		yourself! !
+
+
+!TusLibrosWebTestObjectFactory methodsFor: 'salesbook' stamp: 'ar 7/7/2019 15:58:19'!
+createSalesBook
+	^OrderedCollection new! !
