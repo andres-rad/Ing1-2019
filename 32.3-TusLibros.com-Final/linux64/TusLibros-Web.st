@@ -1,12 +1,146 @@
 !classDefinition: #CheckOutWindow category: #'TusLibros-Web'!
 Panel subclass: #CheckOutWindow
-	instanceVariableNames: ''
+	instanceVariableNames: 'creditCardNumberTextBox ownersNameTextBox payButton transcriptList expirationDateTextBox errorTextBox'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros-Web'!
 
-!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:47:39'!
-initializeWithCartId: cartId username: username password: password! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:58:44'!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke: 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue;
+		morphHeight: self textBoxHeight .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #ownersName
+		textSetter: #ownersName: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke: 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue ;
+		morphHeight: self textBoxHeight .
+		
+	expirationDateTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #expirationDate
+		textSetter: #expirationDate: .
+	expirationDateTextBox textMorph 
+		setProperty: #keyStroke: 
+		toValue: [:key |
+			expirationDateTextBox textMorph acceptContents 
+		].
+	expirationDateTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue ;
+		morphHeight: self textBoxHeight .
+		
+	payButton _
+		PluggableButtonMorph model: self model 
+									stateGetter: nil 
+									action: #checkout 
+									label: 'Pay'. 
+		
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Credit card number:');
+		addMorph: creditCardNumberTextBox ;
+		addMorph: (StringMorph contents: 'Owners name:');
+		addMorph: ownersNameTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date (mm/yyyy)');
+		addMorph: expirationDateTextBox ;
+		addMorph: payButton .
+			
+	! !
+
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:56:15'!
+buildMorphicWindow
+	self layoutMorph beRow;
+		 separation: 15;
+		 padding: #left;
+		 addMorph: self buildCheckOutColumn;
+		addMorph: self buildTranscriptColumn .! !
+
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:07:51'!
+buildTranscriptColumn
+
+	transcriptList _ PluggableListMorph model: self model
+								listGetter: #transcript
+								indexGetter: nil
+								indexSetter: nil.
+	transcriptList morphHeight: self textBoxHeight *6.
+	
+	errorTextBox _ StringMorph contents: ''.
+	
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Transcript:');
+		addMorph: transcriptList;
+		addMorph: errorTextBox ;
+		yourself.
+			
+	! !
+
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:21:09'!
+initializeWith: aTitle cartId: cartId username: username password: password
+	
+	self titleMorph showButtonsNamed: #( close collapse ).
+	self setLabel: aTitle;
+		 model: (CheckOutWindowModel withCartId: cartId username: username password: password);
+		 morphExtent: 640@480;
+		 buildMorphicWindow;
+		 openInWorld.
+	self model when: #paymentDone
+				send: #paymentDone
+				to: self.
+	self model when: #updateTranscript
+				send: #updateTranscript
+				to: self.
+	self model when: #paymentFailed:
+				send: #showError:
+				to: self.! !
+
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:02:00'!
+openTranscript
+
+			
+	! !
+
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:20:51'!
+paymentDone
+	creditCardNumberTextBox updateActualContents.
+	errorTextBox contents: 'Payment Done'.
+	! !
+
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:07:58'!
+showError: anErrorMessage
+
+	errorTextBox contents: 'Error: ', anErrorMessage .! !
+
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:09:11'!
+textBoxHeight
+	^30.! !
+
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:20:22'!
+updateTranscript
+	transcriptList updateList.
+	! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -14,10 +148,10 @@ initializeWithCartId: cartId username: username password: password! !
 CheckOutWindow class
 	instanceVariableNames: ''!
 
-!CheckOutWindow class methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:47:30'!
+!CheckOutWindow class methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:12:34'!
 withCartId: cartId usernam: username password: password
 
-	^self new initializeWithCartId: cartId username: username password: password.! !
+	^self new initializeWith: 'Checkout (', cartId printString, ')' cartId: cartId username: username password: password.! !
 
 
 !classDefinition: #CreateCartWindow category: #'TusLibros-Web'!
@@ -83,7 +217,7 @@ buildMorphicWindow
 		addMorph: self buildPasswordRow;
 		addMorph: self buildCreateCartButtonRow.! !
 
-!CreateCartWindow methodsFor: 'GUI building' stamp: 'TF 7/9/2019 16:49:20'!
+!CreateCartWindow methodsFor: 'GUI building' stamp: 'tf 7/10/2019 19:24:18'!
 buildPasswordRow
 
 	passwordTextBox _ TextModelMorph
@@ -95,6 +229,7 @@ buildPasswordRow
 		setProperty: #keyStroke:
 		toValue: [ :key |
 			passwordTextBox textMorph acceptContents ].
+		
 	passwordTextBox
 		borderWidth: 1;
 		borderColor: Color skyBlue.
@@ -145,7 +280,7 @@ Panel subclass: #StoreWindow
 	poolDictionaries: ''
 	category: 'TusLibros-Web'!
 
-!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:41:35'!
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:08:07'!
 buildCartContentsColumn
 	|checkoutButton |
 	cartContentsList _ 
@@ -153,6 +288,7 @@ buildCartContentsColumn
 								listGetter: #cartContentsAsOrderedCollection
 								indexGetter: #cartContentsIndex
 								indexSetter: #cartContentsIndex:.
+	cartContentsList morphHeight: self listHeight.
 	
 	checkoutButton _ 
 		PluggableButtonMorph model: self model
@@ -175,7 +311,7 @@ buildCartContentsColumn
 		    addMorph: errorTextBox .
 		! !
 
-!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:10:57'!
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:07:24'!
 buildCatalogColumn
 	|addToCartButton|
 	catalogList _ 
@@ -183,6 +319,7 @@ buildCatalogColumn
 								listGetter: #catalog
 								indexGetter: #catalogIndex
 								indexSetter: #catalogIndex:.
+	catalogList morphHeight: self listHeight.
 	
 	addToCartButton _ 
 		PluggableButtonMorph model: self model
@@ -205,10 +342,9 @@ buildMorphicWindow
 		 addMorph: self buildCatalogColumn;
 		 addMorph: self buildCartContentsColumn.! !
 
-!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:10:44'!
-initializeWith: aTitle
-	self halt.
-	self withModel: (CreateCartWindowModel new) andTitle: aTitle.! !
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:07:50'!
+listHeight
+	^280.! !
 
 !StoreWindow methodsFor: 'as yet unclassified' stamp: 'ar 7/9/2019 19:59:46'!
 setCatalog
@@ -270,6 +406,162 @@ withCartId: cartId username: username password: password
 		andTitle: 'Tus Libros - Tienda (', cartId printString, ')'.! !
 
 
+!classDefinition: #CheckOutWindowModelTest category: #'TusLibros-Web'!
+TestCase subclass: #CheckOutWindowModelTest
+	instanceVariableNames: 'checkoutModel checkoutWebClientRequestBlock'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:12:43'!
+cartId
+	^23.! !
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:30:43'!
+checkOutCartIdentifiedAs: aCartId 
+withCreditCardNumbered: aCreditCartNumber 
+ownedBy: anOwner 
+expiringOn: anExpirationMonthOfYear
+	^checkoutWebClientRequestBlock 
+		value: aCartId 
+		value: aCreditCartNumber  
+		value: anOwner  
+		value: anExpirationMonthOfYear .! !
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:25:15'!
+listPurchasesOf: username authenticatingWith: password
+	^Dictionary new at: 'valid' put: 200; at: 'harry potter' put: 120; yourself. ! !
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:13:02'!
+password
+	^'ValidP'.! !
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:22:25'!
+setUp
+	
+	checkoutModel _ 
+		CheckOutWindowModel 
+			withWebClient: self
+			cartId: self cartId 
+			username: self username 
+			password: self password. ! !
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:11:01'!
+test01CreditCardNmuberEmpiezaVacio
+	
+	self assert: checkoutModel creditCardNumber equals: ''.
+ ! !
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:11:16'!
+test02PuedoCambiarElValorDeCreditCardNumber
+	
+	checkoutModel creditCardNumber: '123tteeoo'.
+	self assert: checkoutModel creditCardNumber equals: '123tteeoo'.
+ ! !
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:11:25'!
+test03OwnersNameEmpiezaVacio
+	
+	self assert: checkoutModel ownersName equals: ''.
+ ! !
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:12:09'!
+test04PuedoCambiarElValorDeOwnersName
+	
+	checkoutModel ownersName: '123tteeoo'.
+	self assert: checkoutModel ownersName equals: '123tteeoo'.
+ ! !
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:12:18'!
+test05ExpirationDateEmpiezaVacio
+	
+	self assert: checkoutModel expirationDate equals: ''.
+ ! !
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:11:51'!
+test06PuedoCambiarElValorDeExpirationDate
+	
+	checkoutModel expirationDate: '123tteeoo'.
+	self assert: checkoutModel expirationDate equals: '123tteeoo'.
+ ! !
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:30:56'!
+test07AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiTodoSaleBien
+	|  counter |
+	
+	counter _ 0.
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |
+		self assert: cartId equals: 23. 
+		self assert: ccNumber equals: '0123012301230123'. 
+		self assert: ownersName equals: 'Teo Freund'.
+		self assert: expirationDate equals:  (Month month: 07 year: 2020) . 
+		counter _ counter + 1.
+	].
+	
+
+	checkoutModel when: #paymentDone evaluate: [counter _ counter + 1].
+	checkoutModel creditCardNumber: '0123012301230123'.
+	checkoutModel ownersName: 'Teo Freund'.
+	checkoutModel expirationDate: '07/2020'.
+	
+	checkoutModel checkout.
+	
+	self assert: counter equals: 2.
+	self assert: checkoutModel creditCardNumber equals: '0123'.
+	! !
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:36:39'!
+test08AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiHayUnError
+	|  error |
+	
+	error _ ''.
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |
+		self error: 'Error!!'.
+	].
+	
+
+	checkoutModel when: #paymentFailed: evaluate: [:anError | error _ anError].
+	
+	checkoutModel creditCardNumber: '0123012301230123'.
+	checkoutModel ownersName: 'Teo Freund'.
+	checkoutModel expirationDate: '07/2020'.
+	checkoutModel checkout.
+	
+	self assert: error equals: 'Error!!'.
+
+	! !
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:52:01'!
+test09TranscriptEmpiezaVacio
+	
+	self assert: checkoutModel transcript isEmpty.
+ ! !
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:28:27'!
+test10DespuesDeEfectuarElPagoSeActualizaElTranscript
+
+	| flag |
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |].
+	
+
+	flag _ false.
+	checkoutModel when: #updateTranscript evaluate: [flag _ true].
+	checkoutModel creditCardNumber: '0123012301230123'.
+	checkoutModel ownersName: 'Teo Freund'.
+	checkoutModel expirationDate: '07/2020'.
+	
+	checkoutModel checkout.
+	
+
+	self assert: flag.
+	self assert: checkoutModel transcript equals: (OrderedCollection with: 'harry potter $120' with: 'valid $200').
+	! !
+
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:12:52'!
+username
+	^'Valid'.! !
+
+
 !classDefinition: #CreateCartWindowModelTest category: #'TusLibros-Web'!
 TestCase subclass: #CreateCartWindowModelTest
 	instanceVariableNames: 'webClientRequestBlock windowModel'
@@ -277,11 +569,7 @@ TestCase subclass: #CreateCartWindowModelTest
 	poolDictionaries: ''
 	category: 'TusLibros-Web'!
 
-!CreateCartWindowModelTest methodsFor: 'as yet unclassified' stamp: 'ar 7/9/2019 19:57:04'!
-catalog
-	^webClientRequestBlock value.! !
-
-!CreateCartWindowModelTest methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 17:53:46'!
+!CreateCartWindowModelTest methodsFor: 'tests' stamp: 'ar 7/7/2019 17:53:46'!
 test01NewModelUsernameValueIsEmpty
 	| LoginModel |
 	
@@ -289,7 +577,7 @@ test01NewModelUsernameValueIsEmpty
 	
 	self assert: (LoginModel username = '').! !
 
-!CreateCartWindowModelTest methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 17:53:46'!
+!CreateCartWindowModelTest methodsFor: 'tests' stamp: 'ar 7/7/2019 17:53:46'!
 test02NewModelPasswordValueIsEmpty
 	| LoginModel |
 	
@@ -297,7 +585,7 @@ test02NewModelPasswordValueIsEmpty
 	
 	self assert: (LoginModel password = '').! !
 
-!CreateCartWindowModelTest methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 17:53:46'!
+!CreateCartWindowModelTest methodsFor: 'tests' stamp: 'ar 7/7/2019 17:53:46'!
 test03ModelUsernameValueUpdatesWithInputtedValue
 	| LoginModel |
 	
@@ -306,7 +594,7 @@ test03ModelUsernameValueUpdatesWithInputtedValue
 	LoginModel username: 'ValidUser'.
 	self assert: (LoginModel username = 'ValidUser').! !
 
-!CreateCartWindowModelTest methodsFor: 'as yet unclassified' stamp: 'ar 7/7/2019 17:53:46'!
+!CreateCartWindowModelTest methodsFor: 'tests' stamp: 'ar 7/7/2019 17:53:46'!
 test04ModelPasswordValueUpdatesWithInputtedValue
 	| LoginModel |
 	
@@ -315,7 +603,7 @@ test04ModelPasswordValueUpdatesWithInputtedValue
 	LoginModel password: 'ValidPass'.
 	self assert: (LoginModel password = 'ValidPass').! !
 
-!CreateCartWindowModelTest methodsFor: 'as yet unclassified' stamp: 'TF 7/9/2019 16:17:15'!
+!CreateCartWindowModelTest methodsFor: 'tests' stamp: 'TF 7/9/2019 16:17:15'!
 test05SiElWebClientCreaElCarritoElModeloGuardaElIdYDisparaElEventoDeCreacionExitosa
 	| flag |
 	
@@ -335,7 +623,7 @@ test05SiElWebClientCreaElCarritoElModeloGuardaElIdYDisparaElEventoDeCreacionExit
 	self assert: windowModel cartId equals: 23. 
 	self assert: flag .! !
 
-!CreateCartWindowModelTest methodsFor: 'as yet unclassified' stamp: 'ar 7/9/2019 19:33:52'!
+!CreateCartWindowModelTest methodsFor: 'tests' stamp: 'ar 7/9/2019 19:33:52'!
 test06SiElWebClientRecibeUnErrorAlCrearElCarritoForewardeaElMensajeDeError
 	| flag error |
 	
@@ -373,30 +661,7 @@ TestCase subclass: #StoreWindowModelTest
 	poolDictionaries: ''
 	category: 'TusLibros-Web'!
 
-!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 17:21:10'!
-add: bookQuantity of: bookISBN toCartIdentifiedAs: cartId
-	addToCartWebClientRequestBlock value: bookQuantity value: bookISBN  value: cartId .! !
-
-!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 17:18:19'!
-catalog
-	^catalogWebClientRequestBlock value.! !
-
-!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 17:03:10'!
-defaultCatalog
-	^Dictionary new
-		at: 'valid' put: 23;
-		at: 'harry potter' put: 231;
-		yourself ! !
-
-!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 17:31:50'!
-setUp
-	catalogWebClientRequestBlock _ [
-		self defaultCatalog .
-	].
-
-	addToCartWebClientRequestBlock _ [:anAmount :aBookISBN :aCartId | ].! !
-
-!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 17:18:19'!
+!StoreWindowModelTest methodsFor: 'tests' stamp: 'tf 7/10/2019 17:18:19'!
 test01AlPedirElCatalogoPorPrimeraVezLoReciboYSeLevantaElEvento
 	| storeModel catalogAsOrderedCollection flag |
 	
@@ -415,7 +680,7 @@ test01AlPedirElCatalogoPorPrimeraVezLoReciboYSeLevantaElEvento
 	self assert: storeModel catalog equals:  catalogAsOrderedCollection .
 	self assert: flag.! !
 
-!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 17:18:19'!
+!StoreWindowModelTest methodsFor: 'tests' stamp: 'tf 7/10/2019 17:18:19'!
 test02AlPedirElCatalogoYRecibirUnaExcepcionPorElWebClientSeLlamaAlEventoCorrespondiente
 	| storeModel error |
 	
@@ -431,7 +696,7 @@ test02AlPedirElCatalogoYRecibirUnaExcepcionPorElWebClientSeLlamaAlEventoCorrespo
 	
 	self assert: error equals: 'bad request'.! !
 
-!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 18:06:29'!
+!StoreWindowModelTest methodsFor: 'tests' stamp: 'tf 7/10/2019 18:06:29'!
 test03ElValorDeCatalogIndexComienzaEn0
 	| storeModel |
 	
@@ -439,7 +704,7 @@ test03ElValorDeCatalogIndexComienzaEn0
 
 	self assert: storeModel catalogIndex equals: 0.! !
 
-!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 18:06:12'!
+!StoreWindowModelTest methodsFor: 'tests' stamp: 'tf 7/10/2019 18:06:12'!
 test03bisPuedoCambiarElValorDeCatalogIndex
 	| storeModel |
 	
@@ -447,7 +712,7 @@ test03bisPuedoCambiarElValorDeCatalogIndex
 	storeModel catalogIndex: 42.
 	self assert: storeModel catalogIndex equals: 42.! !
 
-!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 17:33:41'!
+!StoreWindowModelTest methodsFor: 'tests' stamp: 'tf 7/10/2019 17:33:41'!
 test04AlAgregarUnElementoSeNotificaAlWebClientYSeLevantaElEventoCorrespondienteSiTodoSaleBien
 	| storeModel counter |
 	
@@ -471,8 +736,8 @@ test04AlAgregarUnElementoSeNotificaAlWebClientYSeLevantaElEventoCorrespondienteS
 	self assert: counter equals: 2.
 	self assert: storeModel cartContents equals: (Bag with: 'harry potter'). ! !
 
-!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 17:35:21'!
-test05
+!StoreWindowModelTest methodsFor: 'tests' stamp: 'tf 7/10/2019 19:08:04'!
+test05SiAlAgregarUnElementoElWebClientLevantaUnaExcepcionSeLevantaAlEventoYNoSeModificanLosContenidosDelCarrito
 	| storeModel error |
 	
 	error _ 0.
@@ -492,7 +757,7 @@ test05
 	self assert: error equals: 'super error!!'.
 	self assert: storeModel cartContents equals: (Bag new). ! !
 
-!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 18:07:03'!
+!StoreWindowModelTest methodsFor: 'tests' stamp: 'tf 7/10/2019 18:07:03'!
 test06ElValorDeCartContentsIndexComienzaEn0
 	| storeModel |
 	
@@ -500,7 +765,7 @@ test06ElValorDeCartContentsIndexComienzaEn0
 
 	self assert: storeModel cartContentsIndex equals: 0.! !
 
-!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 18:07:42'!
+!StoreWindowModelTest methodsFor: 'tests' stamp: 'tf 7/10/2019 18:07:42'!
 test07PuedoCambiarElValorDeCartContentsIndex
 	| storeModel |
 	
@@ -508,7 +773,7 @@ test07PuedoCambiarElValorDeCartContentsIndex
 	storeModel cartContentsIndex: 42.
 	self assert: storeModel cartContentsIndex equals: 42.! !
 
-!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 18:22:52'!
+!StoreWindowModelTest methodsFor: 'tests' stamp: 'tf 7/10/2019 18:22:52'!
 test08ElValorDelSubTotalComienzaEn0
 	| storeModel |
 	
@@ -516,7 +781,7 @@ test08ElValorDelSubTotalComienzaEn0
 
 	self assert: storeModel subTotal equals: 0.! !
 
-!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 18:26:45'!
+!StoreWindowModelTest methodsFor: 'tests' stamp: 'tf 7/10/2019 18:26:45'!
 test09AlAgregarUnElementoSeIncrementaAcordeElSubTotal
 	| storeModel |
 	
@@ -537,6 +802,32 @@ test09AlAgregarUnElementoSeIncrementaAcordeElSubTotal
 	storeModel addToCart.
 	
 	self assert: storeModel subTotal equals: 231 + 23. ! !
+
+
+!StoreWindowModelTest methodsFor: 'setUp/tearDown' stamp: 'tf 7/10/2019 17:31:50'!
+setUp
+	catalogWebClientRequestBlock _ [
+		self defaultCatalog .
+	].
+
+	addToCartWebClientRequestBlock _ [:anAmount :aBookISBN :aCartId | ].! !
+
+
+!StoreWindowModelTest methodsFor: 'test - private' stamp: 'tf 7/10/2019 17:03:10'!
+defaultCatalog
+	^Dictionary new
+		at: 'valid' put: 23;
+		at: 'harry potter' put: 231;
+		yourself ! !
+
+
+!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 17:21:10'!
+add: bookQuantity of: bookISBN toCartIdentifiedAs: cartId
+	addToCartWebClientRequestBlock value: bookQuantity value: bookISBN  value: cartId .! !
+
+!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 17:18:19'!
+catalog
+	^catalogWebClientRequestBlock value.! !
 
 
 !classDefinition: #TusLibrosServerControllerTest category: #'TusLibros-Web'!
@@ -1118,6 +1409,96 @@ test13LevantaUnaExcepcionAlRecibirUnErrorDelServerSiSeLePideHacerCheckout
 				expiringOn: (Month month: 07 year: 2020) .]
 		 raise: Error -  MessageNotUnderstood 
 		 withMessageText: 'Error'.
+	! !
+
+
+!classDefinition: #CheckOutWindowModel category: #'TusLibros-Web'!
+Object subclass: #CheckOutWindowModel
+	instanceVariableNames: 'cartId username password creditCardNumber ownersName expirationDate webClient transcript'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:26:58'!
+checkout
+
+	[
+		webClient checkOutCartIdentifiedAs: cartId 
+					withCreditCardNumbered:  creditCardNumber 
+					ownedBy: ownersName  
+					expiringOn: (Month readFrom: expirationDate readStream).
+		creditCardNumber _ creditCardNumber last: 4.
+		self triggerEvent: #paymentDone.
+		self updateTranscript.
+		self triggerEvent: #updateTranscript.
+		
+	] on: Error 
+	do: [:anError | self triggerEvent: #paymentFailed: with: anError messageText ].! !
+
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:13:16'!
+creditCardNumber
+	^creditCardNumber! !
+
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:14:01'!
+creditCardNumber: aString 
+	
+	creditCardNumber _ aString! !
+
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:19:07'!
+expirationDate
+	^expirationDate.! !
+
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:19:52'!
+expirationDate: aString 
+	
+	expirationDate _ aString! !
+
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:57:01'!
+initializeWithWebClient: aWebClient cartId: aCartId username: aUsername password: aPassword 
+	webClient _ aWebClient .
+	cartId _ aCartId .
+	username _ aUsername .
+	password _ aPassword .
+	
+	creditCardNumber _ ''.
+	ownersName _ ''.
+	expirationDate _ ''.
+	transcript _ OrderedCollection new.! !
+
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:15:25'!
+ownersName
+	^ownersName.! !
+
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:16:01'!
+ownersName: aString 
+	
+	ownersName _ aString! !
+
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:56:48'!
+transcript
+	^transcript.! !
+
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:27:52'!
+updateTranscript
+	| originalTranscript |
+	originalTranscript _ webClient listPurchasesOf: username authenticatingWith: password .
+	
+	transcript _ OrderedCollection new.
+	originalTranscript keysAndValuesDo: [:key :value | transcript add: key, ' $', value printString ].! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'CheckOutWindowModel class' category: #'TusLibros-Web'!
+CheckOutWindowModel class
+	instanceVariableNames: ''!
+
+!CheckOutWindowModel class methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:55:12'!
+withCartId: aCartId username: aUsername password: aPassword 
+	^self  withWebClient: TusLibrosWebClient new cartId: aCartId username: aUsername password: aPassword .! !
+
+!CheckOutWindowModel class methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:21:08'!
+withWebClient: aWebClient cartId: aCartId username: aUsername password: aPassword
+	^self new initializeWithWebClient: aWebClient cartId: aCartId  username: aUsername  password: aPassword .
 	! !
 
 

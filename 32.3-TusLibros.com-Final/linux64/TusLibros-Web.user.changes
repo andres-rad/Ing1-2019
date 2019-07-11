@@ -3233,3 +3233,2835 @@ CreateCartWindow open.!
 
 
 ----QUIT----(10 July 2019 18:49:17) TusLibros-Web.image priorSource: 14865010!
+
+----STARTUP---- (10 July 2019 19:05:16) as /home/teofr/Documents/IngBkp/Ing1-2019/32.3-TusLibros.com-Final/linux64/TusLibros-Web.image!
+
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:06:17' prior: 50796087!
+buildCartContentsColumn
+	|checkoutButton |
+	cartContentsList _ 
+		PluggableListMorph model: self model
+								listGetter: #cartContentsAsOrderedCollection
+								indexGetter: #cartContentsIndex
+								indexSetter: nil.
+	
+	checkoutButton _ 
+		PluggableButtonMorph model: self model
+									stateGetter: nil
+									action: #goToCheckout
+									label: 'Checkout'.
+									
+	subtotalText _ StringMorph contents: 'Total: $0'.
+	
+	errorTextBox _ StringMorph contents: ''.
+	
+		     
+	^ (LayoutMorph newColumn)
+		    padding: #left;
+		    separation: 15;
+		    addMorph: (StringMorph contents: 'Tu carrito:');
+		    addMorph: cartContentsList;
+    	    addMorph: checkoutButton;
+  	          addMorph: subtotalText;
+		    addMorph: errorTextBox .
+		! !
+
+CreateCartWindow open.!
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:06:52' prior: 50796197!
+buildCartContentsColumn
+	|checkoutButton |
+	cartContentsList _ 
+		PluggableListMorph model: self model
+								listGetter: #cartContentsAsOrderedCollection
+								indexGetter: nil
+								indexSetter: nil.
+	
+	checkoutButton _ 
+		PluggableButtonMorph model: self model
+									stateGetter: nil
+									action: #goToCheckout
+									label: 'Checkout'.
+									
+	subtotalText _ StringMorph contents: 'Total: $0'.
+	
+	errorTextBox _ StringMorph contents: ''.
+	
+		     
+	^ (LayoutMorph newColumn)
+		    padding: #left;
+		    separation: 15;
+		    addMorph: (StringMorph contents: 'Tu carrito:');
+		    addMorph: cartContentsList;
+    	    addMorph: checkoutButton;
+  	          addMorph: subtotalText;
+		    addMorph: errorTextBox .
+		! !
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 18:41:35' prior: 50796225!
+buildCartContentsColumn
+	|checkoutButton |
+	cartContentsList _ 
+		PluggableListMorph model: self model
+								listGetter: #cartContentsAsOrderedCollection
+								indexGetter: #cartContentsIndex
+								indexSetter: #cartContentsIndex:.
+	
+	checkoutButton _ 
+		PluggableButtonMorph model: self model
+									stateGetter: nil
+									action: #goToCheckout
+									label: 'Checkout'.
+									
+	subtotalText _ StringMorph contents: 'Total: $0'.
+	
+	errorTextBox _ StringMorph contents: ''.
+	
+		     
+	^ (LayoutMorph newColumn)
+		    padding: #left;
+		    separation: 15;
+		    addMorph: (StringMorph contents: 'Tu carrito:');
+		    addMorph: cartContentsList;
+    	    addMorph: checkoutButton;
+  	          addMorph: subtotalText;
+		    addMorph: errorTextBox .
+		! !
+!StoreWindowModelTest methodsFor: 'webclient protocol' stamp: 'tf 7/10/2019 19:08:04'!
+test05SiAlAgregarUnElementoElWebClientLevantaUnaExcepcionSeLevantaAlEventoYNoSeModificanLosContenidosDelCarrito
+	| storeModel error |
+	
+	error _ 0.
+	addToCartWebClientRequestBlock _ [:anAmount :aBookISBN :aCartId |
+		self error: 'super error!!'.
+	].
+	
+	storeModel _ StoreWindowModel withWebClient: self cartId: 24  username: 'Valid'  andPassword: 'ValidP'.
+	
+
+	storeModel when: #addToCartFailed evaluate: [:anError | error _ anError ].
+	storeModel catalog.
+	storeModel catalogIndex: 1.
+	
+	storeModel addToCart.
+	
+	self assert: error equals: 'super error!!'.
+	self assert: storeModel cartContents equals: (Bag new). ! !
+
+StoreWindowModelTest removeSelector: #test05!
+
+CreateCartWindowModelTest removeSelector: #catalog!
+
+----SNAPSHOT----(10 July 2019 19:09:30) TusLibros-Web.image priorSource: 14865228!
+
+Object subclass: #CheckOutWindowModel
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+
+!classDefinition: #CheckOutWindowModel category: #'TusLibros-Web'!
+Object subclass: #CheckOutWindowModel
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+
+TestCase subclass: #CheckOutWindowModelTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+
+!classDefinition: #CheckOutWindowModelTest category: #'TusLibros-Web'!
+TestCase subclass: #CheckOutWindowModelTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+
+----SNAPSHOT----(10 July 2019 19:10:19) TusLibros-Web.image priorSource: 14868910!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:10:37'!
+initializeWith: aTitle cartId: cartId username: username password: password! !
+
+CheckOutWindow removeSelector: #initializeWithCartId:username:password:!
+!CheckOutWindow class methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:10:53' prior: 50796167!
+withCartId: cartId usernam: username password: password
+
+	^self new initializeWith: 'Some title' cartId: cartId username: username password: password.! !
+
+StoreWindow removeSelector: #initializeWith:!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:12:00' prior: 50796332!
+initializeWith: aTitle cartId: cartId username: username password: password
+	
+	self titleMorph showButtonsNamed: #( close collapse ).
+	self setLabel: aTitle;
+		 model: (CheckOutWindowModel withCartId: cartId username: username password: password);
+		 morphExtent: 640@480;
+		 buildMorphicWindow;
+		 openInWorld.
+	self model when: #catalogArrived 
+			     send: #setCatalog
+			     to: self.
+	self model when: #cartContentsUpdated 
+				send: #updateCartContents  
+				to: self.
+	self model when: #catalogRequestFailed
+				send: #showError:
+				to: self.
+	self model when: #addToCartFailed
+				send: #showError:
+				to: self.
+	self model  when: #checkOutWindowCreated 
+				send: #delete  
+				to: self. ! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:12:12' prior: 50796351!
+initializeWith: aTitle cartId: cartId username: username password: password
+	
+	self titleMorph showButtonsNamed: #( close collapse ).
+	self setLabel: aTitle;
+		 model: (CheckOutWindowModel withCartId: cartId username: username password: password);
+		 morphExtent: 640@480;
+		 buildMorphicWindow;
+		 openInWorld.
+	! !
+!CheckOutWindow class methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:12:34' prior: 50796341!
+withCartId: cartId usernam: username password: password
+
+	^self new initializeWith: 'Checkout (', cartId printString, ')' cartId: cartId username: username password: password.! !
+
+CreateCartWindow open.!
+!CheckOutWindowModel class methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:13:02'!
+withCartId: aSmallInteger username: aText password: aText3 
+	self shouldBeImplemented.! !
+!CheckOutWindowModel class methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:13:10' prior: 50796401!
+withCartId: aCartId username: aText password: aText3 
+	self shouldBeImplemented.! !
+!CheckOutWindowModel class methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:13:40' prior: 50796408!
+withCartId: aCartId username: aUsername password: aPassword 
+	^self new initializeWithCartId: aCartId username: aUsername password: aPassword .! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:13:46'!
+initializeWithCartId: aSmallInteger username: aText password: aText3 
+	self shouldBeImplemented.! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:14:02' prior: 50796423!
+initializeWithCartId: aCartId username: aUsername password: aPassword 
+	! !
+!CheckOutWindow class methodsFor: 'nil' stamp: 'tf 7/10/2019 19:14:57'!
+buildMorphicWindow
+	self layoutMorph beRow;
+		 separation: 15;
+		 padding: #left;
+		 addMorph: self buildCheckOutColumn;
+		 addMorph: self buildTranscriptColumn.! !
+
+CreateCartWindow open.!
+
+CheckOutWindow class removeSelector: #buildMorphicWindow!
+!CheckOutWindow methodsFor: 'nil' stamp: 'tf 7/10/2019 19:17:59'!
+buildMorphicWindow
+	self layoutMorph beRow;
+		 separation: 15;
+		 padding: #left;
+		 addMorph: self buildCheckOutColumn;
+		 addMorph: self buildTranscriptColumn.! !
+!CreateCartWindow methodsFor: 'GUI building' stamp: 'tf 7/10/2019 19:18:30' prior: 50789544!
+buildPasswordRow
+
+	passwordTextBox _ TextModelMorph
+		textProvider: self model
+		textGetter: #password
+		textSetter: #password: .
+		
+	passwordTextBox textMorph
+		setProperty: #keyStroke:
+		toValue: [ :key |
+			passwordTextBox textMorph acceptContents ].
+	passwordTextBox
+		borderWidth: 1;
+		borderColor: Color skyBlue.
+		
+	^ (LayoutMorph newRow) separation: 25;
+		padding: #left;
+		addMorph: (StringMorph contents: 'Contraseña:');
+		addMorph: passwordTextBox;
+		yourself.! !
+!CreateCartWindow methodsFor: 'GUI building' stamp: 'tf 7/10/2019 19:20:31' prior: 50796454!
+buildPasswordRow
+
+	passwordTextBox _ TextModelMorph
+		textProvider: self model
+		textGetter: #password
+		textSetter: #password: .
+		
+	passwordTextBox textMorph
+		setProperty: #keyStroke:
+		toValue: [ :key |
+			key isTab 
+				ifTrue: [] 
+				ifFalse: [passwordTextBox textMorph acceptContents]
+		].
+	passwordTextBox
+		borderWidth: 1;
+		borderColor: Color skyBlue.
+		
+	^ (LayoutMorph newRow) separation: 25;
+		padding: #left;
+		addMorph: (StringMorph contents: 'Contraseña:');
+		addMorph: passwordTextBox;
+		yourself.! !
+
+CreateCartWindow open.!
+!CreateCartWindow methodsFor: 'GUI building' stamp: 'tf 7/10/2019 19:20:47' prior: 50796472!
+buildPasswordRow
+
+	passwordTextBox _ TextModelMorph
+		textProvider: self model
+		textGetter: #password
+		textSetter: #password: .
+		
+	passwordTextBox textMorph
+		setProperty: #keyStroke:
+		toValue: [ :key |
+			self halt
+			key isTab 
+				ifTrue: [] 
+				ifFalse: [passwordTextBox textMorph acceptContents]
+		].
+	passwordTextBox
+		borderWidth: 1;
+		borderColor: Color skyBlue.
+		
+	^ (LayoutMorph newRow) separation: 25;
+		padding: #left;
+		addMorph: (StringMorph contents: 'Contraseña:');
+		addMorph: passwordTextBox;
+		yourself.! !
+!CreateCartWindow methodsFor: 'GUI building' stamp: 'tf 7/10/2019 19:20:48' prior: 50796492!
+buildPasswordRow
+
+	passwordTextBox _ TextModelMorph
+		textProvider: self model
+		textGetter: #password
+		textSetter: #password: .
+		
+	passwordTextBox textMorph
+		setProperty: #keyStroke:
+		toValue: [ :key |
+			self halt.
+			key isTab 
+				ifTrue: [] 
+				ifFalse: [passwordTextBox textMorph acceptContents]
+		].
+	passwordTextBox
+		borderWidth: 1;
+		borderColor: Color skyBlue.
+		
+	^ (LayoutMorph newRow) separation: 25;
+		padding: #left;
+		addMorph: (StringMorph contents: 'Contraseña:');
+		addMorph: passwordTextBox;
+		yourself.! !
+
+CreateCartWindow open.!
+
+CreateCartWindow open.!
+
+self isTab !
+
+self isTab !
+
+self isTab !
+!CreateCartWindow methodsFor: 'GUI building' stamp: 'tf 7/10/2019 19:23:32' prior: 50796512!
+buildPasswordRow
+
+	passwordTextBox _ TextModelMorph
+		textProvider: self model
+		textGetter: #password
+		textSetter: #password: .
+		
+	passwordTextBox textMorph
+		setProperty: #keyStroke:
+		toValue: [ :key |
+			key isTab 
+				ifTrue: [self halt.] 
+				ifFalse: [passwordTextBox textMorph acceptContents]
+		].
+	passwordTextBox
+		borderWidth: 1;
+		borderColor: Color skyBlue.
+		
+	^ (LayoutMorph newRow) separation: 25;
+		padding: #left;
+		addMorph: (StringMorph contents: 'Contraseña:');
+		addMorph: passwordTextBox;
+		yourself.! !
+
+CreateCartWindow open.!
+!CreateCartWindow methodsFor: 'GUI building' stamp: 'tf 7/10/2019 19:18:30' prior: 50796535!
+buildPasswordRow
+
+	passwordTextBox _ TextModelMorph
+		textProvider: self model
+		textGetter: #password
+		textSetter: #password: .
+		
+	passwordTextBox textMorph
+		setProperty: #keyStroke:
+		toValue: [ :key |
+			passwordTextBox textMorph acceptContents ].
+	passwordTextBox
+		borderWidth: 1;
+		borderColor: Color skyBlue.
+		
+	^ (LayoutMorph newRow) separation: 25;
+		padding: #left;
+		addMorph: (StringMorph contents: 'Contraseña:');
+		addMorph: passwordTextBox;
+		yourself.! !
+!CreateCartWindow methodsFor: 'GUI building' stamp: 'tf 7/10/2019 19:24:18' prior: 50796556!
+buildPasswordRow
+
+	passwordTextBox _ TextModelMorph
+		textProvider: self model
+		textGetter: #password
+		textSetter: #password: .
+		
+	passwordTextBox textMorph
+		setProperty: #keyStroke:
+		toValue: [ :key |
+			passwordTextBox textMorph acceptContents ].
+		
+	passwordTextBox
+		borderWidth: 1;
+		borderColor: Color skyBlue.
+		
+	^ (LayoutMorph newRow) separation: 25;
+		padding: #left;
+		addMorph: (StringMorph contents: 'Contraseña:');
+		addMorph: passwordTextBox;
+		yourself.! !
+
+CreateCartWindow open.!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:24:44'!
+buildCheckOutColumn
+	self shouldBeImplemented.! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:24:45' prior: 50796593!
+buildCheckOutColumn
+	! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:24:53'!
+buildTranscriptColumn
+	self shouldBeImplemented.! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 19:24:54' prior: 50796602!
+buildTranscriptColumn
+	! !
+
+----SNAPSHOT----(10 July 2019 19:25:32) TusLibros-Web.image priorSource: 14869704!
+
+----SNAPSHOT----(10 July 2019 19:26:03) TusLibros-Web.image priorSource: 14878714!
+
+----QUIT----(10 July 2019 19:27:17) TusLibros-Web.image priorSource: 14878798!
+
+----STARTUP---- (10 July 2019 20:35:44) as /home/teofr/Documents/IngBkp/Ing1-2019/32.3-TusLibros.com-Final/linux64/TusLibros-Web.image!
+
+
+----QUIT----(10 July 2019 20:36:12) TusLibros-Web.image priorSource: 14878882!
+
+----STARTUP---- (10 July 2019 23:56:40) as /home/teofr/Documents/IngBkp/Ing1-2019/32.3-TusLibros.com-Final/linux64/TusLibros-Web.image!
+
+
+!classDefinition: #CheckOutWindowModel category: #'TusLibros-Web'!
+Object subclass: #CheckOutWindowModel
+	instanceVariableNames: 'cartId'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+
+!classDefinition: #CheckOutWindowModel category: #'TusLibros-Web'!
+Object subclass: #CheckOutWindowModel
+	instanceVariableNames: 'cartId username'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+
+!classDefinition: #CheckOutWindowModel category: #'TusLibros-Web'!
+Object subclass: #CheckOutWindowModel
+	instanceVariableNames: 'cartId username password'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 23:57:34' prior: 50796430!
+initializeWithCartId: aCartId username: aUsername password: aPassword 
+	cartId _ aCartId .
+	username _ aUsername .
+	password _ aPassword .! !
+
+!classDefinition: #CheckOutWindow category: #'TusLibros-Web'!
+Panel subclass: #CheckOutWindow
+	instanceVariableNames: 'creditCardNumberTextBox'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/10/2019 23:59:22' prior: 50796598!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	 
+	! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:00:46' prior: 50796666!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+	! !
+
+!classDefinition: #CheckOutWindow category: #'TusLibros-Web'!
+Panel subclass: #CheckOutWindow
+	instanceVariableNames: 'creditCardNumberTextBox ownersNameTextBox'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:01:14' prior: 50796675!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+	! !
+
+!classDefinition: #CheckOutWindow category: #'TusLibros-Web'!
+Panel subclass: #CheckOutWindow
+	instanceVariableNames: 'creditCardNumberTextBox ownersNameTextBox expirationDateMonthTextBox'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:02:23' prior: 50796698!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	expirationDateMonthTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+	! !
+
+!classDefinition: #CheckOutWindow category: #'TusLibros-Web'!
+Panel subclass: #CheckOutWindow
+	instanceVariableNames: 'creditCardNumberTextBox ownersNameTextBox expirationDateMonthTextBox expirationDateYearTextBox'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:02:37' prior: 50796733!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	expirationDateMonthTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	expirationDateMonthTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			expirationDateMonthTextBox textMorph acceptContents 
+		].
+	expirationDateMonthTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	expirationDateYearTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+	! !
+
+#(1 2 3 4)!
+
+a _ 0.!
+
+#(1 2 3 4) do: [:x | a _ a + x].!
+
+a!
+
+!classDefinition: #CheckOutWindow category: #'TusLibros-Web'!
+Panel subclass: #CheckOutWindow
+	instanceVariableNames: 'creditCardNumberTextBox ownersNameTextBox expirationDateMonthTextBox expirationDateYearTextBox payButton'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:08:43' prior: 50796789!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	expirationDateMonthTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	expirationDateMonthTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			expirationDateMonthTextBox textMorph acceptContents 
+		].
+	expirationDateMonthTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	expirationDateYearTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	expirationDateYearTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			expirationDateYearTextBox textMorph acceptContents 
+		].
+	expirationDateYearTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	payButton _
+		PluggableButtonMorph model: self model 
+									stateGetter: nil 
+									action: #doCheckout 
+									label: 'Pay'. 
+		
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Credit card number:');
+		addMorph: creditCardNumberTextBox ;
+		addMorph: (StringMorph contents: 'Owners name:');
+		addMorph: ownersNameTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date month');
+		addMorph: expirationDateMonthTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date year');
+		addMorph: expirationDateYearTextBox ;
+		addMorph: payButton .
+			
+	! !
+
+!classDefinition: #CheckOutWindow category: #'TusLibros-Web'!
+Panel subclass: #CheckOutWindow
+	instanceVariableNames: 'creditCardNumberTextBox ownersNameTextBox expirationDateMonthTextBox expirationDateYearTextBox payButton transcriptList'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:10:22' prior: 50796607!
+buildTranscriptColumn
+
+	transcriptList _ 
+		PluggableListMorph model: self model 
+								listGetter: #listPurchases 
+								indexGetter: nil  
+								indexSetter: nil.
+								 
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Compras:');
+		addMorph: nil.
+			
+	! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:10:27' prior: 50796926!
+buildTranscriptColumn
+
+	transcriptList _ 
+		PluggableListMorph model: self model 
+								listGetter: #listPurchases 
+								indexGetter: nil  
+								indexSetter: nil.
+								 
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Compras:');
+		addMorph: transcriptList .
+			
+	! !
+
+CreateCartWindow open.!
+
+!classDefinition: #CheckOutWindowModelTest category: #'TusLibros-Web'!
+TestCase subclass: #CheckOutWindowModelTest
+	instanceVariableNames: 'checkoutModel'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindowModelTest methodsFor: 'nil' stamp: 'tf 7/11/2019 00:11:55'!
+setUp
+	
+	checkoutModel _ 
+		CheckOutWindowModel 
+			withCartId: self cartId 
+			username: self username 
+			password: self password. ! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:12:32'!
+test01
+	
+	self assert: checkoutModel creditCardNumber equals: ''.
+ ! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:12:39'!
+cartId
+	self shouldBeImplemented.! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:12:43' prior: 50796974!
+cartId
+	^23.! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:12:48'!
+username
+	self shouldBeImplemented.! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:12:52' prior: 50796983!
+username
+	^'Valid'.! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:12:58'!
+password
+	self shouldBeImplemented.! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:13:02' prior: 50796992!
+password
+	^'ValidP'.! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:13:08'!
+creditCardNumber
+	self shouldBeImplemented.! !
+
+!classDefinition: #CheckOutWindowModel category: #'TusLibros-Web'!
+Object subclass: #CheckOutWindowModel
+	instanceVariableNames: 'cartId username password creditCardNumber'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:13:16' prior: 50797001!
+creditCardNumber
+	^creditCardNumber! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:13:29' prior: 50796651!
+initializeWithCartId: aCartId username: aUsername password: aPassword 
+	cartId _ aCartId .
+	username _ aUsername .
+	password _ aPassword .
+	
+	creditCardNumber _ ''.! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:13:54'!
+test02
+	
+	checkoutModel creditCardNumber: '123tteeoo'.
+	self assert: checkoutModel creditCardNumber equals: '123tteeoo'.
+ ! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:14:00'!
+creditCardNumber: aString 
+	self shouldBeImplemented.
+	creditCardNumber _ aString! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:14:01' prior: 50797035!
+creditCardNumber: aString 
+	
+	creditCardNumber _ aString! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:15:11' prior: 50796848!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #ownersName
+		textSetter: #ownersName: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	expirationDateMonthTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	expirationDateMonthTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			expirationDateMonthTextBox textMorph acceptContents 
+		].
+	expirationDateMonthTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	expirationDateYearTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	expirationDateYearTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			expirationDateYearTextBox textMorph acceptContents 
+		].
+	expirationDateYearTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	payButton _
+		PluggableButtonMorph model: self model 
+									stateGetter: nil 
+									action: #doCheckout 
+									label: 'Pay'. 
+		
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Credit card number:');
+		addMorph: creditCardNumberTextBox ;
+		addMorph: (StringMorph contents: 'Owners name:');
+		addMorph: ownersNameTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date month');
+		addMorph: expirationDateMonthTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date year');
+		addMorph: expirationDateYearTextBox ;
+		addMorph: payButton .
+			
+	! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:15:13'!
+test03
+	
+	self assert: checkoutModel ownersName equals: ''.
+ ! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:15:19'!
+ownersName
+	self shouldBeImplemented.! !
+
+!classDefinition: #CheckOutWindowModel category: #'TusLibros-Web'!
+Object subclass: #CheckOutWindowModel
+	instanceVariableNames: 'cartId username password creditCardNumber ownersName'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:15:25' prior: 50797118!
+ownersName
+	^ownersName.! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:15:41' prior: 50797019!
+initializeWithCartId: aCartId username: aUsername password: aPassword 
+	cartId _ aCartId .
+	username _ aUsername .
+	password _ aPassword .
+	
+	creditCardNumber _ ''.
+	ownersName _ ''.! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:15:55'!
+test04
+	
+	checkoutModel ownersName: '123tteeoo'.
+	self assert: checkoutModel ownersName equals: '123tteeoo'.
+ ! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:16:00'!
+ownersName: aString 
+	self shouldBeImplemented.
+	ownersName _ aString! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:16:01' prior: 50797152!
+ownersName: aString 
+	
+	ownersName _ aString! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:16:17' prior: 50797046!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #ownersName
+		textSetter: #ownersName: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	expirationDateMonthTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #expirationDateMonth
+		textSetter: #expirationDateMonth: .
+	expirationDateMonthTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			expirationDateMonthTextBox textMorph acceptContents 
+		].
+	expirationDateMonthTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	expirationDateYearTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	expirationDateYearTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			expirationDateYearTextBox textMorph acceptContents 
+		].
+	expirationDateYearTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	payButton _
+		PluggableButtonMorph model: self model 
+									stateGetter: nil 
+									action: #doCheckout 
+									label: 'Pay'. 
+		
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Credit card number:');
+		addMorph: creditCardNumberTextBox ;
+		addMorph: (StringMorph contents: 'Owners name:');
+		addMorph: ownersNameTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date month');
+		addMorph: expirationDateMonthTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date year');
+		addMorph: expirationDateYearTextBox ;
+		addMorph: payButton .
+			
+	! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:16:22' prior: 50797113!
+test03
+	
+	self assert: checkoutModel expirationDateMonth equals: ''.
+ ! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:16:28'!
+test05
+	
+	self assert: checkoutModel expirationDateMonth equals: ''.
+ ! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:15:13' prior: 50797231!
+test03
+	
+	self assert: checkoutModel ownersName equals: ''.
+ ! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:16:41'!
+expirationDateMonth
+	self shouldBeImplemented.! !
+
+!classDefinition: #CheckOutWindowModel category: #'TusLibros-Web'!
+Object subclass: #CheckOutWindowModel
+	instanceVariableNames: 'cartId username password creditCardNumber ownersName expirationDateMonth'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:16:49' prior: 50797248!
+expirationDateMonth
+	^expirationDateMonth! !
+
+Month unStream: '07/2020'!
+
+Month readFrom: '07/2020'!
+
+Month readFrom: '07/2020' readStream !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:18:10' prior: 50797163!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #ownersName
+		textSetter: #ownersName: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	expirationDateMonthTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #expirationDate
+		textSetter: #expirationDate: .
+	expirationDateMonthTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			expirationDateMonthTextBox textMorph acceptContents 
+		].
+	expirationDateMonthTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	payButton _
+		PluggableButtonMorph model: self model 
+									stateGetter: nil 
+									action: #doCheckout 
+									label: 'Pay'. 
+		
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Credit card number:');
+		addMorph: creditCardNumberTextBox ;
+		addMorph: (StringMorph contents: 'Owners name:');
+		addMorph: ownersNameTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date month');
+		addMorph: expirationDateMonthTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date year');
+		addMorph: expirationDateYearTextBox ;
+		addMorph: payButton .
+			
+	! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:18:26' prior: 50797270!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #ownersName
+		textSetter: #ownersName: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	expirationDateMonthTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #expirationDate
+		textSetter: #expirationDate: .
+	expirationDateMonthTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			expirationDateMonthTextBox textMorph acceptContents 
+		].
+	expirationDateMonthTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	payButton _
+		PluggableButtonMorph model: self model 
+									stateGetter: nil 
+									action: #doCheckout 
+									label: 'Pay'. 
+		
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Credit card number:');
+		addMorph: creditCardNumberTextBox ;
+		addMorph: (StringMorph contents: 'Owners name:');
+		addMorph: ownersNameTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date (mm/yyyy)');
+		addMorph: expirationDateMonthTextBox ;
+		addMorph: payButton .
+			
+	! !
+
+!classDefinition: #CheckOutWindow category: #'TusLibros-Web'!
+Panel subclass: #CheckOutWindow
+	instanceVariableNames: 'creditCardNumberTextBox ownersNameTextBox expirationDateMonthTextBox expirationDateYearTextBox payButton transcriptList expirationDateTextBox'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:18:31' prior: 50797326!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #ownersName
+		textSetter: #ownersName: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	expirationDateTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #expirationDate
+		textSetter: #expirationDate: .
+	expirationDateTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			expirationDateTextBox textMorph acceptContents 
+		].
+	expirationDateTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	payButton _
+		PluggableButtonMorph model: self model 
+									stateGetter: nil 
+									action: #doCheckout 
+									label: 'Pay'. 
+		
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Credit card number:');
+		addMorph: creditCardNumberTextBox ;
+		addMorph: (StringMorph contents: 'Owners name:');
+		addMorph: ownersNameTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date (mm/yyyy)');
+		addMorph: expirationDateTextBox ;
+		addMorph: payButton .
+			
+	! !
+
+!classDefinition: #CheckOutWindow category: #'TusLibros-Web'!
+Panel subclass: #CheckOutWindow
+	instanceVariableNames: 'creditCardNumberTextBox ownersNameTextBox expirationDateYearTextBox payButton transcriptList expirationDateTextBox'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+
+Panel subclass: #CheckOutWindow
+	instanceVariableNames: 'creditCardNumberTextBox ownersNameTextBox  payButton transcriptList expirationDateTextBox'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+
+!classDefinition: #CheckOutWindow category: #'TusLibros-Web'!
+Panel subclass: #CheckOutWindow
+	instanceVariableNames: 'creditCardNumberTextBox ownersNameTextBox payButton transcriptList expirationDateTextBox'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:18:47' prior: 50797237!
+test05
+	
+	self assert: checkoutModel expirationDate equals: ''.
+ ! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:18:54'!
+expirationDate
+	self shouldBeImplemented.! !
+
+!classDefinition: #CheckOutWindowModel category: #'TusLibros-Web'!
+Object subclass: #CheckOutWindowModel
+	instanceVariableNames: 'cartId username password creditCardNumber ownersName expirationDateMonth expirationDate'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:19:07' prior: 50797473!
+expirationDate
+	^expirationDate.! !
+
+Object subclass: #CheckOutWindowModel
+	instanceVariableNames: 'cartId username password creditCardNumber ownersName expirationDate'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+
+!classDefinition: #CheckOutWindowModel category: #'TusLibros-Web'!
+Object subclass: #CheckOutWindowModel
+	instanceVariableNames: 'cartId username password creditCardNumber ownersName expirationDate'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+
+CheckOutWindowModel removeSelector: #expirationDateMonth!
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:19:33' prior: 50797136!
+initializeWithCartId: aCartId username: aUsername password: aPassword 
+	cartId _ aCartId .
+	username _ aUsername .
+	password _ aPassword .
+	
+	creditCardNumber _ ''.
+	ownersName _ ''.
+	expirationDate _ ''.! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:19:45' prior: 50797145!
+test04
+	
+	checkoutModel expirationDate: '123tteeoo'.
+	self assert: checkoutModel expirationDate equals: '123tteeoo'.
+ ! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:19:51'!
+expirationDate: aString 
+	self shouldBeImplemented.
+	expirationDate _ aString! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:19:52' prior: 50797526!
+expirationDate: aString 
+	
+	expirationDate _ aString! !
+
+CreateCartWindow open.!
+
+a _ StringMorph contents: 'teo'.!
+
+a.!
+
+a _ StringMorph contents: 'da'.!
+
+a.!
+
+CreateCartWindow open.!
+
+CreateCartWindow open.!
+
+self contents: 'ba'.!
+
+self last: (StringMorph contents: 'bhhgf')!
+
+self class!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:29:38' prior: 50796445!
+buildMorphicWindow
+	self layoutMorph beRow;
+		 separation: 15;
+		 padding: #left;
+		 addMorph: self buildCheckOutColumn.! !
+
+CreateCartWindow open.!
+
+----QUIT----(11 July 2019 00:30:28) TusLibros-Web.image priorSource: 14879100!
+
+----STARTUP---- (11 July 2019 08:59:27) as /home/teofr/Documents/IngBkp/Ing1-2019/32.3-TusLibros.com-Final/linux64/TusLibros-Web.image!
+
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:00:15'!
+openTranscriptColumn
+
+	transcriptList _ 
+		PluggableListMorph model: self model 
+								listGetter: #listPurchases 
+								indexGetter: nil  
+								indexSetter: nil.
+								 
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Compras:');
+		addMorph: transcriptList .
+			
+	! !
+
+CheckOutWindow removeSelector: #buildTranscriptColumn!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:00:18'!
+openTranscript
+
+	transcriptList _ 
+		PluggableListMorph model: self model 
+								listGetter: #listPurchases 
+								indexGetter: nil  
+								indexSetter: nil.
+								 
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Compras:');
+		addMorph: transcriptList .
+			
+	! !
+
+CheckOutWindow removeSelector: #openTranscriptColumn!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:01:00' prior: 50797575!
+openTranscript
+
+	| transcriptPanel |
+	transcriptPanel _ Panel open.
+	transcriptList _ 
+		PluggableListMorph model: self model 
+								listGetter: #listPurchases 
+								indexGetter: nil  
+								indexSetter: nil.
+								 
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Compras:');
+		addMorph: transcriptList .
+			
+	! !
+
+a _ Panel open.!
+
+a _ Panel new.!
+
+a _ Panel new.!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:02:00' prior: 50797590!
+openTranscript
+
+			
+	! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:03:55' prior: 50797390!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #ownersName
+		textSetter: #ownersName: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	expirationDateTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #expirationDate
+		textSetter: #expirationDate: .
+	expirationDateTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			expirationDateTextBox textMorph acceptContents 
+		].
+	expirationDateTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	payButton _
+		PluggableButtonMorph model: self model 
+									stateGetter: nil 
+									action: #doCheckout 
+									label: 'Pay'. 
+		
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Credit card number:');
+		addMorph: creditCardNumberTextBox ;
+		addMorph: (StringMorph contents: 'Owners name:');
+		addMorph: ownersNameTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date (mm/yyyy)');
+		addMorph: expirationDateTextBox ;
+		addMorph: payButton .
+			
+	! !
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:05:48' prior: 50795633!
+buildCatalogColumn
+	|addToCartButton|
+	catalogList _ 
+		PluggableListMorph model: self model
+								listGetter: #catalog
+								indexGetter: #catalogIndex
+								indexSetter: #catalogIndex:.
+	catalogList height: 100.
+	
+	addToCartButton _ 
+		PluggableButtonMorph model: self model
+									stateGetter: nil
+									action: #addToCart
+									label: 'Agregar al carrito'.
+	
+	^ (LayoutMorph newColumn)
+					    separation: 15;
+					    padding: #left;
+					    addMorph: (StringMorph contents: 'Catálogo:');
+					    addMorph: catalogList;
+					    addMorph: addToCartButton.! !
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:05:51' prior: 50797663!
+buildCatalogColumn
+	|addToCartButton|
+	catalogList _ 
+		PluggableListMorph model: self model
+								listGetter: #catalog
+								indexGetter: #catalogIndex
+								indexSetter: #catalogIndex:.
+	catalogList height: 200.
+	
+	addToCartButton _ 
+		PluggableButtonMorph model: self model
+									stateGetter: nil
+									action: #addToCart
+									label: 'Agregar al carrito'.
+	
+	^ (LayoutMorph newColumn)
+					    separation: 15;
+					    padding: #left;
+					    addMorph: (StringMorph contents: 'Catálogo:');
+					    addMorph: catalogList;
+					    addMorph: addToCartButton.! !
+
+CreateCartWindow open.!
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:06:37' prior: 50797685!
+buildCatalogColumn
+	|addToCartButton|
+	catalogList _ 
+		PluggableListMorph model: self model
+								listGetter: #catalog
+								indexGetter: #catalogIndex
+								indexSetter: #catalogIndex:.
+	catalogList morphHeight: 200.
+	
+	addToCartButton _ 
+		PluggableButtonMorph model: self model
+									stateGetter: nil
+									action: #addToCart
+									label: 'Agregar al carrito'.
+	
+	^ (LayoutMorph newColumn)
+					    separation: 15;
+					    padding: #left;
+					    addMorph: (StringMorph contents: 'Catálogo:');
+					    addMorph: catalogList;
+					    addMorph: addToCartButton.! !
+
+CreateCartWindow open.!
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:06:55' prior: 50797707!
+buildCatalogColumn
+	|addToCartButton|
+	catalogList _ 
+		PluggableListMorph model: self model
+								listGetter: #catalog
+								indexGetter: #catalogIndex
+								indexSetter: #catalogIndex:.
+	catalogList morphHeight: 350.
+	
+	addToCartButton _ 
+		PluggableButtonMorph model: self model
+									stateGetter: nil
+									action: #addToCart
+									label: 'Agregar al carrito'.
+	
+	^ (LayoutMorph newColumn)
+					    separation: 15;
+					    padding: #left;
+					    addMorph: (StringMorph contents: 'Catálogo:');
+					    addMorph: catalogList;
+					    addMorph: addToCartButton.! !
+
+CreateCartWindow open.!
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:07:12' prior: 50797730!
+buildCatalogColumn
+	|addToCartButton|
+	catalogList _ 
+		PluggableListMorph model: self model
+								listGetter: #catalog
+								indexGetter: #catalogIndex
+								indexSetter: #catalogIndex:.
+	catalogList morphHeight: 300.
+	
+	addToCartButton _ 
+		PluggableButtonMorph model: self model
+									stateGetter: nil
+									action: #addToCart
+									label: 'Agregar al carrito'.
+	
+	^ (LayoutMorph newColumn)
+					    separation: 15;
+					    padding: #left;
+					    addMorph: (StringMorph contents: 'Catálogo:');
+					    addMorph: catalogList;
+					    addMorph: addToCartButton.! !
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:07:24' prior: 50797753!
+buildCatalogColumn
+	|addToCartButton|
+	catalogList _ 
+		PluggableListMorph model: self model
+								listGetter: #catalog
+								indexGetter: #catalogIndex
+								indexSetter: #catalogIndex:.
+	catalogList morphHeight: self listHeight.
+	
+	addToCartButton _ 
+		PluggableButtonMorph model: self model
+									stateGetter: nil
+									action: #addToCart
+									label: 'Agregar al carrito'.
+	
+	^ (LayoutMorph newColumn)
+					    separation: 15;
+					    padding: #left;
+					    addMorph: (StringMorph contents: 'Catálogo:');
+					    addMorph: catalogList;
+					    addMorph: addToCartButton.! !
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:07:38' prior: 50796252!
+buildCartContentsColumn
+	|checkoutButton |
+	cartContentsList _ 
+		PluggableListMorph model: self model
+								listGetter: #cartContentsAsOrderedCollection
+								indexGetter: #cartContentsIndex
+								indexSetter: #cartContentsIndex:.
+	catalogList morphHeight: self listHeight.
+	
+	checkoutButton _ 
+		PluggableButtonMorph model: self model
+									stateGetter: nil
+									action: #goToCheckout
+									label: 'Checkout'.
+									
+	subtotalText _ StringMorph contents: 'Total: $0'.
+	
+	errorTextBox _ StringMorph contents: ''.
+	
+		     
+	^ (LayoutMorph newColumn)
+		    padding: #left;
+		    separation: 15;
+		    addMorph: (StringMorph contents: 'Tu carrito:');
+		    addMorph: cartContentsList;
+    	    addMorph: checkoutButton;
+  	          addMorph: subtotalText;
+		    addMorph: errorTextBox .
+		! !
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:07:50'!
+listHeight
+	^280.! !
+
+CreateCartWindow open.!
+!StoreWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:08:07' prior: 50797797!
+buildCartContentsColumn
+	|checkoutButton |
+	cartContentsList _ 
+		PluggableListMorph model: self model
+								listGetter: #cartContentsAsOrderedCollection
+								indexGetter: #cartContentsIndex
+								indexSetter: #cartContentsIndex:.
+	cartContentsList morphHeight: self listHeight.
+	
+	checkoutButton _ 
+		PluggableButtonMorph model: self model
+									stateGetter: nil
+									action: #goToCheckout
+									label: 'Checkout'.
+									
+	subtotalText _ StringMorph contents: 'Total: $0'.
+	
+	errorTextBox _ StringMorph contents: ''.
+	
+		     
+	^ (LayoutMorph newColumn)
+		    padding: #left;
+		    separation: 15;
+		    addMorph: (StringMorph contents: 'Tu carrito:');
+		    addMorph: cartContentsList;
+    	    addMorph: checkoutButton;
+  	          addMorph: subtotalText;
+		    addMorph: errorTextBox .
+		! !
+
+CreateCartWindow open.!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:09:11'!
+textBoxHeight
+	^30.! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:09:24' prior: 50797611!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue;
+		morphHeight: self textBoxHeight .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #ownersName
+		textSetter: #ownersName: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	expirationDateTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #expirationDate
+		textSetter: #expirationDate: .
+	expirationDateTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			expirationDateTextBox textMorph acceptContents 
+		].
+	expirationDateTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue .
+		
+	payButton _
+		PluggableButtonMorph model: self model 
+									stateGetter: nil 
+									action: #doCheckout 
+									label: 'Pay'. 
+		
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Credit card number:');
+		addMorph: creditCardNumberTextBox ;
+		addMorph: (StringMorph contents: 'Owners name:');
+		addMorph: ownersNameTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date (mm/yyyy)');
+		addMorph: expirationDateTextBox ;
+		addMorph: payButton .
+			
+	! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:09:39' prior: 50797863!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue;
+		morphHeight: self textBoxHeight .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #ownersName
+		textSetter: #ownersName: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue ;
+		morphHeight: self textBoxHeight .
+		
+	expirationDateTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #expirationDate
+		textSetter: #expirationDate: .
+	expirationDateTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			expirationDateTextBox textMorph acceptContents 
+		].
+	expirationDateTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue ;
+		morphHeight: self textBoxHeight .
+		
+	payButton _
+		PluggableButtonMorph model: self model 
+									stateGetter: nil 
+									action: #doCheckout 
+									label: 'Pay'. 
+		
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Credit card number:');
+		addMorph: creditCardNumberTextBox ;
+		addMorph: (StringMorph contents: 'Owners name:');
+		addMorph: ownersNameTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date (mm/yyyy)');
+		addMorph: expirationDateTextBox ;
+		addMorph: payButton .
+			
+	! !
+
+CreateCartWindow open.!
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:11:01'!
+test01CreditCardNmuberEmpiezaVacio
+	
+	self assert: checkoutModel creditCardNumber equals: ''.
+ ! !
+
+CheckOutWindowModelTest removeSelector: #test01!
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:11:16'!
+test02PuedoCambiarElValorDeCreditCardNumber
+	
+	checkoutModel creditCardNumber: '123tteeoo'.
+	self assert: checkoutModel creditCardNumber equals: '123tteeoo'.
+ ! !
+
+CheckOutWindowModelTest removeSelector: #test02!
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:11:25'!
+test03OwnersNameEmpiezaVacio
+	
+	self assert: checkoutModel ownersName equals: ''.
+ ! !
+
+CheckOutWindowModelTest removeSelector: #test03!
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:11:51'!
+test06PuedoCambiarElValorDeExpirationDate
+	
+	checkoutModel expirationDate: '123tteeoo'.
+	self assert: checkoutModel expirationDate equals: '123tteeoo'.
+ ! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 00:15:55' prior: 50797519!
+test04
+	
+	checkoutModel ownersName: '123tteeoo'.
+	self assert: checkoutModel ownersName equals: '123tteeoo'.
+ ! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:12:09'!
+test04PuedoCambiarElValorDeOwnersName
+	
+	checkoutModel ownersName: '123tteeoo'.
+	self assert: checkoutModel ownersName equals: '123tteeoo'.
+ ! !
+
+CheckOutWindowModelTest removeSelector: #test04!
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:12:18'!
+test05ExpirationDateEmpiezaVacio
+	
+	self assert: checkoutModel expirationDate equals: ''.
+ ! !
+
+CheckOutWindowModelTest removeSelector: #test05!
+
+!classDefinition: #CheckOutWindowModelTest category: #'TusLibros-Web'!
+TestCase subclass: #CheckOutWindowModelTest
+	instanceVariableNames: 'checkoutModel checkoutWebClientRequestBlock'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindowModelTest methodsFor: 'nil' stamp: 'tf 7/11/2019 09:13:30'!
+test07AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiTodoSaleBien
+	| storeModel counter |
+	
+	counter _ 0.
+	checkoutWebClientRequestBlock _ [:anAmount :aBookISBN :aCartId |
+		self assert: anAmount equals: 1. 
+		self assert: aBookISBN equals: 'harry potter'. 
+		self assert: aCartId equals: 24. 
+		counter _ counter + 1.
+	].
+	
+	storeModel _ StoreWindowModel withWebClient: self cartId: 24  username: 'Valid'  andPassword: 'ValidP'.
+	
+
+	storeModel when: #cartContentsUpdated evaluate: [counter _ counter + 1].
+	storeModel catalog.
+	storeModel catalogIndex: 1.
+	
+	storeModel addToCart.
+	
+	self assert: counter equals: 2.
+	self assert: storeModel cartContents equals: (Bag with: 'harry potter'). ! !
+
+07/2020.!
+
+Month readFrom: ('07/2020' readStream ).!
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:15:56' prior: 50798038!
+test07AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiTodoSaleBien
+	| storeModel counter |
+	
+	counter _ 0.
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |
+		self assert: cartId equals: 23. 
+		self assert: ccNumber equals: '0123012301230123'. 
+		self assert: expirationDate equals:  nil. 
+		counter _ counter + 1.
+	].
+	
+	storeModel _ StoreWindowModel withWebClient: self cartId: 24  username: 'Valid'  andPassword: 'ValidP'.
+	
+
+	storeModel when: #cartContentsUpdated evaluate: [counter _ counter + 1].
+	storeModel catalog.
+	storeModel catalogIndex: 1.
+	
+	storeModel addToCart.
+	
+	self assert: counter equals: 2.
+	self assert: storeModel cartContents equals: (Bag with: 'harry potter'). ! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:16:06' prior: 50798066!
+test07AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiTodoSaleBien
+	| storeModel counter |
+	
+	counter _ 0.
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |
+		self assert: cartId equals: 23. 
+		self assert: ccNumber equals: '0123012301230123'. 
+		self assert: expirationDate equals:  (Month month: 07 year: 2020) . 
+		counter _ counter + 1.
+	].
+	
+	storeModel _ StoreWindowModel withWebClient: self cartId: 24  username: 'Valid'  andPassword: 'ValidP'.
+	
+
+	storeModel when: #cartContentsUpdated evaluate: [counter _ counter + 1].
+	storeModel catalog.
+	storeModel catalogIndex: 1.
+	
+	storeModel addToCart.
+	
+	self assert: counter equals: 2.
+	self assert: storeModel cartContents equals: (Bag with: 'harry potter'). ! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:20:14' prior: 50798093!
+test07AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiTodoSaleBien
+	| storeModel counter |
+	
+	counter _ 0.
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |
+		self assert: cartId equals: 23. 
+		self assert: ccNumber equals: '0123012301230123'. 
+		self assert: ownersName equals: 'Teo Freund'.
+		self assert: expirationDate equals:  (Month month: 07 year: 2020) . 
+		counter _ counter + 1.
+	].
+	
+	storeModel _ CheckOutWindowModel withWebClient: self cartId: 23  username: 'valid'  password: 'validP'. 
+	
+
+	storeModel when: #paymentDone evaluate: [counter _ counter + 1].
+	storeModel creditCardNumber: '0123012301230123'.
+	storeModel ownersName: 'Teo Freund'.
+	storeModel expirationDate: '07/2020'.
+	
+	storeModel checkout.
+	
+	self assert: counter equals: 2.
+	self assert: storeModel creditCardNumber equals: '************0123'.
+	! !
+!CheckOutWindowModel class methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:20:23'!
+withWebClient: aCheckOutWindowModelTest cartId: aSmallInteger username: aString password: aString4 
+	self shouldBeImplemented.! !
+!CheckOutWindowModel class methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:21:08' prior: 50798152!
+withWebClient: aWebClient cartId: aCartId username: aUsername password: aPassword
+	^self new initializeWithWebClient: aWebClient cartId: aCartId  username: aUsername  password: aPassword .
+	! !
+!CheckOutWindowModel class methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:21:36' prior: 50796415!
+withCartId: aCartId username: aUsername password: aPassword 
+	^self  initializeWithWebClient: TusLibrosWebClient new cartId: aCartId username: aUsername password: aPassword .! !
+
+!classDefinition: #CheckOutWindowModel category: #'TusLibros-Web'!
+Object subclass: #CheckOutWindowModel
+	instanceVariableNames: 'cartId username password creditCardNumber ownersName expirationDate webClient'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:21:58'!
+initializeWithWebClient: aWebClient cartId: aCartId username: aUsername password: aPassword 
+	webClient _ aWebClient .
+	cartId _ aCartId .
+	username _ aUsername .
+	password _ aPassword .
+	
+	creditCardNumber _ ''.
+	ownersName _ ''.
+	expirationDate _ ''.! !
+
+CheckOutWindowModel removeSelector: #initializeWithCartId:username:password:!
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:22:25' prior: 50796960!
+setUp
+	
+	checkoutModel _ 
+		CheckOutWindowModel 
+			withWebClient: self
+			cartId: self cartId 
+			username: self username 
+			password: self password. ! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:23:15' prior: 50798121!
+test07AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiTodoSaleBien
+	| checkoutModel2 counter |
+	
+	counter _ 0.
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |
+		self assert: cartId equals: 23. 
+		self assert: ccNumber equals: '0123012301230123'. 
+		self assert: ownersName equals: 'Teo Freund'.
+		self assert: expirationDate equals:  (Month month: 07 year: 2020) . 
+		counter _ counter + 1.
+	].
+	
+	checkoutModel2 _ CheckOutWindowModel withWebClient: self cartId: 23  username: 'valid'  password: 'validP'. 
+	
+
+	checkoutModel2 when: #paymentDone evaluate: [counter _ counter + 1].
+	checkoutModel2 creditCardNumber: '0123012301230123'.
+	checkoutModel2 ownersName: 'Teo Freund'.
+	checkoutModel2 expirationDate: '07/2020'.
+	
+	checkoutModel2 checkout.
+	
+	self assert: counter equals: 2.
+	self assert: checkoutModel2 creditCardNumber equals: '************0123'.
+	! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:23:31' prior: 50798211!
+test07AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiTodoSaleBien
+	|  counter |
+	
+	counter _ 0.
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |
+		self assert: cartId equals: 23. 
+		self assert: ccNumber equals: '0123012301230123'. 
+		self assert: ownersName equals: 'Teo Freund'.
+		self assert: expirationDate equals:  (Month month: 07 year: 2020) . 
+		counter _ counter + 1.
+	].
+	
+	checkoutModel _ CheckOutWindowModel withWebClient: self cartId: 23  username: 'valid'  password: 'validP'. 
+	
+
+	checkoutModel when: #paymentDone evaluate: [counter _ counter + 1].
+	checkoutModel creditCardNumber: '0123012301230123'.
+	checkoutModel ownersName: 'Teo Freund'.
+	checkoutModel expirationDate: '07/2020'.
+	
+	checkoutModel checkout.
+	
+	self assert: counter equals: 2.
+	self assert: checkoutModel creditCardNumber equals: '************0123'.
+	! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:23:40' prior: 50798243!
+test07AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiTodoSaleBien
+	|  counter |
+	
+	counter _ 0.
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |
+		self assert: cartId equals: 23. 
+		self assert: ccNumber equals: '0123012301230123'. 
+		self assert: ownersName equals: 'Teo Freund'.
+		self assert: expirationDate equals:  (Month month: 07 year: 2020) . 
+		counter _ counter + 1.
+	].
+	
+
+	checkoutModel when: #paymentDone evaluate: [counter _ counter + 1].
+	checkoutModel creditCardNumber: '0123012301230123'.
+	checkoutModel ownersName: 'Teo Freund'.
+	checkoutModel expirationDate: '07/2020'.
+	
+	checkoutModel checkout.
+	
+	self assert: counter equals: 2.
+	self assert: checkoutModel creditCardNumber equals: '************0123'.
+	! !
+
+'gola' class!
+
+'gola' class last: 2 !
+
+'gola'  last: 2 !
+!CheckOutWindowModel methodsFor: 'nil' stamp: 'tf 7/11/2019 09:27:25'!
+checkout
+	[
+		webClient checkOutCartIdentifiedAs: cartId 
+					withCreditCardNumbered:  creditCardNumber 
+					ownedBy: ownersName  
+					expiringOn: (Month readFrom: expirationDate readStream).
+		creditCardNumber _ creditCardNumber last: 4.
+		self triggerEvent: #paymentDone.
+	] on: Error 
+	do: [].! !
+!CheckOutWindowModelTest methodsFor: 'nil' stamp: 'tf 7/11/2019 09:30:43'!
+checkOutCartIdentifiedAs: aCartId 
+withCreditCardNumbered: aCreditCartNumber 
+ownedBy: anOwner 
+expiringOn: anExpirationMonthOfYear
+	^checkoutWebClientRequestBlock 
+		value: aCartId 
+		value: aCreditCartNumber  
+		value: anOwner  
+		value: anExpirationMonthOfYear .! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:30:56' prior: 50798275!
+test07AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiTodoSaleBien
+	|  counter |
+	
+	counter _ 0.
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |
+		self assert: cartId equals: 23. 
+		self assert: ccNumber equals: '0123012301230123'. 
+		self assert: ownersName equals: 'Teo Freund'.
+		self assert: expirationDate equals:  (Month month: 07 year: 2020) . 
+		counter _ counter + 1.
+	].
+	
+
+	checkoutModel when: #paymentDone evaluate: [counter _ counter + 1].
+	checkoutModel creditCardNumber: '0123012301230123'.
+	checkoutModel ownersName: 'Teo Freund'.
+	checkoutModel expirationDate: '07/2020'.
+	
+	checkoutModel checkout.
+	
+	self assert: counter equals: 2.
+	self assert: checkoutModel creditCardNumber equals: '0123'.
+	! !
+
+----SNAPSHOT----(11 July 2019 09:31:31) TusLibros-Web.image priorSource: 14908852!
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:33:08'!
+test08AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiHayUnError
+	|  counter |
+	
+	counter _ 0.
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |
+		self error: 'Error!!'.
+	].
+	
+
+	checkoutModel when: #paymentDone evaluate: [counter _ counter + 1].
+	checkoutModel creditCardNumber: '0123012301230123'.
+	checkoutModel ownersName: 'Teo Freund'.
+	checkoutModel expirationDate: '07/2020'.
+	
+	checkoutModel checkout.
+	
+	self assert: counter equals: 2.
+	self assert: checkoutModel creditCardNumber equals: '0123'.
+	! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:34:05' prior: 50798358!
+test08AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiHayUnError
+	|  error |
+	
+	error _ 0.
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |
+		self error: 'Error!!'.
+	].
+	
+
+	checkoutModel when: #paymentFailed: evaluate: [:anError | error _ anError].
+	
+	checkoutModel checkout.
+	
+	self assert: error equals: 'Error!!'.
+
+	! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:34:35' prior: 50798304!
+checkout
+	[
+		webClient checkOutCartIdentifiedAs: cartId 
+					withCreditCardNumbered:  creditCardNumber 
+					ownedBy: ownersName  
+					expiringOn: (Month readFrom: expirationDate readStream).
+		creditCardNumber _ creditCardNumber last: 4.
+		self triggerEvent: #paymentDone.
+	] on: Error 
+	do: [:anError | self triggerEvent: #paymentFailed with: anError messageText ].! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:35:13' prior: 50798379!
+test08AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiHayUnError
+	|  error |
+	
+	error _ ''.
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |
+		self error: 'Error!!'.
+	].
+	
+
+	checkoutModel when: #paymentFailed: evaluate: [:anError | error _ anError].
+	
+	checkoutModel checkout.
+	
+	self assert: error equals: 'Error!!'.
+
+	! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:36:39' prior: 50798410!
+test08AlPagarSeHaceElRequestAlWebClientYSeLevantaElEventoCorrespondienteSiHayUnError
+	|  error |
+	
+	error _ ''.
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |
+		self error: 'Error!!'.
+	].
+	
+
+	checkoutModel when: #paymentFailed: evaluate: [:anError | error _ anError].
+	
+	checkoutModel creditCardNumber: '0123012301230123'.
+	checkoutModel ownersName: 'Teo Freund'.
+	checkoutModel expirationDate: '07/2020'.
+	checkoutModel checkout.
+	
+	self assert: error equals: 'Error!!'.
+
+	! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:39:18' prior: 50798394!
+checkout
+	[
+		webClient checkOutCartIdentifiedAs: cartId 
+					withCreditCardNumbered:  creditCardNumber 
+					ownedBy: ownersName  
+					expiringOn: (Month readFrom: expirationDate readStream).
+		creditCardNumber _ creditCardNumber last: 4.
+		self triggerEvent: #paymentDone.
+	] on: Error 
+	do: [:anError | self triggerEvent: #paymentFailed: with: anError messageText ].! !
+
+a _ (LayoutMorph newColumn ) addMorph: (StringMorph contents: 'vdaj').!
+
+Panel open: a.!
+
+EditPanel open: a.!
+
+LayoutMorphEditPanel open: a.!
+
+LayoutMorphEditPanel open: a.!
+
+SubstringsClientWindow open !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:52:01'!
+test09TranscriptEmpiezaVacio
+	
+	self assert: checkoutModel transcript isEmpty.
+ ! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:52:51'!
+buildTranscriptColumn
+	
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Transcript:');
+		addMorph: transcriptList;
+		yourself.
+			
+	! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:53:37' prior: 50798473!
+buildTranscriptColumn
+
+	transcriptList _ PluggableListMorph model: self model
+								listGetter: #transcript
+								indexGetter: nil
+								indexSetter: nil.
+	transcriptList morphHeight: self textBoxHeight *4.
+	
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Transcript:');
+		addMorph: transcriptList;
+		yourself.
+			
+	! !
+
+CreateCartWindow open.!
+!CheckOutWindowModel class methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:55:12' prior: 50798170!
+withCartId: aCartId username: aUsername password: aPassword 
+	^self  withWebClient: TusLibrosWebClient new cartId: aCartId username: aUsername password: aPassword .! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:56:00' prior: 50797916!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue;
+		morphHeight: self textBoxHeight .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #ownersName
+		textSetter: #ownersName: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue ;
+		morphHeight: self textBoxHeight .
+		
+	expirationDateTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #expirationDate
+		textSetter: #expirationDate: .
+	expirationDateTextBox textMorph 
+		setProperty: #keyStroke 
+		toValue: [:key |
+			expirationDateTextBox textMorph acceptContents 
+		].
+	expirationDateTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue ;
+		morphHeight: self textBoxHeight .
+		
+	payButton _
+		PluggableButtonMorph model: self model 
+									stateGetter: nil 
+									action: #checkout 
+									label: 'Pay'. 
+		
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Credit card number:');
+		addMorph: creditCardNumberTextBox ;
+		addMorph: (StringMorph contents: 'Owners name:');
+		addMorph: ownersNameTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date (mm/yyyy)');
+		addMorph: expirationDateTextBox ;
+		addMorph: payButton .
+			
+	! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:56:15' prior: 50797545!
+buildMorphicWindow
+	self layoutMorph beRow;
+		 separation: 15;
+		 padding: #left;
+		 addMorph: self buildCheckOutColumn;
+		addMorph: self buildTranscriptColumn .! !
+
+CreateCartWindow open.!
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:56:39'!
+transcript
+	self shouldBeImplemented.! !
+
+!classDefinition: #CheckOutWindowModel category: #'TusLibros-Web'!
+Object subclass: #CheckOutWindowModel
+	instanceVariableNames: 'cartId username password creditCardNumber ownersName expirationDate webClient transcript'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:56:48' prior: 50798572!
+transcript
+	^transcript.! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:57:01' prior: 50798188!
+initializeWithWebClient: aWebClient cartId: aCartId username: aUsername password: aPassword 
+	webClient _ aWebClient .
+	cartId _ aCartId .
+	username _ aUsername .
+	password _ aPassword .
+	
+	creditCardNumber _ ''.
+	ownersName _ ''.
+	expirationDate _ ''.
+	transcript _ OrderedCollection new.! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:57:34' prior: 50798446!
+checkout
+self halt.
+	[
+		webClient checkOutCartIdentifiedAs: cartId 
+					withCreditCardNumbered:  creditCardNumber 
+					ownedBy: ownersName  
+					expiringOn: (Month readFrom: expirationDate readStream).
+		creditCardNumber _ creditCardNumber last: 4.
+		self triggerEvent: #paymentDone.
+	] on: Error 
+	do: [:anError | self triggerEvent: #paymentFailed: with: anError messageText ].! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 09:58:44' prior: 50798507!
+buildCheckOutColumn
+	creditCardNumberTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #creditCardNumber
+		textSetter: #creditCardNumber: .
+	creditCardNumberTextBox textMorph 
+		setProperty: #keyStroke: 
+		toValue: [:key |
+			creditCardNumberTextBox textMorph acceptContents 
+		].
+	creditCardNumberTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue;
+		morphHeight: self textBoxHeight .
+		
+	ownersNameTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #ownersName
+		textSetter: #ownersName: .
+	ownersNameTextBox textMorph 
+		setProperty: #keyStroke: 
+		toValue: [:key |
+			ownersNameTextBox textMorph acceptContents 
+		].
+	ownersNameTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue ;
+		morphHeight: self textBoxHeight .
+		
+	expirationDateTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #expirationDate
+		textSetter: #expirationDate: .
+	expirationDateTextBox textMorph 
+		setProperty: #keyStroke: 
+		toValue: [:key |
+			expirationDateTextBox textMorph acceptContents 
+		].
+	expirationDateTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue ;
+		morphHeight: self textBoxHeight .
+		
+	payButton _
+		PluggableButtonMorph model: self model 
+									stateGetter: nil 
+									action: #checkout 
+									label: 'Pay'. 
+		
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Credit card number:');
+		addMorph: creditCardNumberTextBox ;
+		addMorph: (StringMorph contents: 'Owners name:');
+		addMorph: ownersNameTextBox ;
+		addMorph: (StringMorph contents: 'Expiration Date (mm/yyyy)');
+		addMorph: expirationDateTextBox ;
+		addMorph: payButton .
+			
+	! !
+
+CreateCartWindow open.!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:00:05' prior: 50796377!
+initializeWith: aTitle cartId: cartId username: username password: password
+	
+	self titleMorph showButtonsNamed: #( close collapse ).
+	self setLabel: aTitle;
+		 model: (CheckOutWindowModel withCartId: cartId username: username password: password);
+		 morphExtent: 640@480;
+		 buildMorphicWindow;
+		 openInWorld.
+	self model when: #paymentDone
+				send: #updateTranscript
+				to: self.! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:00:26' prior: 50798676!
+initializeWith: aTitle cartId: cartId username: username password: password
+	
+	self titleMorph showButtonsNamed: #( close collapse ).
+	self setLabel: aTitle;
+		 model: (CheckOutWindowModel withCartId: cartId username: username password: password);
+		 morphExtent: 640@480;
+		 buildMorphicWindow;
+		 openInWorld.
+	self model when: #paymentDone
+				send: #updateTranscript
+				to: self.
+	self model when: #paymentFailed
+				send: #showError:
+				to: self.! !
+
+!classDefinition: #CheckOutWindow category: #'TusLibros-Web'!
+Panel subclass: #CheckOutWindow
+	instanceVariableNames: 'creditCardNumberTextBox ownersNameTextBox payButton transcriptList expirationDateTextBox errorTextBox'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:00:55' prior: 50798482!
+buildTranscriptColumn
+
+	transcriptList _ PluggableListMorph model: self model
+								listGetter: #transcript
+								indexGetter: nil
+								indexSetter: nil.
+	transcriptList morphHeight: self textBoxHeight *6.
+	
+	errorTextBox _ StringMorph contents: ''.
+	
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Transcript:');
+		addMorph: transcriptList;
+		yourself.
+			
+	! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:01:17'!
+showError: anErrorMessage
+	errorTextBox contents: 'Error: ', anErrorMessage .! !
+
+CreateCartWindow open.!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:02:35' prior: 50798692!
+initializeWith: aTitle cartId: cartId username: username password: password
+	
+	self titleMorph showButtonsNamed: #( close collapse ).
+	self setLabel: aTitle;
+		 model: (CheckOutWindowModel withCartId: cartId username: username password: password);
+		 morphExtent: 640@480;
+		 buildMorphicWindow;
+		 openInWorld.
+	self model when: #paymentDone
+				send: #updateTranscript
+				to: self.
+	self model when: #paymentFailed:
+				send: #showError:
+				to: self.! !
+
+CreateCartWindow open.!
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:03:04' prior: 50798604!
+checkout
+
+	[
+		webClient checkOutCartIdentifiedAs: cartId 
+					withCreditCardNumbered:  creditCardNumber 
+					ownedBy: ownersName  
+					expiringOn: (Month readFrom: expirationDate readStream).
+		creditCardNumber _ creditCardNumber last: 4.
+		self triggerEvent: #paymentDone.
+	] on: Error 
+	do: [:anError | self triggerEvent: #paymentFailed: with: anError messageText ].! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:06:57' prior: 50798735!
+showError: anErrorMessage
+	self halt.
+	errorTextBox contents: 'Error: ', anErrorMessage .! !
+
+CreateCartWindow open.!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:07:51' prior: 50798719!
+buildTranscriptColumn
+
+	transcriptList _ PluggableListMorph model: self model
+								listGetter: #transcript
+								indexGetter: nil
+								indexSetter: nil.
+	transcriptList morphHeight: self textBoxHeight *6.
+	
+	errorTextBox _ StringMorph contents: ''.
+	
+	^(LayoutMorph newColumn )
+		padding: #left;
+		separation: 15;
+		addMorph: (StringMorph contents: 'Transcript:');
+		addMorph: transcriptList;
+		addMorph: errorTextBox ;
+		yourself.
+			
+	! !
+
+CreateCartWindow open.!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:07:58' prior: 50798776!
+showError: anErrorMessage
+
+	errorTextBox contents: 'Error: ', anErrorMessage .! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:09:19'!
+updateTranscript
+	transcriptList updateList.! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:09:37' prior: 50798761!
+checkout
+
+	[
+		webClient checkOutCartIdentifiedAs: cartId 
+					withCreditCardNumbered:  creditCardNumber 
+					ownedBy: ownersName  
+					expiringOn: (Month readFrom: expirationDate readStream).
+		creditCardNumber _ creditCardNumber last: 4.
+		transcript _ OrderedCollection with: 'hola'.
+		self triggerEvent: #paymentDone.
+	] on: Error 
+	do: [:anError | self triggerEvent: #paymentFailed: with: anError messageText ].! !
+
+CreateCartWindow open.!
+
+DateAndTime today .!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:18:26'!
+updateTranscriptAndConfidentialInformation
+	transcriptList updateList.! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:18:26' prior: 50798742!
+initializeWith: aTitle cartId: cartId username: username password: password
+	
+	self titleMorph showButtonsNamed: #( close collapse ).
+	self setLabel: aTitle;
+		 model: (CheckOutWindowModel withCartId: cartId username: username password: password);
+		 morphExtent: 640@480;
+		 buildMorphicWindow;
+		 openInWorld.
+	self model when: #paymentDone
+				send: #updateTranscriptAndConfidentialInformation
+				to: self.
+	self model when: #paymentFailed:
+				send: #showError:
+				to: self.! !
+
+CheckOutWindow removeSelector: #updateTranscript!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:18:48' prior: 50798830!
+updateTranscriptAndConfidentialInformation
+	transcriptList updateList.
+	creditCardNumberTextBox updateActualContents.! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:18:56'!
+test10DespuesDeEfectuarElPagoSeActualizaElTranscript
+	|  counter |
+	
+	counter _ 0.
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |].
+	
+
+	checkoutModel when: #paymentDone evaluate: [].
+	checkoutModel creditCardNumber: '0123012301230123'.
+	checkoutModel ownersName: 'Teo Freund'.
+	checkoutModel expirationDate: '07/2020'.
+	
+	checkoutModel checkout.
+	
+
+	self assert: checkoutModel transcript equals: nil.
+	! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:19:06' prior: 50798863!
+test10DespuesDeEfectuarElPagoSeActualizaElTranscript
+
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |].
+	
+
+	checkoutModel when: #paymentDone evaluate: [].
+	checkoutModel creditCardNumber: '0123012301230123'.
+	checkoutModel ownersName: 'Teo Freund'.
+	checkoutModel expirationDate: '07/2020'.
+	
+	checkoutModel checkout.
+	
+
+	self assert: checkoutModel transcript equals: nil.
+	! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:20:03' prior: 50798812!
+checkout
+
+	[
+		webClient checkOutCartIdentifiedAs: cartId 
+					withCreditCardNumbered:  creditCardNumber 
+					ownedBy: ownersName  
+					expiringOn: (Month readFrom: expirationDate readStream).
+		creditCardNumber _ creditCardNumber last: 4.
+		self triggerEvent: #paymentDone.
+		transcript _ webClient listPurchasesOf: username authenticatingWith: password .
+		self triggerEvent: #updateTranscript.
+		
+	] on: Error 
+	do: [:anError | self triggerEvent: #paymentFailed: with: anError messageText ].! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:20:18'!
+updateTranscript
+	transcriptList updateList.
+	creditCardNumberTextBox updateActualContents.! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:20:18' prior: 50798836!
+initializeWith: aTitle cartId: cartId username: username password: password
+	
+	self titleMorph showButtonsNamed: #( close collapse ).
+	self setLabel: aTitle;
+		 model: (CheckOutWindowModel withCartId: cartId username: username password: password);
+		 morphExtent: 640@480;
+		 buildMorphicWindow;
+		 openInWorld.
+	self model when: #paymentDone
+				send: #updateTranscript
+				to: self.
+	self model when: #paymentFailed:
+				send: #showError:
+				to: self.! !
+
+CheckOutWindow removeSelector: #updateTranscriptAndConfidentialInformation!
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:20:22' prior: 50798917!
+updateTranscript
+	transcriptList updateList.
+	! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:20:51'!
+paymentDone
+	creditCardNumberTextBox updateActualContents.
+	errorTextBox contents: 'Payment Done'.
+	! !
+!CheckOutWindow methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:21:09' prior: 50798924!
+initializeWith: aTitle cartId: cartId username: username password: password
+	
+	self titleMorph showButtonsNamed: #( close collapse ).
+	self setLabel: aTitle;
+		 model: (CheckOutWindowModel withCartId: cartId username: username password: password);
+		 morphExtent: 640@480;
+		 buildMorphicWindow;
+		 openInWorld.
+	self model when: #paymentDone
+				send: #paymentDone
+				to: self.
+	self model when: #updateTranscript
+				send: #updateTranscript
+				to: self.
+	self model when: #paymentFailed:
+				send: #showError:
+				to: self.! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:21:37' prior: 50798881!
+test10DespuesDeEfectuarElPagoSeActualizaElTranscript
+
+	| flag |
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |].
+	
+
+	flag _ false.
+	checkoutModel when: #updateTranscript evaluate: [flag _ true].
+	checkoutModel creditCardNumber: '0123012301230123'.
+	checkoutModel ownersName: 'Teo Freund'.
+	checkoutModel expirationDate: '07/2020'.
+	
+	checkoutModel checkout.
+	
+
+	self assert: checkoutModel transcript equals: nil.
+	! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:21:45' prior: 50798976!
+test10DespuesDeEfectuarElPagoSeActualizaElTranscript
+
+	| flag |
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |].
+	
+
+	flag _ false.
+	checkoutModel when: #updateTranscript evaluate: [flag _ true].
+	checkoutModel creditCardNumber: '0123012301230123'.
+	checkoutModel ownersName: 'Teo Freund'.
+	checkoutModel expirationDate: '07/2020'.
+	
+	checkoutModel checkout.
+	
+
+	self assert: flag.
+	self assert: checkoutModel transcript equals: nil.
+	! !
+!CheckOutWindowModelTest methodsFor: 'nil' stamp: 'tf 7/11/2019 10:25:15'!
+listPurchasesOf: username authenticatingWith: password
+	^Dictionary new at: 'valid' put: 200; at: 'harry potter' put: 120; yourself. ! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:26:01' prior: 50798994!
+test10DespuesDeEfectuarElPagoSeActualizaElTranscript
+
+	| flag |
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |].
+	
+
+	flag _ false.
+	checkoutModel when: #updateTranscript evaluate: [flag _ true].
+	checkoutModel creditCardNumber: '0123012301230123'.
+	checkoutModel ownersName: 'Teo Freund'.
+	checkoutModel expirationDate: '07/2020'.
+	
+	checkoutModel checkout.
+	
+
+	self assert: flag.
+	self assert: checkoutModel transcript equals: (OrderedCollection with: 'valid $200' with: 'harry potter $120').
+	! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:26:58' prior: 50798898!
+checkout
+
+	[
+		webClient checkOutCartIdentifiedAs: cartId 
+					withCreditCardNumbered:  creditCardNumber 
+					ownedBy: ownersName  
+					expiringOn: (Month readFrom: expirationDate readStream).
+		creditCardNumber _ creditCardNumber last: 4.
+		self triggerEvent: #paymentDone.
+		self updateTranscript.
+		self triggerEvent: #updateTranscript.
+		
+	] on: Error 
+	do: [:anError | self triggerEvent: #paymentFailed: with: anError messageText ].! !
+!CheckOutWindowModel methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:27:52'!
+updateTranscript
+	| originalTranscript |
+	originalTranscript _ webClient listPurchasesOf: username authenticatingWith: password .
+	
+	transcript _ OrderedCollection new.
+	originalTranscript keysAndValuesDo: [:key :value | transcript add: key, ' $', value printString ].! !
+!CheckOutWindowModelTest methodsFor: 'as yet unclassified' stamp: 'tf 7/11/2019 10:28:27' prior: 50799020!
+test10DespuesDeEfectuarElPagoSeActualizaElTranscript
+
+	| flag |
+	checkoutWebClientRequestBlock _ [:cartId :ccNumber :ownersName :expirationDate |].
+	
+
+	flag _ false.
+	checkoutModel when: #updateTranscript evaluate: [flag _ true].
+	checkoutModel creditCardNumber: '0123012301230123'.
+	checkoutModel ownersName: 'Teo Freund'.
+	checkoutModel expirationDate: '07/2020'.
+	
+	checkoutModel checkout.
+	
+
+	self assert: flag.
+	self assert: checkoutModel transcript equals: (OrderedCollection with: 'harry potter $120' with: 'valid $200').
+	! !
+
+----SNAPSHOT----(11 July 2019 10:28:48) TusLibros-Web.image priorSource: 14934530!
+
+CreateCartWindow open.!
+
+CreateCartWindow open.!
+
+CreateCartWindow open.!
+
+----SNAPSHOT----(11 July 2019 10:32:48) TusLibros-Web.image priorSource: 14958005!
+
+----QUIT----(11 July 2019 10:32:54) TusLibros-Web.image priorSource: 14958164!
