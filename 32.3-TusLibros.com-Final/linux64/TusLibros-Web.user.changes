@@ -6065,3 +6065,613 @@ CreateCartWindow open.!
 ----SNAPSHOT----(11 July 2019 10:32:48) TusLibros-Web.image priorSource: 14958005!
 
 ----QUIT----(11 July 2019 10:32:54) TusLibros-Web.image priorSource: 14958164!
+
+----STARTUP---- (11 July 2019 11:40:52) as /home/teofr/Documents/IngBkp/Ing1-2019/32.3-TusLibros.com-Final/linux64/TusLibros-Web.image!
+
+!TusLibrosServerControllerTest methodsFor: 'setUp/tearDown' stamp: 'tf 7/11/2019 11:43:23' prior: 50789803!
+setUp
+	testObjectsFactory _ TusLibrosWebTestObjectFactory new.
+	aSystemFacade _ self. 
+	aDefaultServerController _ TusLibrosServerController listeningOn: self port withFacade: aSystemFacade.! !
+!TusLibrosServerControllerTest methodsFor: 'test - port' stamp: 'tf 7/11/2019 11:43:28' prior: 50793861!
+test02PuedoCrearUnaInstanciaDelServidorQueEscucheEnUnPuertoEspecifico
+	| aServerController |
+	
+	aServerController _ TusLibrosServerController listeningOn: 8888 withFacade: self.
+	
+	self assert: aServerController port equals: 8888.
+	
+	aServerController stopListening ; destroy .! !
+!TusLibrosServerControllerTest methodsFor: 'test - port' stamp: 'tf 7/11/2019 11:43:32' prior: 50789758!
+test03ElServerNoPuedeEscucharEnUnPuertoNegativo
+	
+	self should: [TusLibrosServerController listeningOn: -1 withFacade: self ]
+		 raise: Error - MessageNotUnderstood 
+		 withExceptionDo: [:anError |
+			self assert: anError messageText equals: TusLibrosServerController invalidPortNumberMessageError	
+		].! !
+!TusLibrosServerControllerTest methodsFor: 'test - port' stamp: 'tf 7/11/2019 11:43:37' prior: 50789772!
+test04ElServerNoPuedeEscucharEnUnMayorA65535
+	
+	self should: [TusLibrosServerController listeningOn: 3598102 withFacade: self ]
+		 raise: Error - MessageNotUnderstood 
+		 withExceptionDo: [:anError |
+			self assert: anError messageText equals: TusLibrosServerController invalidPortNumberMessageError	
+		].! !
+!TusLibrosServerControllerTest methodsFor: 'test - port' stamp: 'tf 7/11/2019 11:43:40' prior: 50789786!
+test05ElNumeroDePuertoTieneQueSerEntero
+	
+	self should: [TusLibrosServerController listeningOn: 80.5 withFacade: self ]
+		 raise: Error - MessageNotUnderstood 
+		 withExceptionDo: [:anError |
+			self assert: anError messageText equals: TusLibrosServerController invalidPortNumberMessageError	
+		].! !
+
+TestCase subclass: #TusLibrosServerControllerTest
+	instanceVariableNames: 'port testObjectsFactory storeTestObjectsFactory aDefaultServerController'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+
+!classDefinition: #TusLibrosServerControllerTest category: #'TusLibros-Web'!
+TestCase subclass: #TusLibrosServerControllerTest
+	instanceVariableNames: 'port testObjectsFactory storeTestObjectsFactory aDefaultServerController'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Web'!
+!TusLibrosServerControllerTest methodsFor: 'setUp/tearDown' stamp: 'tf 7/11/2019 11:44:17' prior: 50799104!
+setUp
+	testObjectsFactory _ TusLibrosWebTestObjectFactory new.
+	
+	aDefaultServerController _ TusLibrosServerController listeningOn: self port withFacade: self.! !
+
+----STARTUP---- (11 July 2019 11:45:42) as /home/teofr/Documents/IngBkp/Ing1-2019/32.3-TusLibros.com-Final/linux64/TusLibros-Web.image!
+
+
+----SNAPSHOT----(11 July 2019 11:47:36) TusLibros-Web.image priorSource: 14958248!
+!TusLibrosServerControllerTest methodsFor: 'test - create cart' stamp: 'tf 7/11/2019 11:48:59' prior: 50789821!
+test06ElServidorDeTusLibrosTieneUnEndpointParaCrearUnCarrito
+	
+	self assert: 
+		(aDefaultServerController webServer endpoints includes: TusLibrosServerController createCartEndpoint). ! !
+!TusLibrosServerControllerTest methodsFor: 'test - create cart' stamp: 'tf 7/11/2019 11:50:00' prior: 50793922!
+test07IntentarCrearUnCarritoConUnUsuarioMalAutenticadoGeneraUnaRespuestaDeError404
+	| httpResponse queryParams |
+	
+	queryParams _ Dictionary newFromPairs:  { 
+		'user' . testObjectsFactory invalidUser . 
+		'password' . testObjectsFactory invalidUserPassword
+	}.
+	httpResponse _ WebClient htmlSubmit: 'http://localhost:8484/createCart' fields: queryParams.
+	
+	self deny: httpResponse isSuccess.
+	self assert: httpResponse code = 404.
+	self assert: httpResponse content equals: 'key not found'.! !
+!TusLibrosServerControllerTest methodsFor: 'helpers' stamp: 'tf 7/11/2019 11:51:02'!
+urlFor: aMethodName
+	^'http://localhost:8484', aMethodName. ! !
+!TusLibrosServerControllerTest methodsFor: 'test - create cart' stamp: 'tf 7/11/2019 11:51:35' prior: 50799117!
+test07IntentarCrearUnCarritoConUnUsuarioMalAutenticadoGeneraUnaRespuestaDeError404
+	| httpResponse queryParams |
+	
+	queryParams _ Dictionary newFromPairs:  { 
+		'user' . testObjectsFactory invalidUser . 
+		'password' . testObjectsFactory invalidUserPassword
+	}.
+	httpResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController createCartEndpoint)
+					 fields: queryParams.
+	
+	self deny: httpResponse isSuccess.
+	self assert: httpResponse code = 404.
+	self assert: httpResponse content equals: 'key not found'.! !
+!TusLibrosServerControllerTest methodsFor: 'test - create cart' stamp: 'tf 7/11/2019 11:52:09' prior: 50793890!
+test08AlCrearUnCarritoConUnUsuarioValidoTengoUnaRespuesta200
+	| httpResponse queryParams |
+	
+	queryParams _ Dictionary newFromPairs:  { 
+		'username' . testObjectsFactory validUser . 
+		'password' . testObjectsFactory validUserPassword 
+	}.
+	httpResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController createCartEndpoint)
+					 fields: queryParams.
+	
+	self assert: httpResponse isSuccess.
+	self assert: httpResponse code = 200.! !
+!TusLibrosServerControllerTest methodsFor: 'test - add items' stamp: 'tf 7/11/2019 11:52:41' prior: 50789862!
+test09ElServidorDeTusLibrosTieneUnEndpointParaAgregarItemsAlCarrito
+	
+	self assert: 
+		(aDefaultServerController webServer endpoints includes: TusLibrosServerController addToCartEndpoint). ! !
+!TusLibrosServerControllerTest methodsFor: 'test - add items' stamp: 'tf 7/11/2019 11:53:07' prior: 50794151!
+test10ReciboUnaRespuesta200AlAgregarItemsAlCarrito
+	| cartId queryParams addToCartResponse|
+	
+	cartId _ self createCart .
+	
+	queryParams _ Dictionary newFromPairs: { 
+			'cartId' . cartId printString . 
+			'bookISBN' . 'validBook' . 
+			'bookQuantity' . '3' 
+	}.
+	addToCartResponse  _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController addToCartEndpoint ) 
+					 fields: queryParams.
+
+	self assert: addToCartResponse isSuccess .
+	self assert: addToCartResponse code = 200.! !
+!TusLibrosServerControllerTest methodsFor: 'test - add items' stamp: 'tf 7/11/2019 11:53:28' prior: 50799191!
+test10ReciboUnaRespuesta200AlAgregarItemsAlCarrito
+	| cartId queryParams addToCartResponse|
+	
+	cartId _ self createCart .
+	
+	queryParams _ Dictionary newFromPairs: { 
+			'cartId' . cartId printString . 
+			'bookISBN' . testObjectsFactory storeTestObjectsFactory itemSellByTheStore . 
+			'bookQuantity' . '3' 
+	}.
+	addToCartResponse  _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController addToCartEndpoint ) 
+					 fields: queryParams.
+
+	self assert: addToCartResponse isSuccess .
+	self assert: addToCartResponse code = 200.! !
+!TusLibrosServerControllerTest methodsFor: 'test - add items' stamp: 'tf 7/11/2019 11:53:43' prior: 50794169!
+test11ReciboUnaRespuesta404AlAgregarItemsDeUnLibroInexistente
+	| queryParams addToCartResponse cartId |
+	
+	cartId _ self createCart .
+	
+	queryParams _ Dictionary newFromPairs: { 
+		'cartId' . cartId printString . 
+		'bookISBN' . 'invalidBook' . 
+		'bookQuantity' . '3' 
+	}.
+	addToCartResponse  _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController addToCartEndpoint ) 
+					 fields: queryParams.
+	
+	self deny: addToCartResponse isSuccess .
+	self assert: addToCartResponse code = 404.
+	self assert: addToCartResponse content = 'Item is not in catalog'.! !
+!TusLibrosServerControllerTest methodsFor: 'test - add items' stamp: 'tf 7/11/2019 11:53:49' prior: 50793719!
+test12ReciboUnaRespuesta404AlAgregarItemsAUnCarritoInexistente
+	| queryParams addToCartResponse|
+	
+	queryParams _ Dictionary newFromPairs: { 
+		'cartId' . '-1835140' . 
+		'bookISBN' . 'validBook' . 
+		'bookQuantity' . '3' 
+	}.
+	addToCartResponse  _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController addToCartEndpoint ) 
+					 fields: queryParams.
+	
+	self assert: addToCartResponse code = 404.
+	self assert: addToCartResponse content = 'Invalid cart id'.! !
+!TusLibrosServerControllerTest methodsFor: 'test - add items' stamp: 'tf 7/11/2019 11:54:03' prior: 50799231!
+test11ReciboUnaRespuesta404AlAgregarItemsDeUnLibroInexistente
+	| queryParams addToCartResponse cartId |
+	
+	cartId _ self createCart .
+	
+	queryParams _ Dictionary newFromPairs: { 
+		'cartId' . cartId printString . 
+		'bookISBN' . testObjectsFactory storeTestObjectsFactory itemNotSellByTheStore . 
+		'bookQuantity' . '3' 
+	}.
+	addToCartResponse  _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController addToCartEndpoint ) 
+					 fields: queryParams.
+	
+	self deny: addToCartResponse isSuccess .
+	self assert: addToCartResponse code = 404.
+	self assert: addToCartResponse content = 'Item is not in catalog'.! !
+!TusLibrosServerControllerTest methodsFor: 'test - add items' stamp: 'tf 7/11/2019 11:54:07' prior: 50799253!
+test12ReciboUnaRespuesta404AlAgregarItemsAUnCarritoInexistente
+	| queryParams addToCartResponse|
+	
+	queryParams _ Dictionary newFromPairs: { 
+		'cartId' . '-1835140' . 
+		'bookISBN' . testObjectsFactory storeTestObjectsFactory itemSellByTheStore . 
+		'bookQuantity' . '3' 
+	}.
+	addToCartResponse  _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController addToCartEndpoint ) 
+					 fields: queryParams.
+	
+	self assert: addToCartResponse code = 404.
+	self assert: addToCartResponse content = 'Invalid cart id'.! !
+!TusLibrosServerControllerTest methodsFor: 'test - catalogo' stamp: 'tf 7/11/2019 11:54:15' prior: 50789943!
+test18ElServidorDeTusLibrosTieneUnEndpointParaHacerCatalogDelSistema
+	
+	self assert: 
+		(aDefaultServerController webServer endpoints includes: TusLibrosServerController catalogEndpoint). ! !
+!TusLibrosServerControllerTest methodsFor: 'test - catalogo' stamp: 'tf 7/11/2019 11:54:35' prior: 50793737!
+test19AlPedirElCatalogoMeLoDevuelveConCodigo200
+	| catalogResponse aCatalog |
+
+		
+	catalogResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController catalogEndpoint ) 
+					 fields: Dictionary new.
+		
+	
+	self assert: catalogResponse code equals: 200.
+	
+	aCatalog _ WebUtils jsonDecode: catalogResponse content readStream .
+	self assert: aCatalog notEmpty .
+	self assert: aCatalog equals: aSystemFacade catalog . 
+	
+		! !
+!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 11:55:06' prior: 50789968!
+test13ElServidorDeTusLibrosTieneUnEndpointParaHacerCheckoutDelCarrito
+	
+	self assert: 
+		(aDefaultServerController webServer endpoints includes: TusLibrosServerController checkoutCartEndpoint). ! !
+!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 11:55:51' prior: 50793971!
+test14AlHacerCheckoutDeUnCarritoConElementosObtengoUnaRespuestaConCodigo200
+	| cartId queryParams checkOutResponse expirationDate |
+	
+	cartId _ self createCart .
+	
+	queryParams _ Dictionary newFromPairs: { 
+		'cartId' . cartId printString . 
+		'bookISBN' . testObjectsFactory storeTestObjectsFactory itemSellByTheStore . 
+		'bookQuantity' . '3' 
+	}.
+	WebClient htmlSubmit: 'http://localhost:8484/addToCart' fields: queryParams.
+
+	expirationDate _ testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString copyReplaceAll: ' ' with: '%20'.
+	queryParams _ Dictionary newFromPairs: 
+		{'cartId' . cartId printString . 
+		'creditCardNumber' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
+		'ownersName' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
+		'expirationDate' . expirationDate }.
+		
+	checkOutResponse _ WebClient htmlSubmit: 'http://localhost:8484/checkoutcart' fields: queryParams .
+		
+	self assert: checkOutResponse code equals: 200.
+	
+		! !
+!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 11:56:24' prior: 50799353!
+test14AlHacerCheckoutDeUnCarritoConElementosObtengoUnaRespuestaConCodigo200
+	| cartId queryParams checkOutResponse expirationDate |
+	
+	cartId _ self createCart .
+	
+	queryParams _ Dictionary newFromPairs: { 
+		'cartId' . cartId printString . 
+		'bookISBN' . testObjectsFactory storeTestObjectsFactory itemSellByTheStore . 
+		'bookQuantity' . '3' 
+	}.
+	WebClient htmlSubmit: (self urlFor: TusLibrosServerController addToCartEndpoint) fields: queryParams.
+
+	expirationDate _ testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString copyReplaceAll: ' ' with: '%20'.
+	queryParams _ Dictionary newFromPairs: 
+		{'cartId' . cartId printString . 
+		'creditCardNumber' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
+		'ownersName' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
+		'expirationDate' . expirationDate }.
+		
+	checkOutResponse _ WebClient htmlSubmit: 'http://localhost:8484/checkoutcart' fields: queryParams .
+		
+	self assert: checkOutResponse code equals: 200.
+	
+		! !
+!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 11:56:42' prior: 50799389!
+test14AlHacerCheckoutDeUnCarritoConElementosObtengoUnaRespuestaConCodigo200
+	| cartId queryParams checkOutResponse expirationDate |
+	
+	cartId _ self createCart .
+	
+	queryParams _ Dictionary newFromPairs: { 
+		'cartId' . cartId printString . 
+		'bookISBN' . testObjectsFactory storeTestObjectsFactory itemSellByTheStore . 
+		'bookQuantity' . '3' 
+	}.
+	WebClient htmlSubmit: (self urlFor: TusLibrosServerController addToCartEndpoint) fields: queryParams.
+
+	expirationDate _ testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString copyReplaceAll: ' ' with: '%20'.
+	queryParams _ Dictionary newFromPairs: 
+		{'cartId' . cartId printString . 
+		'creditCardNumber' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
+		'ownersName' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
+		'expirationDate' . expirationDate }.
+		
+	checkOutResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController checkoutCartEndpoint ) 
+					 fields: queryParams .
+		
+	self assert: checkOutResponse code equals: 200.
+	
+		! !
+!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 11:57:27' prior: 50794005!
+test15AlHacerCheckoutDeUnCarritoInexistenteObtengoUnaRespuestaConCodigo404YMensajeDeError
+	| cartId queryParams checkOutResponse expirationDate |
+	
+	cartId _ -10.
+	
+	expirationDate _ testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString copyReplaceAll: ' ' with: '%20'.
+	queryParams _ Dictionary newFromPairs: 
+		{'cartId' . cartId printString . 
+		'creditCardNumber' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
+		'ownersName' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
+		'expirationDate' . expirationDate }.
+		
+	checkOutResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController checkoutCartEndpoint ) 
+					 fields: queryParams .
+					
+	self assert: checkOutResponse code equals: 404.
+	self assert: checkOutResponse content equals: 'Invalid cart id'
+	
+		! !
+!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 11:57:32' prior: 50794035!
+test16AlHacerCheckoutDeUnCarritoVacioObtengoUnaRespuestaConCodigo404YUnMensajeDeError
+	| cartId queryParams checkOutResponse expirationDate |
+	
+	cartId _ self createCart .
+	
+	expirationDate _ testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString copyReplaceAll: ' ' with: '%20'.
+	queryParams _ Dictionary newFromPairs: 
+		{'cartId' . cartId printString . 
+		'creditCardNumber' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
+		'ownersName' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
+		'expirationDate' . expirationDate }.
+		
+	checkOutResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController checkoutCartEndpoint ) 
+					 fields: queryParams .
+						
+	self assert: checkOutResponse code equals: 404.
+	self assert: checkOutResponse content equals: 'Can not check out an empty cart'.
+	
+		! !
+!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 11:57:37' prior: 50794065!
+test17AlHacerCheckoutDeUnCarritoConElementosConUnaTarjetaInvalidaObtengoUnaRespuestaConCodigo404YUnMensajeDeError
+	| cartId queryParams checkOutResponse expirationDate |
+	
+	cartId _ self createCart .
+	
+	queryParams _ Dictionary newFromPairs: { 'cartId' . cartId printString . 'bookISBN' . 'validBook' . 'bookQuantity' . '3' }.
+	WebClient htmlSubmit: 'http://localhost:8484/addToCart' fields: queryParams.
+
+	expirationDate _ testObjectsFactory storeTestObjectsFactory expiredMonthOfYear printString copyReplaceAll: ' ' with: '%20'.
+	queryParams _ Dictionary newFromPairs: 
+		{'cartId' . cartId printString . 
+		'creditCardNumber' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
+		'ownersName' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
+		'expirationDate' . expirationDate }.
+		
+	checkOutResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController checkoutCartEndpoint ) 
+					 fields: queryParams .
+						
+	self assert: checkOutResponse code equals: 404.
+	self assert: checkOutResponse content equals: 'Can not charge an expired credit card'.
+	
+		! !
+!TusLibrosServerControllerTest methodsFor: 'test - list purchase' stamp: 'tf 7/11/2019 11:57:54' prior: 50790136!
+test20ElServidorDeTusLibrosTieneUnEndpointParaHacerListPurchases
+	
+	self assert: 
+		(aDefaultServerController webServer endpoints includes: TusLibrosServerController listPurchasesEndpoint). ! !
+!TusLibrosServerControllerTest methodsFor: 'helpers' stamp: 'tf 7/11/2019 11:59:15'!
+addToCartWithDefaultValuesWithCartId: cartId
+	| queryParams |
+	queryParams _ Dictionary newFromPairs: { 
+		'cartId' . cartId printString . 
+		'bookISBN' . testObjectsFactory storeTestObjectsFactory itemSellByTheStore . 
+		'bookQuantity' . '3' 
+	}.
+	WebClient htmlSubmit: (self urlFor: TusLibrosServerController addToCartEndpoint) fields: queryParams.! !
+!TusLibrosServerControllerTest methodsFor: 'helpers' stamp: 'tf 7/11/2019 11:59:21' prior: 50799575!
+addToCartWithDefaultValuesWithCartId: cartId
+	| queryParams |
+	
+	queryParams _ Dictionary newFromPairs: { 
+		'cartId' . cartId printString . 
+		'bookISBN' . testObjectsFactory storeTestObjectsFactory itemSellByTheStore . 
+		'bookQuantity' . '3' 
+	}.
+	WebClient htmlSubmit: (self urlFor: TusLibrosServerController addToCartEndpoint) fields: queryParams.! !
+!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 11:59:36' prior: 50799426!
+test14AlHacerCheckoutDeUnCarritoConElementosObtengoUnaRespuestaConCodigo200
+	| cartId queryParams checkOutResponse expirationDate |
+	
+	cartId _ self createCart .
+	self addToCartWithDefaultValuesWithCartId: cartId .
+	expirationDate _ testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString copyReplaceAll: ' ' with: '%20'.
+	queryParams _ Dictionary newFromPairs: 
+		{'cartId' . cartId printString . 
+		'creditCardNumber' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
+		'ownersName' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
+		'expirationDate' . expirationDate }.
+		
+	checkOutResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController checkoutCartEndpoint ) 
+					 fields: queryParams .
+		
+	self assert: checkOutResponse code equals: 200.
+	
+		! !
+!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 11:59:37' prior: 50799605!
+test14AlHacerCheckoutDeUnCarritoConElementosObtengoUnaRespuestaConCodigo200
+	| cartId queryParams checkOutResponse expirationDate |
+	
+	cartId _ self createCart .
+	self addToCartWithDefaultValuesWithCartId: cartId .
+	
+	expirationDate _ testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString copyReplaceAll: ' ' with: '%20'.
+	queryParams _ Dictionary newFromPairs: 
+		{'cartId' . cartId printString . 
+		'creditCardNumber' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
+		'ownersName' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
+		'expirationDate' . expirationDate }.
+		
+	checkOutResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController checkoutCartEndpoint ) 
+					 fields: queryParams .
+		
+	self assert: checkOutResponse code equals: 200.
+	
+		! !
+!TusLibrosServerControllerTest methodsFor: 'test - checkout' stamp: 'tf 7/11/2019 11:59:53' prior: 50799527!
+test17AlHacerCheckoutDeUnCarritoConElementosConUnaTarjetaInvalidaObtengoUnaRespuestaConCodigo404YUnMensajeDeError
+	| cartId queryParams checkOutResponse expirationDate |
+	
+	cartId _ self createCart .
+	
+	self addToCartWithDefaultValuesWithCartId: cartId .
+	
+	expirationDate _ testObjectsFactory storeTestObjectsFactory expiredMonthOfYear printString copyReplaceAll: ' ' with: '%20'.
+	queryParams _ Dictionary newFromPairs: 
+		{'cartId' . cartId printString . 
+		'creditCardNumber' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
+		'ownersName' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
+		'expirationDate' . expirationDate }.
+		
+	checkOutResponse _ 
+		WebClient htmlSubmit: (self urlFor: TusLibrosServerController checkoutCartEndpoint ) 
+					 fields: queryParams .
+						
+	self assert: checkOutResponse code equals: 404.
+	self assert: checkOutResponse content equals: 'Can not charge an expired credit card'.
+	
+		! !
+!TusLibrosServerControllerTest methodsFor: 'test - list purchase' stamp: 'tf 7/11/2019 12:00:09' prior: 50794103!
+test22AlPedirLasComprasDeUnUsuarioConComprasReciboCodigo200YDiccionarioAcorde
+	| cartId queryParams expirationDate purchasesResponse |
+	
+	cartId _ self createCart .
+	
+	self addToCartWithDefaultValuesWithCartId: cartId .
+	
+	
+	expirationDate _ testObjectsFactory storeTestObjectsFactory notExpiredMonthOfYear printString copyReplaceAll: ' ' with: '%20'.
+	queryParams _ Dictionary newFromPairs: 
+		{'cartId' . cartId printString . 
+		'creditCardNumber' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardNumber . 
+		'ownersName' . testObjectsFactory storeTestObjectsFactory notExpiredCreditCardOwner . 
+		'expirationDate' . expirationDate }.
+		
+	WebClient htmlSubmit: 'http://localhost:8484/checkoutcart' fields: queryParams .
+	
+	queryParams _ Dictionary newFromPairs: 
+		{'username' . testObjectsFactory validUser . 
+		  'password' . testObjectsFactory validUserPassword }.
+		
+	purchasesResponse _ WebClient htmlSubmit: 'http://localhost:8484/listpurchases'  fields: queryParams.
+		
+	self assert: purchasesResponse code equals: 200.
+	self assert: (WebUtils jsonDecode: (purchasesResponse content readStream )) 
+		equals: (Dictionary new 
+					at: 'validBook' 
+					put: 3*(testObjectsFactory storeTestObjectsFactory itemSellByTheStorePrice); yourself ).
+	
+		! !
+
+----SNAPSHOT----(11 July 2019 12:00:29) TusLibros-Web.image priorSource: 14958466!
+!TusLibrosServerController methodsFor: 'services' stamp: 'tf 7/11/2019 12:03:11'!
+addService: aServiceName withBlock: aBlock
+	webServer addService: aServiceName 
+				action: [ :request |
+					[aBlock value: request ]
+					on: Error
+					do: [:anError |
+						request send404Response: anError messageText.	
+					]
+				].! !
+!TusLibrosServerController methodsFor: 'services' stamp: 'tf 7/11/2019 12:04:14' prior: 50790504!
+registerAddToCart
+	self addService: self class addToCartEndpoint 
+		withBlock: [ :request |
+					|cartId bookISBN bookQuantity|
+					
+					cartId _ (request fields at: 'cartId') asInteger.
+					bookISBN _ request fields at: 'bookISBN'.
+					bookQuantity _ (request fields at: 'bookQuantity') asInteger.
+					tusLibrosFacade add: bookQuantity of: bookISBN toCartIdentifiedAs: cartId.
+					request send200Response: (WebUtils jsonEncode: 0). 
+				].
+! !
+!TusLibrosServerController methodsFor: 'services' stamp: 'tf 7/11/2019 12:04:40' prior: 50790525!
+registerCatalog
+	self addService: self class catalogEndpoint 
+		withBlock: [:request |
+						request send200Response: (WebUtils jsonEncode: tusLibrosFacade catalog ).
+						
+					 ].
+	! !
+!TusLibrosServerController methodsFor: 'services' stamp: 'tf 7/11/2019 12:05:35' prior: 50790534!
+registerCheckoutCart
+	self addService: self class checkoutCartEndpoint 
+		withBlock: [:request |
+						|cartId creditCardNumber expirationDate ownersName |
+					
+						cartId _ (request fields at: 'cartId') asInteger.
+						creditCardNumber _ request fields at: 'creditCardNumber'.
+						ownersName _ request fields at: 'ownersName'.
+						expirationDate _ (request fields at: 'expirationDate') copyReplaceAll: '%20' with: ' ' .
+						expirationDate _ Month readFrom: expirationDate readStream .
+						
+						tusLibrosFacade 
+							checkOutCartIdentifiedAs:  cartId 
+							withCreditCardNumbered:  creditCardNumber 
+							ownedBy:  ownersName 
+							expiringOn: expirationDate .
+						
+						request send200Response: (WebUtils jsonEncode: 0). 
+					].
+	! !
+!TusLibrosServerController methodsFor: 'services' stamp: 'tf 7/11/2019 12:06:45' prior: 50790565!
+registerCreateCart
+	self addService: self class createCartEndpoint 
+		withBlock:  [:request |
+					| cartId password username |
+					
+						username _ request fields at: 'username'.
+						password _ request fields at: 'password'.
+						cartId _ tusLibrosFacade createCartFor: username authenticatedWith: password.
+						request send200Response: (WebUtils jsonEncode: cartId).
+					].
+! !
+!TusLibrosServerController methodsFor: 'services' stamp: 'tf 7/11/2019 12:07:12' prior: 50790583!
+registerListPurchases
+	self addService:  self class listPurchasesEndpoint 
+		withBlock: [:request | | purchases password username |
+					
+						
+							username _ request fields at: 'username'.
+							password _ request fields at: 'password'.
+							purchases _ tusLibrosFacade listPurchasesOf: username authenticatingWith: password .
+							request send200Response: (WebUtils jsonEncode: purchases).
+						]
+	! !
+!TusLibrosServerController methodsFor: 'services' stamp: 'tf 7/11/2019 12:07:14' prior: 50799826!
+registerListPurchases
+	self addService:  self class listPurchasesEndpoint 
+		withBlock: [:request | | purchases password username |
+					
+						
+							username _ request fields at: 'username'.
+							password _ request fields at: 'password'.
+							purchases _ tusLibrosFacade listPurchasesOf: username authenticatingWith: password .
+							request send200Response: (WebUtils jsonEncode: purchases).
+						].
+	! !
+
+testObjectsFactory _ TusLibrosWebTestObjectFactory new.!
+
+aSystemFacade _ testObjectsFactory tusLibrosSystemFacade. !
+
+aDefaultServerController _ TusLibrosServerController listeningOn: 8080 withFacade: aSystemFacade.!
+
+CreateCartWindow open.!
+
+----SNAPSHOT----(11 July 2019 12:08:08) TusLibros-Web.image priorSource: 14978937!
+
+----QUIT----(11 July 2019 12:08:13) TusLibros-Web.image priorSource: 14982866!
