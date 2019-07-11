@@ -286,7 +286,7 @@ open
 
 !classDefinition: #StoreWindow category: #'TusLibros-Web'!
 Panel subclass: #StoreWindow
-	instanceVariableNames: 'catalogList cartContentsList subtotalText errorTextBox'
+	instanceVariableNames: 'catalogList cartContentsList subtotalText errorTextBox bookQuantityTextBox'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros-Web'!
@@ -338,7 +338,7 @@ buildCartContentsColumn
 		    addMorph: errorTextBox .
 		! !
 
-!StoreWindow methodsFor: 'GUI building' stamp: 'tf 7/11/2019 09:07:24'!
+!StoreWindow methodsFor: 'GUI building' stamp: 'tf 7/11/2019 13:49:20'!
 buildCatalogColumn
 	|addToCartButton|
 	catalogList _ 
@@ -347,6 +347,21 @@ buildCatalogColumn
 								indexGetter: #catalogIndex
 								indexSetter: #catalogIndex:.
 	catalogList morphHeight: self listHeight.
+	
+	bookQuantityTextBox _ TextModelMorph 
+		textProvider: self model 
+		textGetter:  #bookQuantity
+		textSetter: #bookQuantity: .
+	bookQuantityTextBox textMorph 
+		setProperty: #keyStroke: 
+		toValue: [:key |
+			bookQuantityTextBox textMorph acceptContents 
+		].
+	bookQuantityTextBox 
+		borderWidth: 1;
+		borderColor: Color skyBlue;
+		morphHeight: 30 .
+
 	
 	addToCartButton _ 
 		PluggableButtonMorph model: self model
@@ -359,6 +374,7 @@ buildCatalogColumn
 					    padding: #left;
 					    addMorph: (StringMorph contents: 'Catálogo:');
 					    addMorph: catalogList;
+					   addMorph: bookQuantityTextBox;
 					    addMorph: addToCartButton.! !
 
 !StoreWindow methodsFor: 'GUI building' stamp: 'ar 7/9/2019 19:06:39'!
@@ -819,6 +835,46 @@ test09AlAgregarUnElementoSeIncrementaAcordeElSubTotal
 	storeModel addToCart.
 	
 	self assert: storeModel subTotal equals: 231 + 23. ! !
+
+!StoreWindowModelTest methodsFor: 'tests' stamp: 'tf 7/11/2019 13:48:30'!
+test10ElValorDeBookQuantityComienzaEn1
+	| storeModel |
+	
+	storeModel _ StoreWindowModel withWebClient: self cartId: 23  username: 'Valid'  andPassword: 'ValidP'.
+
+	self assert: storeModel bookQuantity equals: '1'.! !
+
+!StoreWindowModelTest methodsFor: 'tests' stamp: 'tf 7/11/2019 13:45:00'!
+test11ElValorDeBookQuantitySePuedeCambiar
+	| storeModel |
+	
+	storeModel _ StoreWindowModel withWebClient: self cartId: 23  username: 'Valid'  andPassword: 'ValidP'.
+
+	storeModel bookQuantity: 34.
+	self assert: storeModel bookQuantity equals: 34.! !
+
+!StoreWindowModelTest methodsFor: 'tests' stamp: 'tf 7/11/2019 13:46:18'!
+test12AlAgregarUnElementoLaCantidadDependeDelBookQuantity
+	| storeModel flag |
+	
+	flag _ false.
+	addToCartWebClientRequestBlock _ [:anAmount :aBookISBN :aCartId |
+		self assert: anAmount equals: 23. 
+		flag _ true.
+	].
+	
+	storeModel _ StoreWindowModel withWebClient: self cartId: 24  username: 'Valid'  andPassword: 'ValidP'.
+	
+
+	storeModel when: #cartContentsUpdated evaluate: [].
+	storeModel catalog.
+	storeModel catalogIndex: 1.
+	storeModel bookQuantity: 23.
+	
+	storeModel addToCart.
+	
+	self assert: flag .
+! !
 
 
 !StoreWindowModelTest methodsFor: 'setUp/tearDown' stamp: 'tf 7/10/2019 17:31:50'!
@@ -1653,10 +1709,19 @@ withWebClient: aWebClient
 
 !classDefinition: #StoreWindowModel category: #'TusLibros-Web'!
 Object subclass: #StoreWindowModel
-	instanceVariableNames: 'username password webClient cartId catalog catalogIndex cartContents cartContentsIndex listableCatalog catalogAsDict catalogNames subTotal originalCatalog'
+	instanceVariableNames: 'username password webClient cartId catalog catalogIndex cartContents cartContentsIndex listableCatalog catalogAsDict catalogNames subTotal originalCatalog bookQuantity'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros-Web'!
+
+!StoreWindowModel methodsFor: 'accessing' stamp: 'tf 7/11/2019 13:41:00'!
+bookQuantity
+	^bookQuantity.! !
+
+!StoreWindowModel methodsFor: 'accessing' stamp: 'tf 7/11/2019 13:44:55'!
+bookQuantity: anAmount 
+
+	bookQuantity _ anAmount! !
 
 !StoreWindowModel methodsFor: 'accessing' stamp: 'tf 7/10/2019 17:32:37'!
 cartContents
@@ -1718,7 +1783,7 @@ initializeCatalog
 	] on: Error 
 		do: [:anError |  self triggerEvent: #catalogRequestFailed with: anError messageText ]! !
 
-!StoreWindowModel methodsFor: 'initialization' stamp: 'tf 7/10/2019 18:23:32'!
+!StoreWindowModel methodsFor: 'initialization' stamp: 'tf 7/11/2019 13:48:08'!
 initializewithWebClient: aWebClient 
 	cartId: aCartId 
 	username: aUsername 
@@ -1733,21 +1798,23 @@ initializewithWebClient: aWebClient
 	catalogIndex _ 0.
 	cartContentsIndex _ 0.
 	subTotal _ 0.
+	bookQuantity _ '1'.
 
 	
 	! !
 
 
-!StoreWindowModel methodsFor: 'events' stamp: 'tf 7/11/2019 12:33:09'!
+!StoreWindowModel methodsFor: 'events' stamp: 'tf 7/11/2019 13:51:09'!
 addToCart
-	| bookName |
+	| bookName integerBookQuantity |
 
 	bookName _ catalogNames at: catalogIndex .
-	
+	integerBookQuantity _ bookQuantity string asInteger.
 	[
-		webClient add: 1 of: bookName  toCartIdentifiedAs: cartId.
-		cartContents add: bookName.
-		subTotal _ subTotal + originalCatalog at: bookName .
+
+		webClient add: integerBookQuantity of: bookName  toCartIdentifiedAs: cartId.
+		cartContents add: bookName withOccurrences: integerBookQuantity .
+		subTotal _ subTotal + (integerBookQuantity * originalCatalog at: bookName) .
 		self triggerEvent: #cartContentsUpdated.
 	] on: Error 
 	do: [:anError | self triggerEvent: #addToCartFailed with: anError messageText ].! !
@@ -1794,8 +1861,9 @@ validUsersAndPasswords
 						yourself.! !
 
 
-!TusLibrosLocalTester methodsFor: 'initialization' stamp: 'tf 7/11/2019 12:26:47'!
+!TusLibrosLocalTester methodsFor: 'initialization' stamp: 'tf 7/11/2019 13:56:13'!
 initialize
+	TusLibrosServerController allInstances do: [:in | in stopListening ; destroy].  
 	debitsMade _ OrderedCollection new.
 	systemFacade _ TusLibrosSystemFacade
 		authenticatingWith: self validUsersAndPasswords 
